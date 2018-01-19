@@ -149,7 +149,7 @@ namespace ASCOM.DSLR.Classes
                     ImageReady(this, new ImageReadyEventArgs(filepath));
                     _lastFileName = filepath;
                     _waitingForImage = false;
-                    ParseExifData(filepath);
+                    SensorTemperature = GetSensorTemperature(filepath);
                     downloaded = true;
                 }
             }

@@ -25,8 +25,9 @@ namespace ASCOM.DSLR.Classes
         public CameraValue[] TvList;
         public CameraValue[] ISOList;
 
-        protected void ParseExifData(string filePath)
+        protected double GetSensorTemperature(string filePath)
         {
+            double sensorTemperature = 0;
             var exifToolWrapper = new ExifToolWrapper();
             exifToolWrapper.Run(filePath);
 
@@ -35,12 +36,14 @@ namespace ASCOM.DSLR.Classes
             int temperature;
             if (!string.IsNullOrEmpty(exifRecord) && int.TryParse(exifRecord, out temperature))
             {
-                SensorTemperature = temperature;
+                sensorTemperature = temperature;
             }
+
+            return sensorTemperature;
         }
 
         public string StorePath { get; set; }
-        public double SensorTemperature { get; private set; }
+        public double SensorTemperature { get; protected set; }
 
         public abstract CameraModel ScanCameras();
 

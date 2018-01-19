@@ -73,45 +73,47 @@ namespace ASCOM.DSLR.Classes
 
         }
 
-        private string fileName = null;
         private DateTime _startTime;
 
         private void MainCamera_DownloadReady(EOSDigital.API.Camera sender, DownloadInfo Info)
         {
-            NumberFormatInfo nfi = new NumberFormatInfo();
-            nfi.NumberDecimalSeparator = ",";
-
             _duration = Math.Round(_duration, 6);
             if (!Directory.Exists(StorePath))
             {
                 Directory.CreateDirectory(StorePath);
             }
-            if (fileName == null)
-            {
-                fileName = string.Format("IMG_{0}s_{1}iso_{2}", _duration.ToString(nfi), Iso, _startTime.ToString("yyyy_MM_dd_HH_mm_ss"));
-            }
-
-            var fileInfo = new FileInfo(Info.FileName);
-            string fileNameWithExtension = Path.ChangeExtension(fileName, fileInfo.Extension);
-            string filePath = Path.Combine(StorePath, fileNameWithExtension);
-            Info.FileName = fileNameWithExtension;
-
             sender.DownloadFile(Info, StorePath);
-            ImageReady?.Invoke(this, new ImageReadyEventArgs(filePath));
-            ParseExifData(filePath);
-            string fileNameWithTemp = string.Format("IMG_{0}s_{1}iso_{2}C_{3}", _duration.ToString(nfi), Iso, SensorTemperature, _startTime.ToString("yyyy_MM_dd_HH_mm_ss"));
-            string filePathWithTemp = Path.Combine(StorePath, Path.ChangeExtension(fileNameWithTemp, fileInfo.Extension));
-            System.IO.File.Move(filePath, filePathWithTemp);
+
+            string downloadedFilePath = Path.Combine(StorePath, Info.FileName);
+            SensorTemperature = GetSensorTemperature(downloadedFilePath);
+
+            string newFilePath = RenameFile(Info, downloadedFilePath);
+            ImageReady?.Invoke(this, new ImageReadyEventArgs(newFilePath));
+        }
+
+        private string RenameFile(DownloadInfo Info, string downloadedFilePath)
+        {
+            string newFileName = GetFileName();
+            string newFilePath = Path.Combine(StorePath, Info.FileName);
+            File.Move(downloadedFilePath, newFilePath);
+            return newFilePath;
+        }
+
+        private string GetFileName()
+        {
+            NumberFormatInfo nfi = new NumberFormatInfo();
+            nfi.NumberDecimalSeparator = ",";
+            return string.Format("IMG_{0}s_{1}iso_{2}C_{3}", _duration.ToString(nfi), Iso, SensorTemperature, _startTime.ToString("yyyy_MM_dd_HH_mm_ss"));
         }
 
         private void ErrorHandler_NonSevereErrorHappened(object sender, ErrorCode ex)
         {
-
+            ExposureFailed?.Invoke(this, new ExposureFailedEventArgs(ErrorMessages.CameraError, ex.ToString()));
         }
 
         private void ErrorHandler_SevereErrorHappened(object sender, Exception ex)
         {
-            throw ex;
+            ExposureFailed?.Invoke(this, new ExposureFailedEventArgs(ex.Message, ex.StackTrace));
         }
 
         private void CloseSession()
@@ -210,6 +212,7 @@ namespace ASCOM.DSLR.Classes
         {
             OpenSession();
             InitSettings();
+
             _duration = Duration;
             _startTime = DateTime.Now;
             _canceledFlag.IsCanceled = false;

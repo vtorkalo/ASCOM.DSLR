@@ -35,11 +35,11 @@ namespace ASCOM.DSLR
 
         private static void CreateCamera()
         {
-            if (_cameraSettings.IntegrationApi == Enums.IntegrationApi.CanonSdk)
+            if (_cameraSettings.IntegrationApi == IntegrationApi.CanonSdk)
             {
                 _dslrCamera = new CanonSdkCamera();
             }
-            else if (_cameraSettings.IntegrationApi == Enums.IntegrationApi.BackyardEOS)
+            else if (_cameraSettings.IntegrationApi == IntegrationApi.BackyardEOS)
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort);
             }
@@ -63,9 +63,9 @@ namespace ASCOM.DSLR
         public Camera()
         {
             _settingsProvider = new CameraSettingsProvider();
-            ReadProfile();
-
             _imageDataProcessor = new ImageDataProcessor();
+
+            ReadProfile();
 
             tl = new TraceLogger("", "DSLR");
             tl.Enabled = CameraSettings.TraceLog;

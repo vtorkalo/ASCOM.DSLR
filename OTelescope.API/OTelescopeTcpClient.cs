@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -142,9 +141,6 @@ namespace OTelescope.SampleAPI
             return false;
         }
 
-
-
-
         /// <summary>
         /// Process received  data
         /// </summary>
@@ -157,38 +153,6 @@ namespace OTelescope.SampleAPI
             var buffer = new byte[1024];
             TcpClient.Client.Receive(buffer);
             return Encoding.ASCII.GetString(buffer.TakeWhile(b => !b.Equals(0)).ToArray());
-        }
-    }
-
-
-    public static class Extensions
-    {
-        public static void DoInUiThread(this Control sender, Action action)
-        {
-            try
-            {
-                if (sender.Disposing)
-                    return;
-                if (sender.IsDisposed)
-                    return;
-
-                if (sender.InvokeRequired)
-                {
-                    sender.Invoke(action);
-                    return;
-                }
-
-                action();
-            }
-            catch (ObjectDisposedException)
-            {
-                // You should ignore this exception
-            }
-            catch (Exception ex)
-            {
-                // You may want to log this exception
-                // Console.WriteLine(ex.Message);
-            }
         }
     }
 }
