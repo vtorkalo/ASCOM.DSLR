@@ -5,7 +5,8 @@ using System.Reflection;
 using System.Threading;
 using System.Diagnostics;
 using System.Linq;
-namespace ExifToolWrap
+
+namespace ASCOM.DSLR.Classes
 {
     public struct ExifTagItem
     {

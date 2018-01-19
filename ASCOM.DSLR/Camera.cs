@@ -1,16 +1,10 @@
-﻿using ASCOM.Astrometry.AstroUtils;
-using ASCOM.DeviceInterface;
+﻿using ASCOM.DeviceInterface;
 using ASCOM.DSLR.Classes;
 using ASCOM.DSLR.Enums;
 using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace ASCOM.DSLR
 {
@@ -44,7 +38,6 @@ namespace ASCOM.DSLR
             if (_cameraSettings.IntegrationApi == Enums.IntegrationApi.CanonSdk)
             {
                 _dslrCamera = new CanonSdkCamera();
-                _dslrCamera.InitApi();
             }
             else if (_cameraSettings.IntegrationApi == Enums.IntegrationApi.BackyardEOS)
             {
@@ -64,7 +57,7 @@ namespace ASCOM.DSLR
     {
         private CameraSettingsProvider _settingsProvider;
 
-        private LibRawWrapper _libRawWrapper;
+        private ImageDataProcessor _imageDataProcessor;
         private CameraStates _cameraState = CameraStates.cameraIdle;
 
         public Camera()
@@ -72,7 +65,7 @@ namespace ASCOM.DSLR
             _settingsProvider = new CameraSettingsProvider();
             ReadProfile();
 
-            _libRawWrapper = new LibRawWrapper();
+            _imageDataProcessor = new ImageDataProcessor();
 
             tl = new TraceLogger("", "DSLR");
             tl.Enabled = CameraSettings.TraceLog;
@@ -81,21 +74,28 @@ namespace ASCOM.DSLR
 
         private void _dslrCamera_ImageReady(object sender, ImageReadyEventArgs args)
         {
-            tl.LogMessage("Image downloaded", args.RawFileName);
             try
             {
-                tl.LogMessage("RAW Reading", "Raw reading started");
-                PrepareCameraImageArray(args.RawFileName);
-                tl.LogMessage("RAW Reading", "Raw reading finished");
-            }
-            catch (Exception ex)
-            {
-                LogError("RAW reading error", ex);
-                throw new NotConnectedException("Raw reading error");
-            }
+                tl.LogMessage("Image downloaded", args.RawFileName);
+                try
+                {
+                    tl.LogMessage("RAW Reading", "Raw reading started");
+                    PrepareCameraImageArray(args.RawFileName);
+                    tl.LogMessage("RAW Reading", "Raw reading finished");
+                }
+                catch (Exception ex)
+                {
+                    LogError("RAW reading error", ex);
+                    throw new NotConnectedException("Raw reading error");
+                }
 
-            _cameraState = CameraStates.cameraIdle;
-            UnsubscribeCameraEvents();
+                _cameraState = CameraStates.cameraIdle;
+                cameraImageReady = true;
+            }
+            finally
+            {
+                UnsubscribeCameraEvents();
+            }
         }
 
         protected void Init()
@@ -108,10 +108,110 @@ namespace ASCOM.DSLR
         private DateTime exposureStart = DateTime.MinValue;
         private double cameraLastExposureDuration = 0.0;
         private bool cameraImageReady = false;
-
         private Array cameraImageArray;
 
-        //private Array cameraImageArrayColor;
+        public void StartExposure(double Duration, bool Light)
+        {
+            cameraImageReady = false;
+            if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
+
+            cameraLastExposureDuration = Duration;
+            exposureStart = DateTime.Now;
+            _cameraState = CameraStates.cameraExposing;
+            SetCameraSettings(ApiContainer.DslrCamera, CameraSettings);
+            SubscribeCameraEvents();
+
+            try
+            {
+                tl.LogMessage("StartExposure", Duration.ToString() + " " + Light.ToString());
+                ApiContainer.DslrCamera.StartExposure(Duration, Light);
+            }
+            catch (Exception ex)
+            {
+                LogError("Exposure failed", ex);
+                throw new NotConnectedException(ErrorMessages.NotConnected);
+            }
+        }
+
+        private void SubscribeCameraEvents()
+        {
+            ApiContainer.DslrCamera.ImageReady += _dslrCamera_ImageReady;
+            ApiContainer.DslrCamera.ExposureFailed += DslrCamera_ExposureFailed;
+        }
+
+        private void UnsubscribeCameraEvents()
+        {
+            ApiContainer.DslrCamera.ImageReady -= _dslrCamera_ImageReady;
+            ApiContainer.DslrCamera.ExposureFailed -= DslrCamera_ExposureFailed;
+        }
+
+        private void DslrCamera_ExposureFailed(object sender, ExposureFailedEventArgs e)
+        {
+            _cameraState = CameraStates.cameraError;
+            LogError(e.Message, e.StackTrace);
+            UnsubscribeCameraEvents();
+        }
+
+        private void LogError(string message, Exception e)
+        {
+            LogError(message, e.StackTrace);
+        }
+
+        private void LogError(string message, string stacktrace)
+        {
+            tl.LogIssue(message, stacktrace);
+            _cameraState = CameraStates.cameraError;
+        }
+
+        private void SetCameraSettings(IDslrCamera camera, CameraSettings settings)
+        {
+            camera.Iso = Gain > 0 ? Gain : settings.Iso;
+            camera.StorePath = settings.StorePath;
+
+            switch (CameraSettings.CameraMode)
+            {
+                case CameraMode.RGGB:
+                case CameraMode.Color16:
+                    camera.ImageFormat = ImageFormat.RAW;
+                    break;
+                case CameraMode.ColorJpg:
+                    camera.ImageFormat = ImageFormat.JPEG;
+                    break;
+            }
+        }
+
+        private void PrepareCameraImageArray(string rawFileName)
+        {
+
+            if (CameraSettings.CameraMode == Enums.CameraMode.Color16)
+            {
+                cameraImageArray = _imageDataProcessor.ReadAndDebayerRaw(rawFileName);
+            }
+            else if (CameraSettings.CameraMode == Enums.CameraMode.ColorJpg)
+            {
+                cameraImageArray = _imageDataProcessor.ReadJpeg(rawFileName);
+            }
+            else if (CameraSettings.CameraMode == Enums.CameraMode.RGGB)
+            {
+                cameraImageArray = _imageDataProcessor.ReadRaw(rawFileName);
+            }
+            if (BinX > 1 || BinY > 1)
+            {
+                cameraImageArray = _imageDataProcessor.Binning(cameraImageArray, BinX, BinY, CameraSettings.BinningMode);
+            }
+
+            cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
+        }
+
+        public void AbortExposure()
+        {
+            ApiContainer.DslrCamera.AbortExposure();
+        }
+
+        public void StopExposure()
+        {
+            ApiContainer.DslrCamera.StopExposure();
+        }
 
         public short BayerOffsetX { get { return 0; } }
 
@@ -373,213 +473,7 @@ namespace ASCOM.DSLR
             }
         }
 
-        public void StartExposure(double Duration, bool Light)
-        {
-            cameraImageReady = false;
-
-            if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
-
-            cameraLastExposureDuration = Duration;
-            exposureStart = DateTime.Now;
-            tl.LogMessage("StartExposure", Duration.ToString() + " " + Light.ToString());
-            _cameraState = CameraStates.cameraExposing;
-            SetCameraSettings(ApiContainer.DslrCamera, CameraSettings);
-
-            ApiContainer.DslrCamera.ImageReady += _dslrCamera_ImageReady;
-            ApiContainer.DslrCamera.ExposureFailed += DslrCamera_ExposureFailed;
-
-            try
-            {
-                ApiContainer.DslrCamera.StartExposure(Duration, Light);
-            }
-            catch (Exception ex)
-            {
-                LogError("Exposure failed", ex);
-                throw new NotConnectedException(ErrorMessages.NotConnected);
-            }
-        }
-
-        private void UnsubscribeCameraEvents()
-        {
-            ApiContainer.DslrCamera.ImageReady -= _dslrCamera_ImageReady;
-            ApiContainer.DslrCamera.ExposureFailed -= DslrCamera_ExposureFailed;
-        }
-
-        private void DslrCamera_ExposureFailed(object sender, ExposureFailedEventArgs e)
-        {
-            _cameraState = CameraStates.cameraError;
-            LogError(e.Message, e.StackTrace);
-            UnsubscribeCameraEvents();
-        }
-
-        private void LogError(string message, Exception e)
-        {
-            LogError(message, e.StackTrace);
-        }
-
-        private void LogError(string message, string stacktrace)
-        {
-            tl.LogIssue(message, stacktrace);
-            _cameraState = CameraStates.cameraError;
-        }
-
-        private void SetCameraSettings(IDslrCamera camera, CameraSettings settings)
-        {
-            camera.Iso = Gain > 0 ? Gain : settings.Iso;
-            camera.StorePath = settings.StorePath;
-
-            switch (CameraSettings.CameraMode)
-            {
-                case Enums.CameraMode.RGGB:
-                case Enums.CameraMode.Color16:
-                    camera.ImageFormat = Enums.ImageFormat.RAW;
-                    break;
-                case Enums.CameraMode.ColorJpg:
-                    camera.ImageFormat = Enums.ImageFormat.JPEG;
-                    break;
-            }
-        }
-
-        private void PrepareCameraImageArray(string rawFileName)
-        {
-
-            if (CameraSettings.CameraMode == Enums.CameraMode.Color16)
-            {
-                cameraImageArray = _libRawWrapper.ReadAndDebayerRaw(rawFileName);
-            }
-            else if (CameraSettings.CameraMode == Enums.CameraMode.ColorJpg)
-            {
-                cameraImageArray = _libRawWrapper.ReadJpeg(rawFileName);
-            }
-            else if (CameraSettings.CameraMode == Enums.CameraMode.RGGB)
-            {
-                cameraImageArray = _libRawWrapper.ReadRaw(rawFileName);
-            }
-
-            if (BinX > 1 || BinY > 1)
-            {
-                cameraImageArray = Binning(cameraImageArray, BinX, BinY);
-            }
-            cameraImageArray = CutArray(cameraImageArray);
-
-            cameraImageReady = true;
-            _cameraState = CameraStates.cameraIdle;
-        }
-
-        private bool IsCutRequired(int dataXsize, int dataYsize)
-        {
-            bool sizeMatches = StartX == 0 && StartY == 0 && NumX == CameraXSize && NumY == CameraYSize
-                && dataXsize == CameraXSize && dataYsize == CameraYSize;
-
-            bool cut = !(sizeMatches || NumX == 0 || NumY == 0);
-            return cut;
-        }
-
-        private Array CutArray(Array data)
-        {
-            Array result = null;
-            int rank = data.Rank;
-
-            if (IsCutRequired(data.GetLength(0), data.GetLength(1)))
-            {
-                int startXCorrected = StartX % 2 == 0 ? StartX : StartX - 1;
-                int startYCorrected = StartY % 2 == 0 ? StartY : StartY - 1;
-
-                result = rank == 3 ? Array.CreateInstance(typeof(int), NumX, NumY, 3)
-                                   : Array.CreateInstance(typeof(int), NumX, NumY);
-
-                for (int x = 0; x < NumX; x++)
-                    for (int y = 0; y < NumY; y++)
-                    {
-                        int dataX = startXCorrected + x;
-                        int dataY = startYCorrected + y;
-                        if (rank == 3)
-                        {
-                            for (int r = 0; r < 3; r++)
-                            {
-                                result.SetValue(data.GetValue(dataX, dataY, r), x, y, r);
-                            }
-                        }
-                        else
-                        {
-                            result.SetValue(data.GetValue(dataX, dataY), x, y);
-                        }
-                    }
-            }
-            else
-            {
-                result = data;
-            }
-            return result;
-        }
-
-        public int GetMedian(IEnumerable<int> sourceNumbers)
-        {
-            int[] sortedPNumbers = sourceNumbers.OrderBy(n => n).ToArray();
-
-            int size = sortedPNumbers.Length;
-            int mid = size / 2;
-            int median = (size % 2 != 0) ? sortedPNumbers[mid] : (sortedPNumbers[mid] + sortedPNumbers[mid - 1]) / 2;
-            return median;
-        }
-
-        public int GetSum(IEnumerable<int> sourceNumbers, int binx, int biny)
-        {
-            int binCount = binx * biny;
-            var sum = sourceNumbers.Sum();
-
-            if (binCount>4)
-            {
-                sum = sum >> 2;
-            }
-            
-            return sum;
-        }
-
-        private Array Binning(Array data, int binx, int biny)
-        {
-            int width = data.GetLength(0);
-            int height = data.GetLength(1);
-            int binWidth = width / binx;
-            int binHeight = height / biny;
-
-            var result = Array.CreateInstance(typeof(int), binWidth, binHeight);
-
-            for (int x = 0; x < binWidth; x++)
-                for (int y = 0; y < binHeight; y++)
-                {
-                    var binBlockData = new List<int>();
-                    for (int x2 = x * binx; x2 < x * binx + binx; x2++)
-                        for (int y2 = y * biny; y2 < y * biny + biny; y2++)
-                        {
-                            binBlockData.Add((int)data.GetValue(x2, y2));
-                        }
-
-                    int value = 0;
-                    switch(CameraSettings.BinningMode)
-                    {
-                        case BinningMode.Sum:
-                            value = GetSum(binBlockData, binx, biny);
-                            break;
-                        case BinningMode.Median:
-                            value = GetMedian(binBlockData);
-                            break;
-                    }
-                    result.SetValue(value, x, y);
-                }
-
-            return result;
-        }
-
-        public void AbortExposure()
-        {
-            ApiContainer.DslrCamera.AbortExposure();
-        }
-
-        public void StopExposure()
-        {
-            ApiContainer.DslrCamera.StopExposure();
-        }
+       
 
         #endregion
     }

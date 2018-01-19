@@ -1,9 +1,6 @@
 ﻿using EOSDigital.API;
-using ExifToolWrap;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ASCOM.DSLR.Classes
@@ -28,9 +25,8 @@ namespace ASCOM.DSLR.Classes
         public CameraValue[] TvList;
         public CameraValue[] ISOList;
 
-        protected void FileDownloaded(string filePath)
+        protected void ParseExifData(string filePath)
         {
-            _lastFilePath = filePath;
             var exifToolWrapper = new ExifToolWrapper();
             exifToolWrapper.Run(filePath);
 
@@ -42,7 +38,6 @@ namespace ASCOM.DSLR.Classes
                 SensorTemperature = temperature;
             }
         }
-        protected string _lastFilePath;
 
         public string StorePath { get; set; }
         public double SensorTemperature { get; private set; }
@@ -95,8 +90,6 @@ namespace ASCOM.DSLR.Classes
                 return IsoValues;
             }
         }
-
-      
 
         public int FrameWidth
         {

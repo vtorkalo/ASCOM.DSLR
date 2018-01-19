@@ -3,7 +3,6 @@
 namespace ASCOM.DSLR.Classes
 {
 
-
     public class CameraModel
     {
         public string[] Names;

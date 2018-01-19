@@ -88,7 +88,7 @@
     <Compile Include="Enums\ImageFormat.cs" />
     <Compile Include="Enums\IntegrationApi.cs" />
     <Compile Include="Interfaces\IDslrCamera.cs" />
-    <Compile Include="Classes\LibRawWrapper.cs" />
+    <Compile Include="Classes\ImageDataProcessor.cs" />
     <Compile Include="Native\LibRaw.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -36,7 +36,6 @@ namespace ASCOM.DSLR.Interfaces
 
         string StorePath { get; set; }
         CameraModel ScanCameras();
-        void InitApi();
 
         event EventHandler<ImageReadyEventArgs> ImageReady;
         event EventHandler<ExposureFailedEventArgs> ExposureFailed;

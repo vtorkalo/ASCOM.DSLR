@@ -10,6 +10,10 @@ namespace ASCOM.DSLR.Classes
     {
         private bool _waitingForImage = false;
         private int _port;
+        private DateTime _exposureStartTime;
+        private const int timeout = 60;
+        private double _lastDuration;
+        private string _lastFileName;
 
         public BackyardEosCamera(int port)
         {
@@ -19,10 +23,20 @@ namespace ASCOM.DSLR.Classes
 
         private OTelescopeTcpClient _backyardTcpClient;
 
-
-
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
+
+        public string Model
+        {
+            get
+            {
+                return _backyardTcpClient.SendCommand("getcameramodel");
+            }
+        }
+
+        public IntegrationApi IntegrationApi => IntegrationApi.BackyardEOS;
+
+        public ImageFormat ImageFormat { get; set; }
 
         public void AbortExposure()
         {
@@ -40,11 +54,7 @@ namespace ASCOM.DSLR.Classes
 
         public void Dispose()
         {
-        }
-
-        public void InitApi()
-        {
-
+            _backyardTcpClient?.Dispose();
         }
 
         public override CameraModel ScanCameras()
@@ -62,12 +72,21 @@ namespace ASCOM.DSLR.Classes
             return _cameraModel;
         }
 
-        private DateTime _exposureStartTime;
-        private const int timeout = 60;
-        private double _lastDuration;
-
-
         public void StartExposure(double Duration, bool Light)
+        {
+            string quality = GetQualityStr();
+            var command = string.Format("takepicture quality:{0} duration:{1} iso:{2} bin:1", quality, Duration, Iso);
+            _backyardTcpClient.SendCommand(command);
+
+            MarkWaitingForExposure(Duration);
+
+            ThreadPool.QueueUserWorkItem(state =>
+            {
+                CheckDownload();
+            });
+        }
+
+        private string GetQualityStr()
         {
             string quality = null;
             switch (ImageFormat)
@@ -79,89 +98,96 @@ namespace ASCOM.DSLR.Classes
                     quality = "jpg";
                     break;
             }
-            var command = string.Format("takepicture quality:{0} duration:{1} iso:{2} bin:1", quality, Duration, Iso);
-            string reply = _backyardTcpClient.SendCommand(command);
+
+            return quality;
+        }
+
+        private void MarkWaitingForExposure(double Duration)
+        {
             _exposureStartTime = DateTime.Now;
             _lastDuration = Duration;
-
             _waitingForImage = true;
+        }
 
-            ThreadPool.QueueUserWorkItem(state =>
+        private bool IsTimeout(string status)
+        {
+            var timeElapsed = DateTime.Now - _exposureStartTime;
+            bool isTimeout = status == "busy" && timeElapsed.TotalSeconds > _lastDuration + timeout;
+
+            return isTimeout;
+        }
+
+        private bool CheckStatus()
+        {
+            bool isOk = true;
+            var status = _backyardTcpClient.SendCommand("getstatus");
+            if (status == "error")
+            {                
+                CallExposureFailed(ErrorMessages.CameraError);
+                isOk = false;
+            }
+            else if (IsTimeout(status))
             {
+                CallExposureFailed(ErrorMessages.ConnectionTimeout);
+                isOk = false;
+            }
 
-                string lastFileName = string.Empty;
-                while (true)
+            return isOk;
+        }
+
+        private bool TryDownload()
+        {
+            bool downloaded = false;
+            var readyStr = _backyardTcpClient.SendCommand("getispictureready");
+            bool ready = readyStr.Equals(bool.TrueString);
+            if (ready)
+            {
+                var filepath = _backyardTcpClient.SendCommand("getpicturepath").Trim();
+
+                if (ImageReady != null && _waitingForImage && !string.IsNullOrEmpty(filepath) && filepath != _lastFileName)
                 {
-                    try
-                    {
-                        var status = _backyardTcpClient.SendCommand("getstatus");
-                        if (status == "error")
-                        {
-                            _waitingForImage = false;
-                            CallExposureFailed(ErrorMessages.CameraError);
-                            break;
-                        }
-                        if (status == "busy")
-                        {
-                            var currentTime = DateTime.Now;
-                            var diff = currentTime - _exposureStartTime;
-                            if (diff.TotalSeconds > _lastDuration + timeout)
-                            {
-                                CallExposureFailed(ErrorMessages.ConnectionTimeout);
-                                break;
-                            }
-                        }
+                    ImageReady(this, new ImageReadyEventArgs(filepath));
+                    _lastFileName = filepath;
+                    _waitingForImage = false;
+                    ParseExifData(filepath);
+                    downloaded = true;
+                }
+            }
 
-                        var readyStr = _backyardTcpClient.SendCommand("getispictureready");
-                        bool ready = readyStr.Equals(bool.TrueString);
-                        if (ready)
-                        {
-                            var filepath = _backyardTcpClient.SendCommand("getpicturepath").Trim();
+            return downloaded;
+        }
+        
 
-                            if (ImageReady != null && _waitingForImage && !string.IsNullOrEmpty(filepath) && filepath != lastFileName)
-                            {
-                                ImageReady(this, new ImageReadyEventArgs(filepath));
-                                lastFileName = filepath;
-                                _waitingForImage = false;
-                                FileDownloaded(filepath);
-                                break;
-                            }
-                        }
-                        Thread.Sleep(1000);
-                    }
-                    catch (Exception e)
+        private void CheckDownload()
+        {            
+            while (true)
+            {
+                try
+                {
+                    if (!CheckStatus() || TryDownload())
                     {
-                        CallExposureFailed(e.Message, e.StackTrace);
                         break;
                     }
-                }
 
-            });
+                    Thread.Sleep(1000);
+                }
+                catch (Exception e)
+                {
+                    CallExposureFailed(e.Message, e.StackTrace);
+                    break;
+                }
+            }
         }
 
         private void CallExposureFailed(string message, string stackTrace = null)
         {
-            if (ExposureFailed != null)
-            {
-                ExposureFailed(this, new ExposureFailedEventArgs(message, stackTrace));
-            }
+            _waitingForImage = false;
+            ExposureFailed?.Invoke(this, new ExposureFailedEventArgs(message, stackTrace));
         }
 
         public void StopExposure()
         {
             AbortExposure();
         }
-
-        public string Model
-        {
-            get
-            {
-                return _backyardTcpClient.SendCommand("getcameramodel");
-            }
-        }
-
-        public IntegrationApi IntegrationApi => IntegrationApi.BackyardEOS;
-
-        public ImageFormat ImageFormat { get; set; }
     }
 }

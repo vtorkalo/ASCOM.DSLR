@@ -1,19 +1,13 @@
-﻿using ASCOM.DeviceInterface;
-using ASCOM.DSLR.Enums;
+﻿using ASCOM.DSLR.Enums;
 using ASCOM.DSLR.Interfaces;
-using ASCOM.Utilities;
 using EDSDKLib.API.Base;
 using EOSDigital.API;
 using EOSDigital.SDK;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -21,18 +15,14 @@ namespace ASCOM.DSLR.Classes
     {
         public CanonSdkCamera()
         {
-                 
-        }
-
-        public void InitApi()
-        {
             APIHandler = new CanonAPI();
             APIHandler.CameraAdded += APIHandler_CameraAdded;
             ErrorHandler.SevereErrorHappened += ErrorHandler_SevereErrorHappened;
             ErrorHandler.NonSevereErrorHappened += ErrorHandler_NonSevereErrorHappened;
         }
 
-        EOSDigital.API.CanonAPI APIHandler;
+
+        CanonAPI APIHandler;
 
         EOSDigital.API.Camera _mainCamera;
         EOSDigital.API.Camera MainCamera
@@ -55,7 +45,6 @@ namespace ASCOM.DSLR.Classes
             _mainCamera?.Dispose();
             APIHandler?.Dispose();
         }
-
 
         private void APIHandler_CameraAdded(CanonAPI sender)
         {
@@ -108,8 +97,8 @@ namespace ASCOM.DSLR.Classes
             Info.FileName = fileNameWithExtension;
 
             sender.DownloadFile(Info, StorePath);
-            ReturnImage(filePath);
-            FileDownloaded(filePath);
+            ImageReady?.Invoke(this, new ImageReadyEventArgs(filePath));
+            ParseExifData(filePath);
             string fileNameWithTemp = string.Format("IMG_{0}s_{1}iso_{2}C_{3}", _duration.ToString(nfi), Iso, SensorTemperature, _startTime.ToString("yyyy_MM_dd_HH_mm_ss"));
             string filePathWithTemp = Path.Combine(StorePath, Path.ChangeExtension(fileNameWithTemp, fileInfo.Extension));
             System.IO.File.Move(filePath, filePathWithTemp);
@@ -122,7 +111,6 @@ namespace ASCOM.DSLR.Classes
 
         private void ErrorHandler_SevereErrorHappened(object sender, Exception ex)
         {
-            //ReportError($"SDK Error code: {ex.Message}");
             throw ex;
         }
 
@@ -176,7 +164,7 @@ namespace ASCOM.DSLR.Classes
         {
             MainCamera.SetSetting(PropertyID.SaveTo, (int)SaveTo.Host);
             MainCamera.SetCapacity(1024, int.MaxValue);
-            
+
             switch (ImageFormat)
             {
                 case ImageFormat.RAW:
@@ -187,15 +175,31 @@ namespace ASCOM.DSLR.Classes
                     break;
             }
 
+            CameraValue selectedIsoValue = GetSelectedIsoValue();
+            MainCamera.SetSetting(PropertyID.ISO, selectedIsoValue.IntValue);
+        }
+
+        private CameraValue GetSelectedIsoValue()
+        {
             var selectedIsoValue = ISOList.SingleOrDefault(v => v.DoubleValue == Iso && v.DoubleValue > 0);
             if (selectedIsoValue == null)
             {
-                var nearest = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0).Select(v => new { value = v, difference = Math.Abs(v.DoubleValue - Iso) }).OrderBy(d => d.difference).First().value;
+                var nearest = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0)
+                    .Select(v => new { value = v, difference = Math.Abs(v.DoubleValue - Iso) }).OrderBy(d => d.difference).First().value;
+
                 selectedIsoValue = nearest;
             }
 
             var isoValue = ISOValues.GetValue((double)Iso);
-            MainCamera.SetSetting(PropertyID.ISO, selectedIsoValue.IntValue);
+
+            return selectedIsoValue;
+        }
+
+        private CameraValue GetSelectedTv(double Duration)
+        {
+            var nearestTv = TvList.Select(t => new { Tv = t, delta = Math.Abs(t.DoubleValue - Duration) }).OrderBy(d => d.delta);
+            var tvCameraValue = nearestTv.First().Tv;
+            return tvCameraValue;
         }
 
         private CanceledFlag _canceledFlag = new CanceledFlag();
@@ -217,17 +221,9 @@ namespace ASCOM.DSLR.Classes
             }
             else
             {
-                var nearestTv = TvList.Select(t => new { Tv = t, delta = Math.Abs(t.DoubleValue - Duration) }).OrderBy(d => d.delta);
-                MainCamera.SetSetting(PropertyID.Tv, nearestTv.First().Tv.IntValue);
+                CameraValue tvCameraValue = GetSelectedTv(Duration);
+                MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
                 MainCamera.TakePhoto();
-            }
-        }
-
-        private void ReturnImage(string rawFileName)
-        {
-            if (ImageReady != null)
-            {
-                ImageReady(this, new ImageReadyEventArgs(rawFileName));
             }
         }
 
