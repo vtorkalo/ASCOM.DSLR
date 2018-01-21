@@ -5,6 +5,7 @@ using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace ASCOM.DSLR
 {
@@ -42,6 +43,10 @@ namespace ASCOM.DSLR
             else if (_cameraSettings.IntegrationApi == IntegrationApi.BackyardEOS)
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort);
+            }
+            else if (_cameraSettings.IntegrationApi == IntegrationApi.DigiCamControl)
+            {
+                _dslrCamera = new DigiCamControlCamera();
             }
         }
 
@@ -295,7 +300,14 @@ namespace ASCOM.DSLR
 
         public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
 
-        public ArrayList Gains { get { return new ArrayList(ApiContainer.DslrCamera.IsoValues); } }
+        public ArrayList Gains
+        {
+            get
+            {
+                var iso = ApiContainer.DslrCamera.IsoValues.Select(i => "ISO" + i.ToString()).ToArray();
+                return new ArrayList(iso);
+            }
+        }
 
         public bool HasShutter { get { return true; } }
 
@@ -313,9 +325,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                
-                    return cameraImageArray;
-            
+                return cameraImageArray;
             }
         }
 
@@ -445,11 +455,11 @@ namespace ASCOM.DSLR
                 SensorType sensorType;
                 switch (CameraSettings.CameraMode)
                 {
-                    case Enums.CameraMode.RGGB:
+                    case CameraMode.RGGB:
                         sensorType = CameraSettings.EnableBinning ? SensorType.Monochrome : SensorType.RGGB;
                         break;
-                    case Enums.CameraMode.Color16:
-                    case Enums.CameraMode.ColorJpg:
+                    case CameraMode.Color16:
+                    case CameraMode.ColorJpg:
                         sensorType = SensorType.Color;
                         break;
                     default:

@@ -8,6 +8,7 @@ namespace ASCOM.DSLR.Enums
     public enum IntegrationApi
     {
         CanonSdk = 0,
-        BackyardEOS = 1
+        BackyardEOS = 1,
+        DigiCamControl = 2
     }
 }

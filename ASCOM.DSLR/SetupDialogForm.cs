@@ -78,9 +78,7 @@ namespace ASCOM.DSLR
             cbImageMode.Items.Clear();
             cbImageMode.Items.Add(CameraMode.RGGB);
             cbImageMode.Items.Add(CameraMode.Color16);
-            //cbImageMode.Items.Add(CameraMode.Monochrome16);
             cbImageMode.Items.Add(CameraMode.ColorJpg);
-            //cbImageMode.Items.Add(CameraMode.MonochromeJpg);
             cbImageMode.SelectedItem = Settings.CameraMode;
 
             chkEnableBin.Checked = Settings.EnableBinning;
@@ -88,6 +86,7 @@ namespace ASCOM.DSLR
 
             cbIntegrationApi.Items.Add(IntegrationApi.CanonSdk);
             cbIntegrationApi.Items.Add(IntegrationApi.BackyardEOS);
+            cbIntegrationApi.Items.Add(IntegrationApi.DigiCamControl);
             cbIntegrationApi.SelectedItem = Settings.IntegrationApi;
             ConnectionMethodChanged();
 

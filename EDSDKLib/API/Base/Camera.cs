@@ -541,7 +541,6 @@ namespace EOSDigital.API
 
         private void BulbExposure(int bulbTime, CanceledFlag canceledFlag)
         {
-            
             try
             {
                 SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);

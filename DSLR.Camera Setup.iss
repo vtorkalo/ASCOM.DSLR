@@ -41,7 +41,14 @@ Source: "bin\EDSDK.dll"; DestDir: "{app}"
 Source: "bin\EDSDKLib.dll"; DestDir: "{app}"
 Source: "bin\exiftool.exe"; DestDir: "{app}"
 Source: "bin\OTelescope.API.dll"; DestDir: "{app}"
-
+Source: "bin\CameraControl.Devices.dll"; DestDir: "{app}"
+Source: "bin\Canon.Eos.Framework.dll"; DestDir: "{app}"
+Source: "bin\Interop.PortableDeviceApiLib.dll"; DestDir: "{app}"
+Source: "bin\Interop.PortableDeviceTypesLib.dll"; DestDir: "{app}"
+Source: "bin\Newtonsoft.Json.dll"; DestDir: "{app}"
+Source: "bin\PortableDeviceLib.dll"; DestDir: "{app}"
+Source: "bin\Rssdp.dll"; DestDir: "{app}"
+Source: "bin\websocket-sharp.dll"; DestDir: "{app}"
 
 
 ; Only if driver is .NET
@@ -49,7 +56,6 @@ Source: "bin\OTelescope.API.dll"; DestDir: "{app}"
 ; Only for .NET assembly/in-proc drivers
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
 Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
-
 
 
 
