@@ -1,5 +1,9 @@
-﻿using EOSDigital.API;
+﻿using ASCOM.DSLR.Enums;
+using EOSDigital.API;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -24,6 +28,22 @@ namespace ASCOM.DSLR.Classes
         
         public CameraValue[] TvList;
         public CameraValue[] ISOList;
+
+        protected string RenameFile(string downloadedFilePath, double duration, DateTime startTime)
+        {
+            string newFileName = GetFileName(duration, startTime);
+            string newFilePath = Path.Combine(StorePath, newFileName);
+            File.Move(downloadedFilePath, newFilePath);
+            return newFilePath;
+        }
+
+        protected string GetFileName(double duration, DateTime startTime)
+        {
+            duration = Math.Round(duration, 6);
+            NumberFormatInfo nfi = new NumberFormatInfo();
+            nfi.NumberDecimalSeparator = ",";
+            return string.Format("IMG_{0}s_{1}iso_{2}C_{3}", duration.ToString(nfi), Iso, SensorTemperature, startTime.ToString("yyyy_MM_dd_HH_mm_ss"));
+        }
 
         protected double GetSensorTemperature(string filePath)
         {
@@ -74,6 +94,8 @@ namespace ASCOM.DSLR.Classes
                 return IsoValues.Max();
             }
         }
+
+        public ImageFormat ImageFormat { get; set; }
 
         public List<short> IsoValues
         {

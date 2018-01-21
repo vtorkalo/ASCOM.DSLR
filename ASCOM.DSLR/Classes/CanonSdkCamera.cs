@@ -76,8 +76,7 @@ namespace ASCOM.DSLR.Classes
         private DateTime _startTime;
 
         private void MainCamera_DownloadReady(EOSDigital.API.Camera sender, DownloadInfo Info)
-        {
-            _duration = Math.Round(_duration, 6);
+        {           
             if (!Directory.Exists(StorePath))
             {
                 Directory.CreateDirectory(StorePath);
@@ -87,24 +86,11 @@ namespace ASCOM.DSLR.Classes
             string downloadedFilePath = Path.Combine(StorePath, Info.FileName);
             SensorTemperature = GetSensorTemperature(downloadedFilePath);
 
-            string newFilePath = RenameFile(Info, downloadedFilePath);
+            string newFilePath = RenameFile(downloadedFilePath, _duration, _startTime);
             ImageReady?.Invoke(this, new ImageReadyEventArgs(newFilePath));
         }
 
-        private string RenameFile(DownloadInfo Info, string downloadedFilePath)
-        {
-            string newFileName = GetFileName();
-            string newFilePath = Path.Combine(StorePath, Info.FileName);
-            File.Move(downloadedFilePath, newFilePath);
-            return newFilePath;
-        }
-
-        private string GetFileName()
-        {
-            NumberFormatInfo nfi = new NumberFormatInfo();
-            nfi.NumberDecimalSeparator = ",";
-            return string.Format("IMG_{0}s_{1}iso_{2}C_{3}", _duration.ToString(nfi), Iso, SensorTemperature, _startTime.ToString("yyyy_MM_dd_HH_mm_ss"));
-        }
+       
 
         private void ErrorHandler_NonSevereErrorHappened(object sender, ErrorCode ex)
         {
@@ -152,7 +138,7 @@ namespace ASCOM.DSLR.Classes
 
         public IntegrationApi IntegrationApi => IntegrationApi.CanonSdk;
 
-        public ImageFormat ImageFormat { get; set; }
+      
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;

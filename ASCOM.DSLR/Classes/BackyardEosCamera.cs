@@ -36,8 +36,6 @@ namespace ASCOM.DSLR.Classes
 
         public IntegrationApi IntegrationApi => IntegrationApi.BackyardEOS;
 
-        public ImageFormat ImageFormat { get; set; }
-
         public void AbortExposure()
         {
             _backyardTcpClient.SendCommand("abort");
