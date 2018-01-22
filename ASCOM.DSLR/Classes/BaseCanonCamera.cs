@@ -31,8 +31,9 @@ namespace ASCOM.DSLR.Classes
 
         protected string RenameFile(string downloadedFilePath, double duration, DateTime startTime)
         {
+            var fileInfo = new FileInfo(downloadedFilePath);
             string newFileName = GetFileName(duration, startTime);
-            string newFilePath = Path.Combine(StorePath, newFileName);
+            string newFilePath = Path.ChangeExtension(Path.Combine(StorePath, newFileName), fileInfo.Extension);
             File.Move(downloadedFilePath, newFilePath);
             return newFilePath;
         }

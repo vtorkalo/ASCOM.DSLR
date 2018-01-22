@@ -49,9 +49,7 @@ namespace ASCOM.DSLR.Classes
             DeviceManager.DisableNativeDrivers = false;
             Log.LogError += Log_LogError;
             Log.LogDebug += Log_LogError;
-            Log.LogInfo += Log_LogError;
-
-            DeviceManager.ConnectToCamera();
+            Log.LogInfo += Log_LogError;            
         }
 
         public void AbortExposure()
@@ -61,14 +59,23 @@ namespace ASCOM.DSLR.Classes
 
         public void ConnectCamera()
         {
+            DeviceManager.ConnectToCamera();
         }
+
 
         public void DisconnectCamera()
         {
+            foreach (var device in DeviceManager.ConnectedDevices.ToList())
+            {
+                DeviceManager.DisconnectCamera(device);
+            }
         }
+
+
 
         public void Dispose()
         {
+            DisconnectCamera();
         }
 
         public override CameraModel ScanCameras()
@@ -113,8 +120,7 @@ namespace ASCOM.DSLR.Classes
 
             return nearest;
         }
-
-
+        
 
         DigiCamCanceledFlag _canceled = new DigiCamCanceledFlag();
         private double _duration;
@@ -122,13 +128,16 @@ namespace ASCOM.DSLR.Classes
 
         public void StartExposure(double Duration, bool Light)
         {
-            DeviceManager.ConnectToCamera();
             _canceled.IsCanceled = false;
-            DeviceManager.SelectedCameraDevice.IsoNumber.Value = GetNearesetValue(DeviceManager.SelectedCameraDevice.IsoNumber, Iso);
+            
             _startTime = DateTime.Now;
             _duration = Duration;
+            var camera = DeviceManager.SelectedCameraDevice;
+            camera.IsoNumber.Value = GetNearesetValue(camera.IsoNumber, Iso);
+            camera.CompressionSetting.Value = camera.CompressionSetting.Values.SingleOrDefault(v => v.ToUpper() == "RAW");
 
-            if (Duration>1)
+            bool canBulb = camera.GetCapability(CapabilityEnum.Bulb);
+            if (Duration>1 && canBulb)
             {
                 ThreadPool.QueueUserWorkItem(state =>
                 {
@@ -137,7 +146,7 @@ namespace ASCOM.DSLR.Classes
             }
             else
             {
-                DeviceManager.SelectedCameraDevice.ShutterSpeed.Value = GetNearesetValue(DeviceManager.SelectedCameraDevice.ShutterSpeed, Duration);
+                camera.ShutterSpeed.Value = GetNearesetValue(camera.ShutterSpeed, Duration);
                 DeviceManager.SelectedCameraDevice.CapturePhoto();
             }
         }
@@ -171,10 +180,10 @@ namespace ASCOM.DSLR.Classes
  
         private void Log_LogError(LogEventArgs e)
         {
-            if (e.Exception != null)
-            {
-                ExposureFailed?.Invoke(this, new ExposureFailedEventArgs(e.Exception.Message, e.Exception.StackTrace));
-            }
+            //if (e.Exception != null)
+            //{
+            //    ExposureFailed?.Invoke(this, new ExposureFailedEventArgs(e.Exception.Message, e.Exception.StackTrace));
+            //}
         }
     
         private void PhotoCaptured(PhotoCapturedEventArgs eventArgs)
@@ -189,12 +198,10 @@ namespace ASCOM.DSLR.Classes
 
             SensorTemperature = GetSensorTemperature(fileName);
 
-            string newFilePath = RenameFile(fileName, _duration, _startTime); ;
+            string newFilePath = RenameFile(fileName, _duration, _startTime);
             ImageReady?.Invoke(this, new ImageReadyEventArgs(newFilePath));
-
-
+            
             eventArgs.CameraDevice.IsBusy = false;
-          //  DeviceManager.DisconnectCamera(DeviceManager.SelectedCameraDevice);
         }
 
         private string GetFileNameForDownload(PhotoCapturedEventArgs eventArgs)

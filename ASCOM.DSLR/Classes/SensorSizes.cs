@@ -16,7 +16,7 @@ namespace ASCOM.DSLR.Classes
     {
         public static List<CameraModel> Models = new List<CameraModel>
         {
-         new CameraModel
+            new CameraModel
 {
 Names = new string[]{"EOS 300D", "Digital Rebel", "Kiss Digital", "300D"},
 SensorWidth = 22.7,
@@ -359,7 +359,289 @@ SensorWidth = 36,
 SensorHeight = 24,
 ImageWidth = 5184,
 ImageHeight = 3456,
+},
+new CameraModel
+{
+Names = new string[]{"D3s"},
+SensorWidth = 36,
+SensorHeight = 24,
+ImageWidth = 4256,
+ImageHeight = 2832,
+},
+new CameraModel
+{
+Names = new string[]{"D3x"},
+SensorWidth = 36,
+SensorHeight = 24,
+ImageWidth = 6048,
+ImageHeight = 4032,
+},
+new CameraModel
+{
+Names = new string[]{"D300"},
+SensorWidth = 23.6,
+SensorHeight = 15.8,
+ImageWidth = 4288,
+ImageHeight = 2848,
+},
+new CameraModel
+{
+Names = new string[]{"D300S"},
+SensorWidth = 23.6,
+SensorHeight = 15.8,
+ImageWidth = 4288,
+ImageHeight = 2848,
+},
+new CameraModel
+{
+Names = new string[]{"D3400"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6000,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D3300"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6016,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D3200"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6016,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D3100"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 4608,
+ImageHeight = 3072,
+},
+new CameraModel
+{
+Names = new string[]{"D3000"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 3872,
+ImageHeight = 2592,
+},
+new CameraModel
+{
+Names = new string[]{"D4"},
+SensorWidth = 36,
+SensorHeight = 23.9,
+ImageWidth = 4928,
+ImageHeight = 3280,
+},
+new CameraModel
+{
+Names = new string[]{"D40"},
+SensorWidth = 237,
+SensorHeight = 15.6,
+ImageWidth = 3008,
+ImageHeight = 2000,
+},
+new CameraModel
+{
+Names = new string[]{"D5"},
+SensorWidth = 23.9,
+SensorHeight = 35.9,
+ImageWidth = 5568,
+ImageHeight = 3712,
+},
+new CameraModel
+{
+Names = new string[]{"D500"},
+SensorWidth = 23.5,
+SensorHeight = 15.7,
+ImageWidth = 5568,
+ImageHeight = 3712,
+},
+new CameraModel
+{
+Names = new string[]{"D5600"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6000,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D5500"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6000,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D5300"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6000,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D5200"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6000,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D5100"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 4928,
+ImageHeight = 3264,
+},
+new CameraModel
+{
+Names = new string[]{"D5000"},
+SensorWidth = 23.6,
+SensorHeight = 15.8,
+ImageWidth = 4288,
+ImageHeight = 2848,
+},
+new CameraModel
+{
+Names = new string[]{"D60"},
+SensorWidth = 23.6,
+SensorHeight = 15.8,
+ImageWidth = 3872,
+ImageHeight = 2592,
+},
+new CameraModel
+{
+Names = new string[]{"D600"},
+SensorWidth = 35.9,
+SensorHeight = 24,
+ImageWidth = 6016,
+ImageHeight = 4016,
+},
+new CameraModel
+{
+Names = new string[]{"D610"},
+SensorWidth = 35.9,
+SensorHeight = 24,
+ImageWidth = 6016,
+ImageHeight = 4016,
+},
+new CameraModel
+{
+Names = new string[]{"D700"},
+SensorWidth = 36,
+SensorHeight = 23.9,
+ImageWidth = 4256,
+ImageHeight = 2832,
+},
+new CameraModel
+{
+Names = new string[]{"D750"},
+SensorWidth = 35.9,
+SensorHeight = 24,
+ImageWidth = 6016,
+ImageHeight = 4016,
+},
+new CameraModel
+{
+Names = new string[]{"D7500"},
+SensorWidth = 23.5,
+SensorHeight = 15.7,
+ImageWidth = 5568,
+ImageHeight = 3712,
+},
+new CameraModel
+{
+Names = new string[]{"D7200"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6000,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D7100"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 6000,
+ImageHeight = 4000,
+},
+new CameraModel
+{
+Names = new string[]{"D7000"},
+SensorWidth = 23.5,
+SensorHeight = 15.6,
+ImageWidth = 4928,
+ImageHeight = 3264,
+},
+new CameraModel
+{
+Names = new string[]{"D80"},
+SensorWidth = 23.6,
+SensorHeight = 15.8,
+ImageWidth = 3872,
+ImageHeight = 2592,
+},
+new CameraModel
+{
+Names = new string[]{"D810"},
+SensorWidth = 35.9,
+SensorHeight = 24,
+ImageWidth = 7360,
+ImageHeight = 4912,
+},
+new CameraModel
+{
+Names = new string[]{"D810A"},
+SensorWidth = 35.9,
+SensorHeight = 24,
+ImageWidth = 7360,
+ImageHeight = 4912,
+},
+new CameraModel
+{
+Names = new string[]{"D800"},
+SensorWidth = 35.9,
+SensorHeight = 24,
+ImageWidth = 7360,
+ImageHeight = 4912,
+},
+new CameraModel
+{
+Names = new string[]{"D800E"},
+SensorWidth = 35.9,
+SensorHeight = 24,
+ImageWidth = 7360,
+ImageHeight = 4912,
+},
+new CameraModel
+{
+Names = new string[]{"D90"},
+SensorWidth = 23.6,
+SensorHeight = 15.8,
+ImageWidth = 4288,
+ImageHeight = 2848,
+},
+new CameraModel
+{
+Names = new string[]{"Df"},
+SensorWidth = 36,
+SensorHeight = 23.9,
+ImageWidth = 4928,
+ImageHeight = 3280,
 }
+
+
 
 
         };
