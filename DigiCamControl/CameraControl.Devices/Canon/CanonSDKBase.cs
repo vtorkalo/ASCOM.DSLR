@@ -456,7 +456,14 @@ namespace CameraControl.Devices.Canon
             AdvancedProperties.Add(InitAEBracket());
             foreach (PropertyValue<long> value in AdvancedProperties)
             {
-                value.SetValue((long)Camera.GetProperty(value.Code), false);
+                try
+                {
+                    value.SetValue((long)Camera.GetProperty(value.Code), false);
+                }
+                catch (Exception e)
+                {
+                    Log.Debug("Error get property" + value.Code.ToString(), e);
+                }
             }
         }
 

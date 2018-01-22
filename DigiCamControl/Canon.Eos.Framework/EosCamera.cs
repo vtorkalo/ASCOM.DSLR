@@ -650,7 +650,7 @@ namespace Canon.Eos.Framework
         {
             //this.Lock();
             //Thread.Sleep(120);
-            Util.Assert(this.SendCommand(Edsdk.CameraCommand_PressShutterButton, 65539),
+            Util.Assert(this.SendCommand(Edsdk.CameraCommand_PressShutterButton, 0x00000003),
                 "Failed to start bulb mode");
         }
 
