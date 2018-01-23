@@ -87,6 +87,7 @@
     <Compile Include="Classes\DigiCamControlCamera.cs" />
     <Compile Include="Classes\ErrorMessages.cs" />
     <Compile Include="Classes\ExifToolWrapper.cs" />
+    <Compile Include="Classes\SerialPortShutterRelease.cs" />
     <Compile Include="Driver.cs" />
     <Compile Include="Enums\BinningMode.cs" />
     <Compile Include="Enums\CameraMode.cs" />

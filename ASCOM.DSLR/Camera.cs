@@ -34,6 +34,8 @@ namespace ASCOM.DSLR
             }
         }
 
+        public static TraceLogger TraceLogger { get; set; }
+
         private static void CreateCamera()
         {
             if (_cameraSettings.IntegrationApi == IntegrationApi.CanonSdk)
@@ -46,7 +48,7 @@ namespace ASCOM.DSLR
             }
             else if (_cameraSettings.IntegrationApi == IntegrationApi.DigiCamControl)
             {
-                _dslrCamera = new DigiCamControlCamera();
+                _dslrCamera = new DigiCamControlCamera(TraceLogger);
             }
         }
 
@@ -75,6 +77,7 @@ namespace ASCOM.DSLR
             tl = new TraceLogger("", "DSLR");
             tl.Enabled = CameraSettings.TraceLog;
             connectedState = false;
+            ApiContainer.TraceLogger = tl;
         }
 
         private void _dslrCamera_ImageReady(object sender, ImageReadyEventArgs args)
@@ -183,6 +186,9 @@ namespace ASCOM.DSLR
                     camera.ImageFormat = ImageFormat.JPEG;
                     break;
             }
+
+            camera.UseExternalShutter = settings.UseExternalShutter;
+            camera.ExternalShutterPort = settings.ExternalShutterPortName;
         }
 
         private void PrepareCameraImageArray(string rawFileName)

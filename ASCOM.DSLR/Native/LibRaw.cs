@@ -50,7 +50,10 @@ namespace ASCOM.DSLR.Native
 
         public delegate void exif_parser_callback(IntPtr context, int tag, int type, int len, uint ord, IntPtr ifp);
 
-     //   DllDef void libraw_set_exifparser_handler(libraw_data_t*, exif_parser_callback cb, void* datap);
+        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_COLOR(IntPtr data, int row, int col);
+
+        //   DllDef void libraw_set_exifparser_handler(libraw_data_t*, exif_parser_callback cb, void* datap);
     }
 
 
@@ -60,13 +63,68 @@ namespace ASCOM.DSLR.Native
         //  public ushort image;
         //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public IntPtr image;
-
-
+        
 
         public libraw_image_sizes_t sizes;
+        public libraw_iparams_t idata;
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    internal struct libraw_iparams_t
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4)]
+        public string guard;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string make;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string model;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string software;
+
+        public uint raw_count;
+
+        public uint dng_version;
+
+        public uint is_foveon;
+
+        public int colors;
+
+        public uint filters;
+
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6 * 6)]
+        public char[] xtrans;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6 * 6)]
+        public char[] xtrans_abs; 
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 5)]
+        public string cdesc;
+
+        //      char guard[4];
+        //      char make[64];
+        //      char model[64];
+        //      char software[64];
+        //      unsigned raw_count;
+        //      unsigned dng_version;
+        //      unsigned is_foveon;
+        //      int colors;
+        //      unsigned filters;
+        //      char xtrans[6][6];
+        //char xtrans_abs[6][6];
+        //char cdesc[5];
+        //      unsigned xmplen;
+        //      char* xmpdata;
+
+
+        //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4 * 3)]
+        //public float[] cam_xyz; //[4][3];
+    }
+
+        [StructLayout(LayoutKind.Sequential)]
     internal struct libraw_image_sizes_t
     {
         /// <summary>Full height of RAW image (including the frame) in pixels.</summary>
@@ -105,6 +163,7 @@ namespace ASCOM.DSLR.Native
         /// </summary>
         public ushort iwidth;
 
+        public uint raw_pitch;
         /// <summary>
         /// Pixel width/height ratio. If it is not unity, scaling of the image along 
         /// one of the axes is required during output.
@@ -121,10 +180,8 @@ namespace ASCOM.DSLR.Native
         /// </summary>
         public int flip;
 
-        /// <summary> Width (in pixels) of right part of masked pixels area.</summary>
-        public ushort right_margin;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8 * 4)]
+        public int[] mask;
 
-        /// <summary> Width (in pixels) of bottom part of masked pixels area.</summary>
-        public ushort bottom_margin;
     }
 }

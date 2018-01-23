@@ -95,6 +95,12 @@ namespace ASCOM.DSLR.Classes
 
             var dataStructure = GetStructure<libraw_data_t>(data);
 
+            var colorsStr = dataStructure.idata.cdesc;
+            int rIndex = colorsStr.IndexOf('R');
+            int gIndex = colorsStr.IndexOf('G');
+            int bIndex = colorsStr.IndexOf('B');
+            int g2Index = colorsStr.LastIndexOf('G');
+
 
             var pixels = new int[dataStructure.sizes.iwidth, dataStructure.sizes.iheight];
             ushort width = dataStructure.sizes.iwidth;
@@ -102,31 +108,33 @@ namespace ASCOM.DSLR.Classes
 
             for (int rc = 0; rc < width * height; rc++)
             {
-                var r = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8);
-                var g = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + 2);
-                var b = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + 4);
-                var g2 = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + 6);
                 
                 int row = rc / width;
                 int col = rc - width * row;
-          
-                if (row % 2 == 0 && col % 2 == 0)
-                {
-                    pixels[col, row] = r;
-                }
-                else if (row % 2 == 0 && col % 2 == 1)
-                {
-                    pixels[col, row] = g;
-                }
-                else if (row % 2 == 1 && col % 2 == 0)
-                {
-                    pixels[col, row] = g2;
-                }
-                else if (row % 2 == 1 && col % 2 == 1)
-                {
-                    pixels[col, row] = b;
-                }
 
+                var colorIndex = NativeMethods.libraw_COLOR(data, row, col);
+                var val  = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + colorIndex * 2);
+
+                int blockRow = row / 2;
+
+                int blockCol = col / 2;
+
+                if (colorIndex == rIndex)
+                {//R
+                    pixels[blockCol * 2, blockRow * 2] = val;
+                }
+                else if (colorIndex == gIndex)
+                {//G
+                    pixels[blockCol * 2 + 1, blockRow * 2] = val;
+                }
+                else if (colorIndex == g2Index)
+                {//G2
+                    pixels[blockCol * 2 , blockRow * 2 + 1] = val;
+                }
+                else if (colorIndex == bIndex)
+                {//B
+                    pixels[blockCol * 2 + 1, blockRow * 2 + 1] = val;
+                }
             }
             NativeMethods.libraw_close(data);
 

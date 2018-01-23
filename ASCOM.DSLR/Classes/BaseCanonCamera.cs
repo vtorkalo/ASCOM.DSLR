@@ -53,11 +53,15 @@ namespace ASCOM.DSLR.Classes
             exifToolWrapper.Run(filePath);
 
             var exifRecord = exifToolWrapper.SingleOrDefault(e => e.name == "Camera Temperature").value;
-            exifRecord = Regex.Replace(exifRecord, "[^0-9.-]", "");
-            int temperature;
-            if (!string.IsNullOrEmpty(exifRecord) && int.TryParse(exifRecord, out temperature))
+
+            if (!string.IsNullOrEmpty(exifRecord))
             {
-                sensorTemperature = temperature;
+                exifRecord = Regex.Replace(exifRecord, "[^0-9.-]", "");
+                int temperature;
+                if (!string.IsNullOrEmpty(exifRecord) && int.TryParse(exifRecord, out temperature))
+                {
+                    sensorTemperature = temperature;
+                }
             }
 
             return sensorTemperature;
@@ -166,5 +170,8 @@ namespace ASCOM.DSLR.Classes
                 return pixelSize;
             }
         }
+
+        public bool UseExternalShutter { get; set; }
+        public string ExternalShutterPort { get; set; }
     }
 }

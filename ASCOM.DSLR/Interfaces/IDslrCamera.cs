@@ -37,6 +37,9 @@ namespace ASCOM.DSLR.Interfaces
         string StorePath { get; set; }
         CameraModel ScanCameras();
 
+        bool UseExternalShutter { get; set; }
+        string ExternalShutterPort { get; set; }
+
         event EventHandler<ImageReadyEventArgs> ImageReady;
         event EventHandler<ExposureFailedEventArgs> ExposureFailed;
         IntegrationApi IntegrationApi { get; }

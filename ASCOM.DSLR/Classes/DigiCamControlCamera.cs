@@ -1,8 +1,10 @@
 ﻿using ASCOM.DSLR.Enums;
 using ASCOM.DSLR.Interfaces;
+using ASCOM.Utilities;
 using CameraControl.Devices;
 using CameraControl.Devices.Classes;
 using CameraControl.Devices.Wifi;
+using CameraControl.Plugins.ExternalDevices;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,15 +31,19 @@ namespace ASCOM.DSLR.Classes
             }
         }
 
+
         public CameraDeviceManager DeviceManager { get; set; }
 
         public IntegrationApi IntegrationApi => IntegrationApi.DigiCamControl;
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
+        private TraceLogger _tl;
 
-        public DigiCamControlCamera()
+
+        public DigiCamControlCamera(TraceLogger tl)
         {
+            _tl = tl;
             DeviceManager = new CameraDeviceManager();
             DeviceManager.CameraSelected += DeviceManager_CameraSelected;
             DeviceManager.CameraConnected += DeviceManager_CameraConnected;
@@ -49,7 +55,8 @@ namespace ASCOM.DSLR.Classes
             DeviceManager.DisableNativeDrivers = false;
             Log.LogError += Log_LogError;
             Log.LogDebug += Log_LogError;
-            Log.LogInfo += Log_LogError;            
+            Log.LogInfo += Log_LogError;
+            
         }
 
         public void AbortExposure()
@@ -57,11 +64,45 @@ namespace ASCOM.DSLR.Classes
             _canceled.IsCanceled = true;
         }
 
+        private void LogProperties(PropertyValue<long> properties)
+        {
+            StringBuilder propsStr = new StringBuilder(properties.Name + ": ");
+            foreach (var p in properties.Values)
+            {
+                propsStr.Append(p);
+                propsStr.Append(":");
+            }
+            _tl.LogMessage("Property values", propsStr.ToString());
+        }
+
         public void ConnectCamera()
         {
             DeviceManager.ConnectToCamera();
+            var camera = DeviceManager.SelectedCameraDevice;
+            LogCameraInfo(camera);
+          
         }
 
+        private void LogCameraInfo(ICameraDevice camera)
+        {
+            _tl.LogMessage("DeviceName", camera.DeviceName);
+            LogProperties(camera.IsoNumber);
+            LogProperties(camera.ShutterSpeed);
+            LogProperties(camera.FNumber);
+            LogProperties(camera.Mode);
+            LogProperties(camera.FocusMode);
+            LogProperties(camera.CompressionSetting);
+
+            foreach (var p in camera.Properties)
+            {
+                LogProperties(p);
+            }
+
+            foreach (var p in camera.AdvancedProperties)
+            {
+                LogProperties(p);
+            }
+        }
 
         public void DisconnectCamera()
         {
@@ -70,8 +111,6 @@ namespace ASCOM.DSLR.Classes
                 DeviceManager.DisconnectCamera(device);
             }
         }
-
-
 
         public void Dispose()
         {
@@ -95,7 +134,7 @@ namespace ASCOM.DSLR.Classes
                 if (valueStr.Contains("/"))
                 {
                     value = ParseValue(valueStr.Split('/').Last());
-                    if (value >0)
+                    if (value > 0)
                     {
                         value = 1 / value;
                     }
@@ -108,7 +147,8 @@ namespace ASCOM.DSLR.Classes
         private string GetNearesetValue(PropertyValue<long> propertyValue, double value)
         {
             string nearest = propertyValue.Values.Select(v =>
-            {
+            { 
+
                 double doubleValue = ParseValue(v);
                 return new
                 {
@@ -135,14 +175,28 @@ namespace ASCOM.DSLR.Classes
             var camera = DeviceManager.SelectedCameraDevice;
             camera.IsoNumber.Value = GetNearesetValue(camera.IsoNumber, Iso);
             camera.CompressionSetting.Value = camera.CompressionSetting.Values.SingleOrDefault(v => v.ToUpper() == "RAW");
-
             bool canBulb = camera.GetCapability(CapabilityEnum.Bulb);
-            if (Duration>1 && canBulb)
+            if (Duration>1)
             {
-                ThreadPool.QueueUserWorkItem(state =>
+                if (UseExternalShutter)
                 {
-                    BulbExposure((int)(Duration * 1000), _canceled);
-                });
+                    ThreadPool.QueueUserWorkItem(state =>
+                    {
+                        var _serialPortShutter = new SerialPortShutterRelease(ExternalShutterPort);
+                        BulbExposure((int)(Duration * 1000), _canceled,
+                            () => _serialPortShutter.OpenShutter(),
+                            () => _serialPortShutter.CloseShutter());
+                    });
+                }
+                else
+                {
+                    ThreadPool.QueueUserWorkItem(state =>
+                    {
+                        BulbExposure((int)(Duration * 1000), _canceled,
+                            () => DeviceManager.SelectedCameraDevice.StartBulbMode(),
+                            () => DeviceManager.SelectedCameraDevice.EndBulbMode());
+                    });
+                }
             }
             else
             {
@@ -152,9 +206,10 @@ namespace ASCOM.DSLR.Classes
         }
 
 
-        private void BulbExposure(int bulbTime, DigiCamCanceledFlag canceledFlag)
+        private void BulbExposure(int bulbTime, DigiCamCanceledFlag canceledFlag, Action startBulb, Action endBulb)
         {
-            DeviceManager.SelectedCameraDevice.StartBulbMode();
+            startBulb();
+
             int seconds = bulbTime / 1000;
             int milliseconds = bulbTime % 1000;
 
@@ -169,7 +224,7 @@ namespace ASCOM.DSLR.Classes
                 }
             }
 
-            DeviceManager.SelectedCameraDevice.EndBulbMode();
+            endBulb();
         }
 
         public void StopExposure()
@@ -180,6 +235,7 @@ namespace ASCOM.DSLR.Classes
  
         private void Log_LogError(LogEventArgs e)
         {
+            _tl.LogMessage(e.Message.ToString(), e.Exception?.Message);
             //if (e.Exception != null)
             //{
             //    ExposureFailed?.Invoke(this, new ExposureFailedEventArgs(e.Exception.Message, e.Exception.StackTrace));
@@ -188,6 +244,8 @@ namespace ASCOM.DSLR.Classes
     
         private void PhotoCaptured(PhotoCapturedEventArgs eventArgs)
         {
+            _tl.LogMessage("Photo captured filename", eventArgs.FileName);
+
             string fileName = GetFileNameForDownload(eventArgs);
             if (!Directory.Exists(Path.GetDirectoryName(fileName)))
             {
@@ -212,6 +270,11 @@ namespace ASCOM.DSLR.Classes
                   StaticHelper.GetUniqueFilename(
                     Path.GetDirectoryName(fileName) + "\\" + Path.GetFileNameWithoutExtension(fileName) + "_", 0,
                     Path.GetExtension(fileName));
+
+            if (string.IsNullOrEmpty(Path.GetExtension(fileName)))
+            {
+                fileName = Path.ChangeExtension(fileName, "nef");
+            }
 
             return fileName;            
         }

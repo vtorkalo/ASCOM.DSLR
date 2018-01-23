@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using EOSDigital.API;
 using System.Threading;
+using System.IO.Ports;
 
 namespace ASCOM.DSLR
 {
@@ -45,6 +46,9 @@ namespace ASCOM.DSLR
             }
             Settings.EnableBinning = chkEnableBin.Checked;
             Settings.BinningMode = (BinningMode)cbBinningMode.SelectedItem;
+
+            Settings.UseExternalShutter = chkUseExternalShutter.Checked;
+            Settings.ExternalShutterPortName = cbShutterPort.SelectedItem as string;
         }
 
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
@@ -103,6 +107,18 @@ namespace ASCOM.DSLR
             tbSavePath.Text = Settings.StorePath;
 
             tbBackyardEosPort.Text = Settings.BackyardEosPort.ToString();
+
+            chkUseExternalShutter.Checked = Settings.UseExternalShutter;
+            UseExternalShutterChanged();
+
+            foreach (var port in SerialPort.GetPortNames())
+            {
+                cbShutterPort.Items.Add(port);
+            }
+            if (!string.IsNullOrEmpty(Settings.ExternalShutterPortName))
+            {
+                cbShutterPort.SelectedIndex = cbShutterPort.FindStringExact(Settings.ExternalShutterPortName);
+            }
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -169,6 +185,16 @@ namespace ASCOM.DSLR
         private void ConnectionMethodChanged()
         {
             tbBackyardEosPort.Enabled = (IntegrationApi)cbIntegrationApi.SelectedItem == IntegrationApi.BackyardEOS;
+        }
+
+        private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)
+        {
+            UseExternalShutterChanged();
+        }
+
+        private void UseExternalShutterChanged()
+        {
+            cbShutterPort.Enabled = chkUseExternalShutter.Checked;
         }
     }
 }

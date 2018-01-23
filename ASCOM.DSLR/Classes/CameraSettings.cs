@@ -15,6 +15,7 @@ namespace ASCOM.DSLR.Classes
             Iso = 400;
             BackyardEosPort = 1491;
             EnableBinning = false;
+            ExternalShutterPortName = string.Empty;
         }
 
         public bool TraceLog { get; set; }
@@ -30,6 +31,11 @@ namespace ASCOM.DSLR.Classes
         public int BackyardEosPort { get; set; }
 
         public bool EnableBinning { get; set; }
+
         public BinningMode BinningMode { get; set; }
+
+        public bool UseExternalShutter { get; set; }
+
+        public string ExternalShutterPortName { get; set; }
     }
 }
