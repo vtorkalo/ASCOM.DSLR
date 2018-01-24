@@ -108,40 +108,36 @@ namespace ASCOM.DSLR.Classes
 
             for (int rc = 0; rc < width * height; rc++)
             {
-                
                 int row = rc / width;
                 int col = rc - width * row;
 
                 var colorIndex = NativeMethods.libraw_COLOR(data, row, col);
-                var val  = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + colorIndex * 2);
+                short pixelValue  = Marshal.ReadInt16(dataStructure.image, rc * 8 + colorIndex * 2);
 
                 int blockRow = row / 2;
-
                 int blockCol = col / 2;
 
                 if (colorIndex == rIndex)
                 {//R
-                    pixels[blockCol * 2, blockRow * 2] = val;
+                    pixels[blockCol * 2, blockRow * 2] = pixelValue;
                 }
                 else if (colorIndex == gIndex)
                 {//G
-                    pixels[blockCol * 2 + 1, blockRow * 2] = val;
+                    pixels[blockCol * 2 + 1, blockRow * 2] = pixelValue;
                 }
                 else if (colorIndex == g2Index)
                 {//G2
-                    pixels[blockCol * 2 , blockRow * 2 + 1] = val;
+                    pixels[blockCol * 2 , blockRow * 2 + 1] = pixelValue;
                 }
                 else if (colorIndex == bIndex)
                 {//B
-                    pixels[blockCol * 2 + 1, blockRow * 2 + 1] = val;
+                    pixels[blockCol * 2 + 1, blockRow * 2 + 1] = pixelValue;
                 }
             }
             NativeMethods.libraw_close(data);
 
             return pixels;
         }
-
-        
 
         public Array Binning(Array data, int binx, int biny, BinningMode binningMode)
         {

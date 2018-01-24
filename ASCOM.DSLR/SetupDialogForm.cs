@@ -90,7 +90,7 @@ namespace ASCOM.DSLR
 
             cbIntegrationApi.Items.Add(IntegrationApi.CanonSdk);
             cbIntegrationApi.Items.Add(IntegrationApi.BackyardEOS);
-            cbIntegrationApi.Items.Add(IntegrationApi.DigiCamControl);
+            cbIntegrationApi.Items.Add(IntegrationApi.Nikon);
             cbIntegrationApi.SelectedItem = Settings.IntegrationApi;
             ConnectionMethodChanged();
 
@@ -185,6 +185,10 @@ namespace ASCOM.DSLR
         private void ConnectionMethodChanged()
         {
             tbBackyardEosPort.Enabled = (IntegrationApi)cbIntegrationApi.SelectedItem == IntegrationApi.BackyardEOS;
+         
+            bool isDigiCamControl = (IntegrationApi)cbIntegrationApi.SelectedItem == IntegrationApi.Nikon;
+            chkUseExternalShutter.Enabled = isDigiCamControl;
+            cbShutterPort.Enabled = isDigiCamControl;
         }
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)

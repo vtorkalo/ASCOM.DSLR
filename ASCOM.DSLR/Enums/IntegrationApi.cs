@@ -9,6 +9,6 @@ namespace ASCOM.DSLR.Enums
     {
         CanonSdk = 0,
         BackyardEOS = 1,
-        DigiCamControl = 2
+        Nikon = 2
     }
 }

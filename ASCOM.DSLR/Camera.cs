@@ -46,7 +46,7 @@ namespace ASCOM.DSLR
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort);
             }
-            else if (_cameraSettings.IntegrationApi == IntegrationApi.DigiCamControl)
+            else if (_cameraSettings.IntegrationApi == IntegrationApi.Nikon)
             {
                 _dslrCamera = new DigiCamControlCamera(TraceLogger);
             }

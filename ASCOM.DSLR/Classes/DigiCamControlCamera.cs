@@ -34,7 +34,7 @@ namespace ASCOM.DSLR.Classes
 
         public CameraDeviceManager DeviceManager { get; set; }
 
-        public IntegrationApi IntegrationApi => IntegrationApi.DigiCamControl;
+        public IntegrationApi IntegrationApi => IntegrationApi.Nikon;
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
@@ -176,25 +176,22 @@ namespace ASCOM.DSLR.Classes
             camera.IsoNumber.Value = GetNearesetValue(camera.IsoNumber, Iso);
             camera.CompressionSetting.Value = camera.CompressionSetting.Values.SingleOrDefault(v => v.ToUpper() == "RAW");
             bool canBulb = camera.GetCapability(CapabilityEnum.Bulb);
-            if (Duration>1)
+            if (Duration>30)
             {
+                int durationMsec = (int) (Duration * 1000);
                 if (UseExternalShutter)
                 {
                     ThreadPool.QueueUserWorkItem(state =>
                     {
                         var _serialPortShutter = new SerialPortShutterRelease(ExternalShutterPort);
-                        BulbExposure((int)(Duration * 1000), _canceled,
-                            () => _serialPortShutter.OpenShutter(),
-                            () => _serialPortShutter.CloseShutter());
+                        BulbExposure(durationMsec , _canceled, _serialPortShutter.OpenShutter, _serialPortShutter.CloseShutter);
                     });
                 }
                 else
                 {
                     ThreadPool.QueueUserWorkItem(state =>
                     {
-                        BulbExposure((int)(Duration * 1000), _canceled,
-                            () => DeviceManager.SelectedCameraDevice.StartBulbMode(),
-                            () => DeviceManager.SelectedCameraDevice.EndBulbMode());
+                        BulbExposure(durationMsec, _canceled, camera.StartBulbMode, camera.EndBulbMode);
                     });
                 }
             }
@@ -231,15 +228,10 @@ namespace ASCOM.DSLR.Classes
         {
             AbortExposure();            
         }
-        
  
         private void Log_LogError(LogEventArgs e)
         {
             _tl.LogMessage(e.Message.ToString(), e.Exception?.Message);
-            //if (e.Exception != null)
-            //{
-            //    ExposureFailed?.Invoke(this, new ExposureFailedEventArgs(e.Exception.Message, e.Exception.StackTrace));
-            //}
         }
     
         private void PhotoCaptured(PhotoCapturedEventArgs eventArgs)

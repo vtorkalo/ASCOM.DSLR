@@ -43,7 +43,7 @@ namespace ASCOM.DSLR.Classes
             duration = Math.Round(duration, 6);
             NumberFormatInfo nfi = new NumberFormatInfo();
             nfi.NumberDecimalSeparator = ",";
-            return string.Format("IMG_{0}s_{1}iso_{2}C_{3}", duration.ToString(nfi), Iso, SensorTemperature, startTime.ToString("yyyy_MM_dd_HH_mm_ss"));
+            return string.Format("IMG_{0}s_{1}iso_{2}C_{3}", duration.ToString(nfi), Iso, SensorTemperature, startTime.ToString("yyyy-MM-dd--HH-mm-ss"));
         }
 
         protected double GetSensorTemperature(string filePath)
