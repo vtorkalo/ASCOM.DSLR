@@ -22,7 +22,7 @@ namespace ASCOM.DSLR.Classes
 
         public CameraMode CameraMode { get; set; }
 
-        public IntegrationApi IntegrationApi { get; set; }
+        public ConnectionMethod IntegrationApi { get; set; }
 
         public string StorePath { get; set; }
 
@@ -37,5 +37,9 @@ namespace ASCOM.DSLR.Classes
         public bool UseExternalShutter { get; set; }
 
         public string ExternalShutterPortName { get; set; }
+
+        public bool LiveViewCaptureMode { get; set; }
+
+        public LiveViewZoom LiveViewZoom { get; set; }
     }
 }

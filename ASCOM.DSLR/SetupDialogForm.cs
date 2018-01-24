@@ -32,7 +32,7 @@ namespace ASCOM.DSLR
         {
             Settings.TraceLog = chkTrace.Checked;
             Settings.CameraMode = (CameraMode)cbImageMode.SelectedItem;
-            Settings.IntegrationApi = (IntegrationApi)cbIntegrationApi.SelectedItem;
+            Settings.IntegrationApi = (ConnectionMethod)cbIntegrationApi.SelectedItem;
 
             if (Directory.Exists(tbSavePath.Text))
             {
@@ -88,9 +88,9 @@ namespace ASCOM.DSLR
             chkEnableBin.Checked = Settings.EnableBinning;
             EnableBinChanged();
 
-            cbIntegrationApi.Items.Add(IntegrationApi.CanonSdk);
-            cbIntegrationApi.Items.Add(IntegrationApi.BackyardEOS);
-            cbIntegrationApi.Items.Add(IntegrationApi.Nikon);
+            cbIntegrationApi.Items.Add(ConnectionMethod.CanonSdk);
+            cbIntegrationApi.Items.Add(ConnectionMethod.BackyardEOS);
+            cbIntegrationApi.Items.Add(ConnectionMethod.Nikon);
             cbIntegrationApi.SelectedItem = Settings.IntegrationApi;
             ConnectionMethodChanged();
 
@@ -157,12 +157,17 @@ namespace ASCOM.DSLR
             if (chkEnableBin.Checked)
             {
                 cbImageMode.SelectedItem = CameraMode.RGGB;
-                cbImageMode.Enabled = false;
+
+                cbImageMode.Visible = false;
+                lbImageMode.Visible = false;
+
                 cbBinningMode.Enabled = true;
             }
             else
             {
-                cbImageMode.Enabled = true;
+                cbImageMode.Visible = true;
+                lbImageMode.Visible = true;
+
                 cbBinningMode.Enabled = false;
             }
         }
@@ -184,11 +189,13 @@ namespace ASCOM.DSLR
 
         private void ConnectionMethodChanged()
         {
-            tbBackyardEosPort.Enabled = (IntegrationApi)cbIntegrationApi.SelectedItem == IntegrationApi.BackyardEOS;
+            bool isBEOS = (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.BackyardEOS;
+            tbBackyardEosPort.Visible = isBEOS;
+            lblBackyardEosPort.Visible = isBEOS;
          
-            bool isDigiCamControl = (IntegrationApi)cbIntegrationApi.SelectedItem == IntegrationApi.Nikon;
-            chkUseExternalShutter.Enabled = isDigiCamControl;
-            cbShutterPort.Enabled = isDigiCamControl;
+            bool isDigiCamControl = (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Nikon;
+            chkUseExternalShutter.Visible = isDigiCamControl;
+            cbShutterPort.Visible = isDigiCamControl;
         }
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)

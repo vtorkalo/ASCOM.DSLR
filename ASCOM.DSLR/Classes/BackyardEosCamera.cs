@@ -34,7 +34,10 @@ namespace ASCOM.DSLR.Classes
             }
         }
 
-        public IntegrationApi IntegrationApi => IntegrationApi.BackyardEOS;
+        public ConnectionMethod IntegrationApi => ConnectionMethod.BackyardEOS;
+
+        public bool SupportsViewView { get { return false; } }
+        public bool IsLiveViewMode { get { throw new NotSupportedException(); } set { throw new System.NotSupportedException(); } }
 
         public void AbortExposure()
         {

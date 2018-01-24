@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -73,6 +74,9 @@ namespace ASCOM.DSLR.Classes
 
         }
 
+        public bool SupportsViewView { get { return true; } }
+        public bool IsLiveViewMode { get { throw new NotSupportedException(); } set { throw new System.NotSupportedException(); } }
+
         private DateTime _startTime;
 
         private void MainCamera_DownloadReady(EOSDigital.API.Camera sender, DownloadInfo Info)
@@ -136,7 +140,7 @@ namespace ASCOM.DSLR.Classes
             }
         }        
 
-        public IntegrationApi IntegrationApi => IntegrationApi.CanonSdk;
+        public ConnectionMethod IntegrationApi => ConnectionMethod.CanonSdk;
 
       
 

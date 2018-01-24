@@ -40,9 +40,12 @@ namespace ASCOM.DSLR.Interfaces
         bool UseExternalShutter { get; set; }
         string ExternalShutterPort { get; set; }
 
+        bool SupportsViewView { get; }
+        bool IsLiveViewMode { get; set; }
+
         event EventHandler<ImageReadyEventArgs> ImageReady;
         event EventHandler<ExposureFailedEventArgs> ExposureFailed;
-        IntegrationApi IntegrationApi { get; }
+        ConnectionMethod IntegrationApi { get; }
 
     }
 

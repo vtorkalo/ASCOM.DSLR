@@ -117,7 +117,7 @@ namespace ASCOM.DSLR.Classes
                     result = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0).Select(v => (short)v.DoubleValue).ToList();
                 }
 
-                return IsoValues;
+                return result;
             }
         }
 

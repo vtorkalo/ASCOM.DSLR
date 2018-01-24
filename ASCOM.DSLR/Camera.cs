@@ -38,15 +38,15 @@ namespace ASCOM.DSLR
 
         private static void CreateCamera()
         {
-            if (_cameraSettings.IntegrationApi == IntegrationApi.CanonSdk)
+            if (_cameraSettings.IntegrationApi == ConnectionMethod.CanonSdk)
             {
                 _dslrCamera = new CanonSdkCamera();
             }
-            else if (_cameraSettings.IntegrationApi == IntegrationApi.BackyardEOS)
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort);
             }
-            else if (_cameraSettings.IntegrationApi == IntegrationApi.Nikon)
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
             {
                 _dslrCamera = new DigiCamControlCamera(TraceLogger);
             }

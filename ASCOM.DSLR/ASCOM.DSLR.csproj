@@ -78,6 +78,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
     <Compile Include="Camera.cs" />
     <Compile Include="Classes\BackyardEosCamera.cs" />
     <Compile Include="Classes\BaseCanonCamera.cs" />
@@ -92,7 +98,8 @@
     <Compile Include="Enums\BinningMode.cs" />
     <Compile Include="Enums\CameraMode.cs" />
     <Compile Include="Enums\ImageFormat.cs" />
-    <Compile Include="Enums\IntegrationApi.cs" />
+    <Compile Include="Enums\ConnectionMethod.cs" />
+    <Compile Include="Enums\LiveViewZoom.cs" />
     <Compile Include="Interfaces\IDslrCamera.cs" />
     <Compile Include="Classes\ImageDataProcessor.cs" />
     <Compile Include="Native\LibRaw.cs" />
@@ -116,6 +123,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
