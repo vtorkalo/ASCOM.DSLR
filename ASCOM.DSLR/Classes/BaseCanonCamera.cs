@@ -124,11 +124,15 @@ namespace ASCOM.DSLR.Classes
             }
         }
 
+        public int LvFrameWidth { get; protected set; }
+
+        public int LvFrameHeight { get; protected set; }
+
         public int FrameWidth
         {
             get
             {
-                return !IsLiveViewMode ? CameraModel.ImageWidth : 960;
+                return !IsLiveViewMode ? CameraModel.ImageWidth : LvFrameWidth;
             }
         }
 
@@ -136,7 +140,7 @@ namespace ASCOM.DSLR.Classes
         {
             get
             {
-                return !IsLiveViewMode ? CameraModel.ImageHeight : 640;
+                return !IsLiveViewMode ? CameraModel.ImageHeight : LvFrameHeight;
             }
         }
 

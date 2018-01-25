@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ASCOM.DSLR.Classes
@@ -113,6 +114,7 @@ namespace ASCOM.DSLR.Classes
                 _mainCamera.ProgressChanged -= MainCamera_ProgressChanged;
                 _mainCamera.StateChanged -= MainCamera_StateChanged;
                 _mainCamera.DownloadReady -= MainCamera_DownloadReady;
+                MainCamera.LiveViewUpdated -= MainCamera_LiveViewUpdated;
                 _mainCamera.CloseSession();
             }
         }
@@ -126,7 +128,7 @@ namespace ASCOM.DSLR.Classes
                 MainCamera.ProgressChanged += MainCamera_ProgressChanged;
                 MainCamera.StateChanged += MainCamera_StateChanged;
                 MainCamera.DownloadReady += MainCamera_DownloadReady;
-                MainCamera.LiveViewUpdated += MainCamera_LiveViewUpdated;
+                MainCamera.LiveViewUpdated += MainCamera_LiveViewUpdated;                
 
                 TvList = MainCamera.GetSettingsList(PropertyID.Tv);
                 ISOList = MainCamera.GetSettingsList(PropertyID.ISO);
@@ -135,11 +137,21 @@ namespace ASCOM.DSLR.Classes
 
         private void MainCamera_LiveViewUpdated(EOSDigital.API.Camera sender, Stream img)
         {
-            var Evf_Bmp = new Bitmap(img);
-            if (LiveViewImageReady != null && _lvCapture)
+            if (_lvInitialized)
             {
-                LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
-                _lvCapture = false;
+                var Evf_Bmp = new Bitmap(img);
+                if (LvFrameHeight == 0 || LvFrameWidth == 0)
+                {
+                    LvFrameWidth = Evf_Bmp.Width;
+                    LvFrameHeight = Evf_Bmp.Height;
+                }
+
+                if (LiveViewImageReady != null && _lvCapture)
+                {
+                    LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
+                    _lvCapture = false;
+
+                }
             }
         }
 
@@ -250,22 +262,36 @@ namespace ASCOM.DSLR.Classes
             CloseCamera();
         }
 
+        private bool _lvInitialized;
         public void ConnectCamera()
         {
             OpenSession();
             if (IsLiveViewMode)
             {
+                LvFrameHeight = 0;
+                LvFrameWidth = 0;
+
                 MainCamera.StartLiveView();
+                Thread.Sleep(1000);
+                MainCamera.SetSetting(PropertyID.Evf_Zoom, (UInt32)LiveViewZoom);
+                Thread.Sleep(1000);
+                _lvInitialized = true;
+
+                while (LvFrameHeight == 0 || LvFrameWidth == 0)
+                {
+                    Thread.Sleep(500);
+                }
             }
+            
         }
 
         public void DisconnectCamera()
         {
-            CloseSession();
-            if (IsLiveViewMode)
+            if (IsLiveViewMode && MainCamera.SessionOpen)
             {
                 MainCamera.StopLiveView();
             }
+            CloseSession();
         }
     }
 }

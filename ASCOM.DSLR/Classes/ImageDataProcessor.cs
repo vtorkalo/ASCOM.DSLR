@@ -41,10 +41,10 @@ namespace ASCOM.DSLR.Classes
 
                 int row = rc / width;
                 int col = rc - width * row;
-                int rowReversed = height - row - 1;
-                pixels[col, rowReversed, 0] = b;
-                pixels[col, rowReversed, 1] = g;
-                pixels[col, rowReversed, 2] = r;
+                //int rowReversed = height - row - 1;
+                pixels[col, row, 0] = b;
+                pixels[col, row, 1] = g;
+                pixels[col, row, 2] = r;
             }
             NativeMethods.libraw_close(data);
 
@@ -82,10 +82,10 @@ namespace ASCOM.DSLR.Classes
                 int row = rc / width;
                 int col = rc - width * row;
 
-                var rowReversed = height - row - 1;
-                result[col, rowReversed, 0] = b;
-                result[col, rowReversed, 1] = g;
-                result[col, rowReversed, 2] = r;
+                //var rowReversed = height - row - 1;
+                result[col, row, 0] = b;
+                result[col, row, 1] = g;
+                result[col, row, 2] = r;
             }
 
             return result;

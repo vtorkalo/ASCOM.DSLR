@@ -159,8 +159,9 @@ namespace ASCOM.DSLR
 
         private void LvExposure(double duration)
         {
-            ApiContainer.DslrCamera.StartExposure(duration, true);
             ApiContainer.DslrCamera.LiveViewImageReady += DslrCamera_LiveViewImageReady;
+            ApiContainer.DslrCamera.StartExposure(duration, true);
+            
         }
 
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
@@ -489,18 +490,26 @@ namespace ASCOM.DSLR
             get
             {
                 SensorType sensorType;
-                switch (CameraSettings.CameraMode)
+
+                if (CameraSettings.LiveViewCaptureMode)
                 {
-                    case CameraMode.RGGB:
-                        sensorType = CameraSettings.EnableBinning ? SensorType.Monochrome : SensorType.RGGB;
-                        break;
-                    case CameraMode.Color16:
-                    case CameraMode.ColorJpg:
-                        sensorType = SensorType.Color;
-                        break;
-                    default:
-                        sensorType = SensorType.RGGB;
-                        break;
+                    sensorType = SensorType.Color;
+                }
+                else
+                {
+                    switch (CameraSettings.CameraMode)
+                    {
+                        case CameraMode.RGGB:
+                            sensorType = CameraSettings.EnableBinning ? SensorType.Monochrome : SensorType.RGGB;
+                            break;
+                        case CameraMode.Color16:
+                        case CameraMode.ColorJpg:
+                            sensorType = SensorType.Color;
+                            break;
+                        default:
+                            sensorType = SensorType.RGGB;
+                            break;
+                    }
                 }
 
                 return sensorType;
