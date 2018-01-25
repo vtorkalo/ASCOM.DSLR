@@ -37,10 +37,11 @@ namespace ASCOM.DSLR.Classes
         public ConnectionMethod IntegrationApi => ConnectionMethod.Nikon;
 
         public bool SupportsViewView { get { return false; } }
-        public bool IsLiveViewMode { get { throw new NotSupportedException(); } set { throw new System.NotSupportedException(); } }
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
+        public event EventHandler<LiveViewImageReadyEventArgs> LiveViewImageReady;
+
         private TraceLogger _tl;
 
 

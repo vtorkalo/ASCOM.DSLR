@@ -41,6 +41,8 @@ namespace ASCOM.DSLR
             if (_cameraSettings.IntegrationApi == ConnectionMethod.CanonSdk)
             {
                 _dslrCamera = new CanonSdkCamera();
+                _dslrCamera.IsLiveViewMode = _cameraSettings.LiveViewCaptureMode;
+                _dslrCamera.LiveViewZoom = _cameraSettings.LiveViewZoom;
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {
@@ -57,6 +59,8 @@ namespace ASCOM.DSLR
         public static void SetSettings(CameraSettings settings)
         {
             _cameraSettings = settings;
+            _dslrCamera?.Dispose();
+            _dslrCamera = null;
         }
     }
 
@@ -122,10 +126,22 @@ namespace ASCOM.DSLR
         {
             cameraImageReady = false;
             if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
-
             cameraLastExposureDuration = Duration;
             exposureStart = DateTime.Now;
             _cameraState = CameraStates.cameraExposing;
+
+            if (ApiContainer.DslrCamera.IsLiveViewMode)
+            {
+                LvExposure(Duration);
+            }
+            else
+            {
+                ShutterExposure(Duration, Light);
+            }
+        }
+
+        private void ShutterExposure(double Duration, bool Light)
+        {
             SetCameraSettings(ApiContainer.DslrCamera, CameraSettings);
             SubscribeCameraEvents();
 
@@ -139,6 +155,20 @@ namespace ASCOM.DSLR
                 LogError("Exposure failed", ex);
                 throw new NotConnectedException(ErrorMessages.NotConnected);
             }
+        }
+
+        private void LvExposure(double duration)
+        {
+            ApiContainer.DslrCamera.StartExposure(duration, true);
+            ApiContainer.DslrCamera.LiveViewImageReady += DslrCamera_LiveViewImageReady;
+        }
+
+        private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
+        {
+            cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
+            ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
+
+            cameraImageReady = true;
         }
 
         private void SubscribeCameraEvents()

@@ -3,6 +3,7 @@ using ASCOM.DSLR.Classes;
 using ASCOM.DSLR.Enums;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -43,10 +44,23 @@ namespace ASCOM.DSLR.Interfaces
         bool SupportsViewView { get; }
         bool IsLiveViewMode { get; set; }
 
+        LiveViewZoom LiveViewZoom { get; set; }
+
         event EventHandler<ImageReadyEventArgs> ImageReady;
+        event EventHandler<LiveViewImageReadyEventArgs> LiveViewImageReady;
+
         event EventHandler<ExposureFailedEventArgs> ExposureFailed;
         ConnectionMethod IntegrationApi { get; }
 
+    }
+
+    public class LiveViewImageReadyEventArgs : EventArgs
+    {
+        public LiveViewImageReadyEventArgs(Bitmap data)
+        {
+            Data = data;
+        }
+        public Bitmap Data { get; private set; }
     }
 
     public class ImageReadyEventArgs : EventArgs

@@ -32,6 +32,8 @@ namespace ASCOM.DSLR
         {
             Settings.TraceLog = chkTrace.Checked;
             Settings.CameraMode = (CameraMode)cbImageMode.SelectedItem;
+            
+
             Settings.IntegrationApi = (ConnectionMethod)cbIntegrationApi.SelectedItem;
 
             if (Directory.Exists(tbSavePath.Text))
@@ -49,6 +51,9 @@ namespace ASCOM.DSLR
 
             Settings.UseExternalShutter = chkUseExternalShutter.Checked;
             Settings.ExternalShutterPortName = cbShutterPort.SelectedItem as string;
+
+            Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
+            Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
         }
 
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
@@ -119,6 +124,15 @@ namespace ASCOM.DSLR
             {
                 cbShutterPort.SelectedIndex = cbShutterPort.FindStringExact(Settings.ExternalShutterPortName);
             }
+
+            cbLiveViewZoom.Items.Add(LiveViewZoom.Fit);
+            cbLiveViewZoom.Items.Add(LiveViewZoom.x5);
+            cbLiveViewZoom.Items.Add(LiveViewZoom.x10);
+
+            chkEnableLiveView.Checked = Settings.LiveViewCaptureMode;
+            cbLiveViewZoom.SelectedItem = Settings.LiveViewZoom;
+            LiveViewModeChagned();
+
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -206,6 +220,44 @@ namespace ASCOM.DSLR
         private void UseExternalShutterChanged()
         {
             cbShutterPort.Enabled = chkUseExternalShutter.Checked;
+        }
+
+        private void cbImageMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void LiveViewModeChagned()
+        {
+            bool isLiveView = chkEnableLiveView.Checked;
+
+            lblBackyardEosPort.Visible = !isLiveView;
+            tbBackyardEosPort.Visible = !isLiveView;
+
+            chkUseExternalShutter.Visible = !isLiveView;
+            cbShutterPort.Visible = !isLiveView;
+
+            chkEnableBin.Visible = !isLiveView;
+            cbBinningMode.Visible = !isLiveView;
+
+            lblSavePhotosTo.Visible = !isLiveView;
+            tbSavePath.Visible = !isLiveView;
+            btnBrowse.Visible = !isLiveView;
+
+            lblIso.Visible = !isLiveView;
+            cbIso.Visible = !isLiveView;
+
+            lblLiveViewZoom.Visible = isLiveView;
+            cbLiveViewZoom.Visible = isLiveView;
+
+            cbImageMode.Visible = !isLiveView;
+            lbImageMode.Visible = !isLiveView;
+        }
+
+       
+        private void chkEnableLiveView_CheckedChanged(object sender, EventArgs e)
+        {
+            LiveViewModeChagned();
         }
     }
 }

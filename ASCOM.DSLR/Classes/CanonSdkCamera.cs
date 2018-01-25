@@ -5,6 +5,7 @@ using EOSDigital.API;
 using EOSDigital.SDK;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,7 +22,6 @@ namespace ASCOM.DSLR.Classes
             ErrorHandler.SevereErrorHappened += ErrorHandler_SevereErrorHappened;
             ErrorHandler.NonSevereErrorHappened += ErrorHandler_NonSevereErrorHappened;
         }
-
 
         CanonAPI APIHandler;
 
@@ -75,7 +75,7 @@ namespace ASCOM.DSLR.Classes
         }
 
         public bool SupportsViewView { get { return true; } }
-        public bool IsLiveViewMode { get { throw new NotSupportedException(); } set { throw new System.NotSupportedException(); } }
+        
 
         private DateTime _startTime;
 
@@ -126,11 +126,22 @@ namespace ASCOM.DSLR.Classes
                 MainCamera.ProgressChanged += MainCamera_ProgressChanged;
                 MainCamera.StateChanged += MainCamera_StateChanged;
                 MainCamera.DownloadReady += MainCamera_DownloadReady;
+                MainCamera.LiveViewUpdated += MainCamera_LiveViewUpdated;
+
                 TvList = MainCamera.GetSettingsList(PropertyID.Tv);
                 ISOList = MainCamera.GetSettingsList(PropertyID.ISO);
             }
         }
 
+        private void MainCamera_LiveViewUpdated(EOSDigital.API.Camera sender, Stream img)
+        {
+            var Evf_Bmp = new Bitmap(img);
+            if (LiveViewImageReady != null && _lvCapture)
+            {
+                LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
+                _lvCapture = false;
+            }
+        }
 
         public string Model
         {
@@ -146,6 +157,7 @@ namespace ASCOM.DSLR.Classes
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
+        public event EventHandler<LiveViewImageReadyEventArgs> LiveViewImageReady;
 
         public void AbortExposure()
         {
@@ -198,25 +210,33 @@ namespace ASCOM.DSLR.Classes
 
         private double _duration;
 
+        private bool _lvCapture = false;
+
         public void StartExposure(double Duration, bool Light)
         {
-            OpenSession();
-            InitSettings();
-
-            _duration = Duration;
-            _startTime = DateTime.Now;
-            _canceledFlag.IsCanceled = false;
-
-            if (Duration >= 1)
+            if (!IsLiveViewMode)
             {
-                MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
-                MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                InitSettings();
+
+                _duration = Duration;
+                _startTime = DateTime.Now;
+                _canceledFlag.IsCanceled = false;
+
+                if (Duration >= 1)
+                {
+                    MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
+                    MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                }
+                else
+                {
+                    CameraValue tvCameraValue = GetSelectedTv(Duration);
+                    MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
+                    MainCamera.TakePhoto();
+                }
             }
             else
             {
-                CameraValue tvCameraValue = GetSelectedTv(Duration);
-                MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
-                MainCamera.TakePhoto();
+                _lvCapture = true;
             }
         }
 
@@ -232,12 +252,20 @@ namespace ASCOM.DSLR.Classes
 
         public void ConnectCamera()
         {
-
+            OpenSession();
+            if (IsLiveViewMode)
+            {
+                MainCamera.StartLiveView();
+            }
         }
 
         public void DisconnectCamera()
         {
-
+            CloseSession();
+            if (IsLiveViewMode)
+            {
+                MainCamera.StopLiveView();
+            }
         }
     }
 }

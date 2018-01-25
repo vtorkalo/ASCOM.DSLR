@@ -29,6 +29,8 @@ namespace ASCOM.DSLR.Classes
         public CameraValue[] TvList;
         public CameraValue[] ISOList;
 
+        public bool IsLiveViewMode { get; set; }
+
         protected string RenameFile(string downloadedFilePath, double duration, DateTime startTime)
         {
             var fileInfo = new FileInfo(downloadedFilePath);
@@ -37,6 +39,7 @@ namespace ASCOM.DSLR.Classes
             File.Move(downloadedFilePath, newFilePath);
             return newFilePath;
         }
+        public LiveViewZoom LiveViewZoom { get; set; }
 
         protected string GetFileName(double duration, DateTime startTime)
         {
@@ -125,7 +128,7 @@ namespace ASCOM.DSLR.Classes
         {
             get
             {
-                return CameraModel.ImageWidth;
+                return !IsLiveViewMode ? CameraModel.ImageWidth : 960;
             }
         }
 
@@ -133,7 +136,7 @@ namespace ASCOM.DSLR.Classes
         {
             get
             {
-                return CameraModel.ImageHeight;
+                return !IsLiveViewMode ? CameraModel.ImageHeight : 640;
             }
         }
 

@@ -95,7 +95,7 @@ namespace ASCOM.DSLR
             using (SetupDialogForm F = new SetupDialogForm(CameraSettings))
             {
                 var result = F.ShowDialog(new Form { TopMost = true });
-                if (result == System.Windows.Forms.DialogResult.OK)
+                if (result == DialogResult.OK)
                 {
                     CameraSettings = F.Settings;
                     WriteProfile(); // Persist device configuration values to the ASCOM Profile store
