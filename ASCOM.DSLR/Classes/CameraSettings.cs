@@ -12,10 +12,13 @@ namespace ASCOM.DSLR.Classes
             TraceLog = true;
             CameraMode = CameraMode.RGGB;
             StorePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "ASCOM_DSLR");
+            IntegrationApi = ConnectionMethod.CanonSdk;
             Iso = 400;
             BackyardEosPort = 1491;
             EnableBinning = false;
             ExternalShutterPortName = string.Empty;
+            LiveViewZoom = LiveViewZoom.Fit;
+            BinningMode = BinningMode.Sum;
         }
 
         public bool TraceLog { get; set; }

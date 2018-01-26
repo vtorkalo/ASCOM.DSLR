@@ -80,6 +80,14 @@ namespace ASCOM.DSLR
 
         public CameraSettings Settings { get; private set; }
 
+        private void SetSelectedItem(ComboBox comboBox, object selectedItem)
+        {
+            if (comboBox.Items.Contains(selectedItem))
+            {
+                comboBox.SelectedItem = selectedItem;
+            }
+        }
+
         private void InitUI()
         {
             chkTrace.Checked = Settings.TraceLog;
@@ -88,7 +96,7 @@ namespace ASCOM.DSLR
             cbImageMode.Items.Add(CameraMode.RGGB);
             cbImageMode.Items.Add(CameraMode.Color16);
             cbImageMode.Items.Add(CameraMode.ColorJpg);
-            cbImageMode.SelectedItem = Settings.CameraMode;
+            SetSelectedItem(cbImageMode, Settings.CameraMode);
 
             chkEnableBin.Checked = Settings.EnableBinning;
             EnableBinChanged();
@@ -96,12 +104,12 @@ namespace ASCOM.DSLR
             cbIntegrationApi.Items.Add(ConnectionMethod.CanonSdk);
             cbIntegrationApi.Items.Add(ConnectionMethod.BackyardEOS);
             cbIntegrationApi.Items.Add(ConnectionMethod.Nikon);
-            cbIntegrationApi.SelectedItem = Settings.IntegrationApi;
+            SetSelectedItem(cbIntegrationApi, Settings.IntegrationApi);
             ConnectionMethodChanged();
 
             cbBinningMode.Items.Add(BinningMode.Sum);
             cbBinningMode.Items.Add(BinningMode.Median);
-            cbBinningMode.SelectedItem = Settings.BinningMode;
+            SetSelectedItem(cbBinningMode, Settings.BinningMode);
 
             var isoValues = ISOValues.Values.Where(v => v.DoubleValue <= short.MaxValue && v.DoubleValue>0).Select(v => (short)v.DoubleValue);
             cbIso.DisplayMember = "display";
@@ -130,7 +138,7 @@ namespace ASCOM.DSLR
             cbLiveViewZoom.Items.Add(LiveViewZoom.x10);
 
             chkEnableLiveView.Checked = Settings.LiveViewCaptureMode;
-            cbLiveViewZoom.SelectedItem = Settings.LiveViewZoom;
+            SetSelectedItem(cbLiveViewZoom, Settings.LiveViewZoom);
             LiveViewModeChagned();
 
         }
@@ -170,7 +178,7 @@ namespace ASCOM.DSLR
         {
             if (chkEnableBin.Checked)
             {
-                cbImageMode.SelectedItem = CameraMode.RGGB;
+                SetSelectedItem(cbImageMode, CameraMode.RGGB);
 
                 cbImageMode.Visible = false;
                 lbImageMode.Visible = false;
@@ -210,6 +218,21 @@ namespace ASCOM.DSLR
             bool isDigiCamControl = (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Nikon;
             chkUseExternalShutter.Visible = isDigiCamControl;
             cbShutterPort.Visible = isDigiCamControl;
+
+            bool isCanon = (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.CanonSdk;
+            if (isCanon)
+            {
+                chkEnableLiveView.Visible = true;
+                lblLiveViewZoom.Visible = true;
+                cbLiveViewZoom.Visible = true;
+            }
+            else
+            {
+                chkEnableLiveView.Checked = false;
+                chkEnableLiveView.Visible = false;
+                lblLiveViewZoom.Visible = false;
+                cbLiveViewZoom.Visible = false;
+            }
         }
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)
@@ -258,6 +281,12 @@ namespace ASCOM.DSLR
         private void chkEnableLiveView_CheckedChanged(object sender, EventArgs e)
         {
             LiveViewModeChagned();
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+            var aboutForm = new About();
+            aboutForm.ShowDialog(this);
         }
     }
 }

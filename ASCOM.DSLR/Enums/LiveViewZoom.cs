@@ -8,7 +8,7 @@ namespace ASCOM.DSLR.Enums
 {
     public enum LiveViewZoom
     {
-        Fit = 0,
+        Fit = 1,
         x5 = 5,
         x10 = 10
     }

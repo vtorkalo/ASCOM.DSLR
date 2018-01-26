@@ -82,6 +82,9 @@ namespace ASCOM.DSLR
             tl.Enabled = CameraSettings.TraceLog;
             connectedState = false;
             ApiContainer.TraceLogger = tl;
+
+            BinX = 1;
+            BinY = 1;
         }
 
         private void _dslrCamera_ImageReady(object sender, ImageReadyEventArgs args)
@@ -160,15 +163,18 @@ namespace ASCOM.DSLR
         private void LvExposure(double duration)
         {
             ApiContainer.DslrCamera.LiveViewImageReady += DslrCamera_LiveViewImageReady;
-            ApiContainer.DslrCamera.StartExposure(duration, true);
-            
+            ApiContainer.DslrCamera.StartExposure(duration, true);            
         }
 
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
         {
             cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
+            //cameraImageArray = color;
+            cameraImageArray = _imageDataProcessor.ToMonochrome(cameraImageArray, _imageDataProcessor.From8To16Bit);
+            cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
 
+            _cameraState = CameraStates.cameraIdle;
             cameraImageReady = true;
         }
 
@@ -331,7 +337,17 @@ namespace ASCOM.DSLR
 
         public double FullWellCapacity { get { return short.MaxValue; } }
 
-        public short Gain { get; set; }
+        public short Gain
+        {
+            get
+            {
+                return ApiContainer.DslrCamera.Iso;
+            }
+            set
+            {
+                ApiContainer.DslrCamera.Iso = value;
+            }
+        }
 
         public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
 
@@ -421,9 +437,7 @@ namespace ASCOM.DSLR
                 {
                     case Enums.CameraMode.RGGB:
                     case Enums.CameraMode.Color16:
-                        maxValue = CameraSettings.EnableBinning && CameraSettings.BinningMode == BinningMode.Sum ?
-                            (int) Math.Pow(2, 14) * MaxBinX * MaxBinY
-                         : (int)Math.Pow(2, 14);
+                        maxValue = short.MaxValue;
                         break;
 
                     case Enums.CameraMode.ColorJpg:
@@ -473,7 +487,7 @@ namespace ASCOM.DSLR
 
         public void PulseGuide(GuideDirections Direction, int Duration) { }
 
-        public short ReadoutMode { get { throw new PropertyNotImplementedException(); } set { throw new PropertyNotImplementedException(); } }
+        public short ReadoutMode { get; set; }
 
         public ArrayList ReadoutModes { get { return new ArrayList(); } }
 
@@ -493,7 +507,7 @@ namespace ASCOM.DSLR
 
                 if (CameraSettings.LiveViewCaptureMode)
                 {
-                    sensorType = SensorType.Color;
+                    sensorType = SensorType.Monochrome;
                 }
                 else
                 {
@@ -513,7 +527,6 @@ namespace ASCOM.DSLR
                 }
 
                 return sensorType;
-
             }
         }
 

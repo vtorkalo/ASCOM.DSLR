@@ -87,7 +87,7 @@ namespace ASCOM.DSLR.Classes
             get; set;
         }
 
-        public short MinIso
+        public virtual short MinIso
         {
             get
             {
@@ -95,7 +95,7 @@ namespace ASCOM.DSLR.Classes
             }
         }
 
-        public short MaxIso
+        public virtual short MaxIso
         {
             get
             {

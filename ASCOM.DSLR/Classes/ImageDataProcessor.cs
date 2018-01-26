@@ -57,6 +57,29 @@ namespace ASCOM.DSLR.Classes
             var result = ReadBitmap(img);
             return result;
         }
+
+        public int From8To16Bit(int value)
+        {
+            int result = (int)( ((double)value / (double)byte.MaxValue) * short.MaxValue);
+
+            return result;
+        }
+
+        public int[,] ToMonochrome(Array data, Func<int, int> process)
+        {
+            var result = new int[data.GetLength(0), data.GetLength(1)];
+            for (int x = 0; x < data.GetLength(0); x++)
+                for (int y = 0; y < data.GetLength(1); y++)
+                {
+                    for (int c = 0; c < 3; c++)
+                    {
+                        result[x, y] += (int)data.GetValue(x, y, c);
+                    }
+                    result[x, y] = process(result[x, y]);
+                }
+
+            return result;
+        }
         
         public int[,,] ReadBitmap(Bitmap img)
         {
