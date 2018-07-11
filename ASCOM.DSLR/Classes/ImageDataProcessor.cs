@@ -60,7 +60,7 @@ namespace ASCOM.DSLR.Classes
 
         public int From8To16Bit(int value)
         {
-            int result = (int)( ((double)value / (double)byte.MaxValue) * short.MaxValue);
+            int result = value << 5;
 
             return result;
         }

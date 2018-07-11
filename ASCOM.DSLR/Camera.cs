@@ -489,7 +489,13 @@ namespace ASCOM.DSLR
 
         public short ReadoutMode { get; set; }
 
-        public ArrayList ReadoutModes { get { return new ArrayList(); } }
+        public ArrayList ReadoutModes
+        {
+            get
+            {
+                return new ArrayList();
+            }
+        }
 
         public string SensorName
         {
