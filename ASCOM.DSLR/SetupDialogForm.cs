@@ -99,13 +99,12 @@ namespace ASCOM.DSLR
             SetSelectedItem(cbImageMode, Settings.CameraMode);
 
             chkEnableBin.Checked = Settings.EnableBinning;
-            EnableBinChanged();
-
+            
             cbIntegrationApi.Items.Add(ConnectionMethod.CanonSdk);
             cbIntegrationApi.Items.Add(ConnectionMethod.BackyardEOS);
             cbIntegrationApi.Items.Add(ConnectionMethod.Nikon);
             SetSelectedItem(cbIntegrationApi, Settings.IntegrationApi);
-            ConnectionMethodChanged();
+            
 
             cbBinningMode.Items.Add(BinningMode.Sum);
             cbBinningMode.Items.Add(BinningMode.Median);
@@ -122,8 +121,7 @@ namespace ASCOM.DSLR
             tbBackyardEosPort.Text = Settings.BackyardEosPort.ToString();
 
             chkUseExternalShutter.Checked = Settings.UseExternalShutter;
-            UseExternalShutterChanged();
-
+            
             foreach (var port in SerialPort.GetPortNames())
             {
                 cbShutterPort.Items.Add(port);
@@ -139,7 +137,8 @@ namespace ASCOM.DSLR
 
             chkEnableLiveView.Checked = Settings.LiveViewCaptureMode;
             SetSelectedItem(cbLiveViewZoom, Settings.LiveViewZoom);
-            LiveViewModeChagned();
+
+            UpdateUiState();
 
         }
 
@@ -171,11 +170,12 @@ namespace ASCOM.DSLR
 
         private void chkEnableBin_CheckedChanged(object sender, EventArgs e)
         {
-            EnableBinChanged();
+            UpdateUiState();
         }
 
         private void EnableBinChanged()
         {
+            bool isLv = IsLiveView();
             if (chkEnableBin.Checked)
             {
                 SetSelectedItem(cbImageMode, CameraMode.RGGB);
@@ -183,12 +183,12 @@ namespace ASCOM.DSLR
                 cbImageMode.Visible = false;
                 lbImageMode.Visible = false;
 
-                cbBinningMode.Enabled = true;
+                cbBinningMode.Enabled = true && !isLv;
             }
             else
             {
-                cbImageMode.Visible = true;
-                lbImageMode.Visible = true;
+                cbImageMode.Visible = true && !isLv;
+                lbImageMode.Visible = true && !isLv;
 
                 cbBinningMode.Enabled = false;
             }
@@ -206,7 +206,15 @@ namespace ASCOM.DSLR
 
         private void cbIntegrationApi_SelectedIndexChanged(object sender, EventArgs e)
         {
+            UpdateUiState();
+        }
+
+        private void UpdateUiState()
+        {
             ConnectionMethodChanged();
+            LiveViewModeChagned();
+            UseExternalShutterChanged();
+            EnableBinChanged();
         }
 
         private void ConnectionMethodChanged()
@@ -237,7 +245,7 @@ namespace ASCOM.DSLR
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)
         {
-            UseExternalShutterChanged();
+            UpdateUiState();
         }
 
         private void UseExternalShutterChanged()
@@ -252,10 +260,7 @@ namespace ASCOM.DSLR
 
         private void LiveViewModeChagned()
         {
-            bool isLiveView = chkEnableLiveView.Checked;
-
-            lblBackyardEosPort.Visible = !isLiveView;
-            tbBackyardEosPort.Visible = !isLiveView;
+            bool isLiveView = IsLiveView();
 
             chkUseExternalShutter.Visible = !isLiveView;
             cbShutterPort.Visible = !isLiveView;
@@ -277,10 +282,14 @@ namespace ASCOM.DSLR
             lbImageMode.Visible = !isLiveView;
         }
 
-       
+        private bool IsLiveView()
+        {
+            return chkEnableLiveView.Checked;
+        }
+
         private void chkEnableLiveView_CheckedChanged(object sender, EventArgs e)
         {
-            LiveViewModeChagned();
+            UpdateUiState();
         }
 
         private void btnAbout_Click(object sender, EventArgs e)
