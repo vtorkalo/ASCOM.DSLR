@@ -219,15 +219,13 @@ namespace ASCOM.DSLR
 
         private void ConnectionMethodChanged()
         {
-            bool isBEOS = (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.BackyardEOS;
+            bool isBEOS = IsBeos();
             tbBackyardEosPort.Visible = isBEOS;
             lblBackyardEosPort.Visible = isBEOS;
-         
-            bool isDigiCamControl = (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Nikon;
+            bool isDigiCamControl = IsDigiCamControl();
             chkUseExternalShutter.Visible = isDigiCamControl;
             cbShutterPort.Visible = isDigiCamControl;
-
-            bool isCanon = (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.CanonSdk;
+            bool isCanon = IsCanon();
             if (isCanon)
             {
                 chkEnableLiveView.Visible = true;
@@ -241,6 +239,23 @@ namespace ASCOM.DSLR
                 lblLiveViewZoom.Visible = false;
                 cbLiveViewZoom.Visible = false;
             }
+        }
+
+        
+
+        private bool IsCanon()
+        {
+            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.CanonSdk;
+        }
+
+        private bool IsDigiCamControl()
+        {
+            return cbIntegrationApi.SelectedItem !=null &&  (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Nikon;
+        }
+
+        private bool IsBeos()
+        {
+            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.BackyardEOS;
         }
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)
