@@ -103,6 +103,7 @@ namespace ASCOM.DSLR
             cbIntegrationApi.Items.Add(ConnectionMethod.CanonSdk);
             cbIntegrationApi.Items.Add(ConnectionMethod.BackyardEOS);
             cbIntegrationApi.Items.Add(ConnectionMethod.Nikon);
+            cbIntegrationApi.Items.Add(ConnectionMethod.Pentax);
             SetSelectedItem(cbIntegrationApi, Settings.IntegrationApi);
             
 
@@ -226,6 +227,7 @@ namespace ASCOM.DSLR
             chkUseExternalShutter.Visible = isDigiCamControl;
             cbShutterPort.Visible = isDigiCamControl;
             bool isCanon = IsCanon();
+            bool isPentax = IsPentax();
             if (isCanon)
             {
                 chkEnableLiveView.Visible = true;
@@ -241,11 +243,14 @@ namespace ASCOM.DSLR
             }
         }
 
-        
-
         private bool IsCanon()
         {
             return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.CanonSdk;
+        }
+
+        private bool IsPentax()
+        {
+            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Pentax;
         }
 
         private bool IsDigiCamControl()

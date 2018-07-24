@@ -52,6 +52,10 @@ namespace ASCOM.DSLR
             {
                 _dslrCamera = new DigiCamControlCamera(TraceLogger);
             }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Pentax)
+            {
+                _dslrCamera = new PentaxCamera();
+            }
         }
 
         private static CameraSettings _cameraSettings { get; set; }

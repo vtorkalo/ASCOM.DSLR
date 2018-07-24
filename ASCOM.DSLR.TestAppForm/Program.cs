@@ -26,7 +26,10 @@ namespace ASCOM.DSLR
 
             var p = new ImageDataProcessor();
 
-            var data0 = p.ReadRaw(@"d:\astrophoto\horse\light\LIGHT_300s_800iso_+22c_20171020-02h19m30s143ms.CR2");
+            var detector = new CameraModelDetector(p);
+            var m = detector.GetCameraModel(new TestCamera());
+
+            var data0 = p.ReadRaw(@"c:\git-vtorkalo\test.dng-0000.dng");
             var dataCanon = p.ReadRaw(@"d:\EOS\RGB.CR2");
             SaveData(dataCanon, "canon.png");
 

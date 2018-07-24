@@ -87,12 +87,14 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Classes\BackyardEosCamera.cs" />
     <Compile Include="Classes\BaseCanonCamera.cs" />
+    <Compile Include="Classes\CameraModelDetector.cs" />
     <Compile Include="Classes\CameraSettings.cs" />
     <Compile Include="Classes\CameraSettingsProvider.cs" />
     <Compile Include="Classes\CanonSdkCamera.cs" />
     <Compile Include="Classes\DigiCamControlCamera.cs" />
     <Compile Include="Classes\ErrorMessages.cs" />
     <Compile Include="Classes\ExifToolWrapper.cs" />
+    <Compile Include="Classes\PentaxCamera.cs" />
     <Compile Include="Classes\SerialPortShutterRelease.cs" />
     <Compile Include="Driver.cs" />
     <Compile Include="Enums\BinningMode.cs" />

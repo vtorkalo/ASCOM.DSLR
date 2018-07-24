@@ -1,0 +1,300 @@
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D26FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D26FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D36FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D36FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D46FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D46FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D56FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D56FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D66FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D66FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D76FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D76FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D86FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D86FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8D96FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8D96FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8DA6FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8DA6FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8DB6FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8DB6FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8DC6FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8DC6FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8DD6FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8DD6FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8DE6FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8DE6FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8DF6FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8DF6FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E06FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E06FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E16FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E16FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E26FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E26FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E36FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E36FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E46FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E46FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E56FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E56FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E66FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E66FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E76FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E76FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E86FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E86FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8E96FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8E96FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8EA6FB8, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8EA6FB8, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xD8EB6FB8, length = 30272)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xD8EB6FB8, 0x7640})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xC0D17100, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xC0D17100, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xC0D27100, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xC0D27100, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xC0D37100, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xC0D37100, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xC0D47100, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xC0D47100, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xC0D57100, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xC0D57100, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xC0D67100, length = 65536)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xC0D67100, 0x10000})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0xC0D77100, length = 47203)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0xC0D77100, 0xB863})
+[C]                     command(fd=ac, 6, 0, 8)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]     pslr_buffer_read(65536)
+[C]             ipslr_download(address = 0x0, length = 0)
+[C]     pslr_delete_buffer(0)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0x0})
+[C]                     command(fd=ac, 2, 3, 4)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x01
+[R]                              => ERROR: 0x01
+[R]                              => ERROR: 0x00
+[C]     pslr_disconnect()
+[C]             ipslr_cmd_10_0a(0x0)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0x0})
+[C]                     command(fd=ac, 10, a, 4)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x00
+[C]             ipslr_set_mode(0x0)
+[C]                     _ipslr_write_args(cmd_2 = 0x0, {0x0})
+[C]                     command(fd=ac, 0, 0, 4)
+[C]                     get_status(0xac)
+[R]                              => ERROR: 0x01
+[R]                              => ERROR: 0x00
+[C]             ipslr_status()
+[C]                     command(fd=ac, 0, 1, 0)
+[C]                     get_result(0xac)
+[R]                              => [1C 00 00 00]
+[C]                     read_result(0xac, size=28)
+[R]                              => [00 00 00 01  00 00 00 00  01 00 01 00  03 E0 00 00
+                                     00 00 00 00  00 00 00 00  00 00 00 00]
+[C]     pslr_shutdown()
+
+C:\Users\Tommy Lim KW\Desktop\pktriggercord-0.84.04-win>

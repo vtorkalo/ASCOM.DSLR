@@ -1,0 +1,54 @@
+
+C:\Users\Tommy Lim KW\Desktop\pktriggercord-0.84.04-win>pktriggercord-cli --status
+pktriggercord-cli: K-5IIs Connected...
+
+current iso                     : 800
+current shutter speed           : 2/1
+camera max shutter speed        : 1/8000
+current aperture                : 0.0
+lens max aperture               : 16.0
+lens min aperture               : 2.8
+set shutter speed               : 2/1
+set aperture                    : 0.0
+fixed iso                       : 800
+auto iso                        : 80-6400
+jpeg quality                    : 4
+jpeg resolution                 : 16M
+jpeg image tone                 : Bright
+jpeg saturation                 : 3
+jpeg contrast                   : 5
+jpeg sharpness                  : 5
+jpeg hue                        : 6
+zoom                            : 0.00 mm
+focus                           : 40
+color space                     : AdobeRGB
+image format                    : RAW
+raw format                      : DNG
+light meter flags               : 544
+ec                              : 0.00
+custom ev steps                 : 1/3
+custom sensitivity steps        : 1
+exposure mode                   : 6
+scene mode                      : NONE
+user mode flag                  : 0
+ae metering mode                : Center
+af mode                         : MF
+af point select                 : Spot
+selected af point               : 0
+focused af point                : 0
+drive mode                      : Single
+auto bracket mode               : off
+auto bracket picture count      : 0
+auto bracket picture counter    : 0
+auto bracket ev                 : 0.30
+shake reduction                 : on
+white balance mode              : Auto
+white balance adjust            : 0
+flash mode                      : Manual
+flash exposure compensation     : 0.00
+manual mode ev                  : 0.00
+lens                            : M-42 or No Lens
+battery                         : 7.42V 6.99V 7.55V 2.26V
+buffer mask                     : 0000000000000000
+
+C:\Users\Tommy Lim KW\Desktop\pktriggercord-0.84.04-win>
