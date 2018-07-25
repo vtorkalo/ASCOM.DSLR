@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ASCOM.DSLR.Classes
 {
-    public class PentaxCamera : BaseCanonCamera, IDslrCamera
+    public class PentaxCamera : BaseCamera, IDslrCamera
     {
         private bool _waitingForImage = false;
         private DateTime _exposureStartTime;

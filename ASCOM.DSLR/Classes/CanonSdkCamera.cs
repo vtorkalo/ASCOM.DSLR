@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace ASCOM.DSLR.Classes
 {
-    public class CanonSdkCamera : BaseCanonCamera, IDslrCamera, IDisposable
+    public class CanonSdkCamera : BaseCamera, IDslrCamera, IDisposable
     {
         public CanonSdkCamera()
         {

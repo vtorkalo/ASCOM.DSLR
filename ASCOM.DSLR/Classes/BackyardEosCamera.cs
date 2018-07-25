@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace ASCOM.DSLR.Classes
 {
-    public class BackyardEosCamera : BaseCanonCamera, IDslrCamera
+    public class BackyardEosCamera : BaseCamera, IDslrCamera
     {
         private bool _waitingForImage = false;
         private int _port;

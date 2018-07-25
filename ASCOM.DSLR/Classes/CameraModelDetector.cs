@@ -26,8 +26,9 @@ namespace ASCOM.DSLR.Classes
             var model = camera.Model;
             camera.ImageReady += Camera_ImageReady;
             camera.StartExposure(1, true);
+            camera.StorePath = @"d:\EOS";
 
-            oSignalEvent.WaitOne(10*10000); 
+            oSignalEvent.WaitOne(60*1000); 
             oSignalEvent.Reset();
 
             CameraModel result = null;
@@ -38,7 +39,7 @@ namespace ASCOM.DSLR.Classes
                 result.ImageHeight = _imageData.GetLength(1);
                 result.SensorWidth = 22.5;
                 result.SensorHeight = 15;
-                result.Names = new string[] { model };
+                result.Name = model;
             }
 
             return result;

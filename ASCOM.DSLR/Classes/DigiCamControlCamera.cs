@@ -15,7 +15,7 @@ using System.Windows.Forms;
 
 namespace ASCOM.DSLR.Classes
 {
-    public class DigiCamControlCamera : BaseCanonCamera, IDslrCamera
+    public class DigiCamControlCamera : BaseCamera, IDslrCamera
     {
         public string Model
         {
@@ -24,7 +24,7 @@ namespace ASCOM.DSLR.Classes
                 string model = string.Empty;
                 if (_cameraModel != null)
                 {
-                    model = _cameraModel.Names.First();
+                    model = _cameraModel.Name;
                 }
 
                 return model;

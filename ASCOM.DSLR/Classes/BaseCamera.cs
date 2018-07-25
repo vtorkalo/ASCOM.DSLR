@@ -1,4 +1,5 @@
 ﻿using ASCOM.DSLR.Enums;
+using ASCOM.DSLR.Interfaces;
 using EOSDigital.API;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,12 @@ using System.Text.RegularExpressions;
 
 namespace ASCOM.DSLR.Classes
 {
-    public abstract class BaseCanonCamera
+    public abstract class BaseCamera
     {
         protected CameraModel _cameraModel;
 
         public CameraModel CameraModel
-        {
+        {`  
             get
             {
                 if (_cameraModel == null)
@@ -77,8 +78,8 @@ namespace ASCOM.DSLR.Classes
 
         public CameraModel GetCameraModel(string cameraDescription)
         {
-            var descriptionParts = cameraDescription.Split(' ');
-            var model = SensorSizes.Models.SingleOrDefault(m => m.Names.Any(n => descriptionParts.Any(d => d.StartsWith(n))));
+            var cameraModelDetector = new CameraModelDetector(new ImageDataProcessor());
+            var model = cameraModelDetector.GetCameraModel((IDslrCamera)this);
             return model;
         }
 

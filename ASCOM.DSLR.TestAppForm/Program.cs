@@ -27,32 +27,13 @@ namespace ASCOM.DSLR
             var p = new ImageDataProcessor();
 
             var detector = new CameraModelDetector(p);
-            var m = detector.GetCameraModel(new TestCamera());
+            var m = detector.GetCameraModel(new CanonSdkCamera());
 
-            var data0 = p.ReadRaw(@"c:\git-vtorkalo\test.dng-0000.dng");
-            var dataCanon = p.ReadRaw(@"d:\EOS\RGB.CR2");
-            SaveData(dataCanon, "canon.png");
-
-            var dataSample = p.ReadRaw(@"d:\ascomdev\nef2\RAW_NIKON_D3100.NEF");
-            SaveData(dataSample, "sample.png");
-
-        
-
-           
+            var data0 = p.ReadRaw(@"d:\ascomdev\git\ASCOM.DSLR\testdata\test.dng-0000.dng");
+      
 
             
 
-
-            
-
-            var data = p.ReadRaw(@"d:\ascomdev\nef2\IMG_5s_1600iso_0C_2018_01_23_16_35_19.nef");
-            var data2 = p.ReadRaw(@"d:\ascomdev\nef2\IMG_10s_1600iso_0C_2018_01_23_16_38_54.nef");
-
-
-            var names = SerialPort.GetPortNames();
-            var shutter = new SerialPortShutterRelease(names.First());
-            shutter.OpenShutter();
-            shutter.CloseShutter();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

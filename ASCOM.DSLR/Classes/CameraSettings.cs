@@ -1,5 +1,6 @@
 ﻿using ASCOM.DSLR.Enums;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ASCOM.DSLR.Classes
@@ -44,5 +45,7 @@ namespace ASCOM.DSLR.Classes
         public bool LiveViewCaptureMode { get; set; }
 
         public LiveViewZoom LiveViewZoom { get; set; }
+
+        public List<CameraModel> CameraModels { get; set; }
     }
 }

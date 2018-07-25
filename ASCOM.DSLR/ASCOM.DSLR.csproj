@@ -86,7 +86,7 @@
     </Compile>
     <Compile Include="Camera.cs" />
     <Compile Include="Classes\BackyardEosCamera.cs" />
-    <Compile Include="Classes\BaseCanonCamera.cs" />
+    <Compile Include="Classes\BaseCamera.cs" />
     <Compile Include="Classes\CameraModelDetector.cs" />
     <Compile Include="Classes\CameraSettings.cs" />
     <Compile Include="Classes\CameraSettingsProvider.cs" />
