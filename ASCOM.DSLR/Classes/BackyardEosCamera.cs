@@ -2,6 +2,7 @@
 using ASCOM.DSLR.Interfaces;
 using OTelescope.SampleAPI;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace ASCOM.DSLR.Classes
@@ -15,7 +16,7 @@ namespace ASCOM.DSLR.Classes
         private double _lastDuration;
         private string _lastFileName;
 
-        public BackyardEosCamera(int port)
+        public BackyardEosCamera(int port, List<CameraModel> cameraModelsHistory) :base(cameraModelsHistory)
         {
             _port = port;
             _backyardTcpClient = new OTelescopeTcpClient(_port);

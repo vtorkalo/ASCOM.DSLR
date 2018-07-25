@@ -16,14 +16,13 @@ namespace ASCOM.DSLR.Classes
 {
     public class CanonSdkCamera : BaseCamera, IDslrCamera, IDisposable
     {
-        public CanonSdkCamera()
+        public CanonSdkCamera(List<CameraModel> cameraModelsHistory) : base(cameraModelsHistory)
         {
             APIHandler = new CanonAPI();
             APIHandler.CameraAdded += APIHandler_CameraAdded;
             ErrorHandler.SevereErrorHappened += ErrorHandler_SevereErrorHappened;
             ErrorHandler.NonSevereErrorHappened += ErrorHandler_NonSevereErrorHappened;
         }
-
         CanonAPI APIHandler;
 
         EOSDigital.API.Camera _mainCamera;

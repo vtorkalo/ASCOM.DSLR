@@ -52,6 +52,7 @@ namespace ASCOM.DSLR.Interfaces
         event EventHandler<ExposureFailedEventArgs> ExposureFailed;
         ConnectionMethod IntegrationApi { get; }
 
+        CameraModel CameraModel { get; }      
     }
 
     public class LiveViewImageReadyEventArgs : EventArgs

@@ -27,7 +27,7 @@ namespace ASCOM.DSLR
             var p = new ImageDataProcessor();
 
             var detector = new CameraModelDetector(p);
-            var m = detector.GetCameraModel(new CanonSdkCamera());
+            var m = detector.GetCameraModel(new CanonSdkCamera(new System.Collections.Generic.List<CameraModel>()));
 
             var data0 = p.ReadRaw(@"d:\ascomdev\git\ASCOM.DSLR\testdata\test.dng-0000.dng");
       

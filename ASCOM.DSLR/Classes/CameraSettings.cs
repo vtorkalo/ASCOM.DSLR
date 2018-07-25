@@ -20,6 +20,7 @@ namespace ASCOM.DSLR.Classes
             ExternalShutterPortName = string.Empty;
             LiveViewZoom = LiveViewZoom.Fit;
             BinningMode = BinningMode.Sum;
+            CameraModelsHistory = new List<CameraModel>();
         }
 
         public bool TraceLog { get; set; }
@@ -46,6 +47,6 @@ namespace ASCOM.DSLR.Classes
 
         public LiveViewZoom LiveViewZoom { get; set; }
 
-        public List<CameraModel> CameraModels { get; set; }
+        public List<CameraModel> CameraModelsHistory { get; set; }
     }
 }

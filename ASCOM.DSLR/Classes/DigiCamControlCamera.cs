@@ -45,7 +45,7 @@ namespace ASCOM.DSLR.Classes
         private TraceLogger _tl;
 
 
-        public DigiCamControlCamera(TraceLogger tl)
+        public DigiCamControlCamera(TraceLogger tl, List<CameraModel> cameraModelHistory)  : base(cameraModelHistory)
         {
             _tl = tl;
             DeviceManager = new CameraDeviceManager();

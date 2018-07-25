@@ -17,10 +17,9 @@ namespace ASCOM.DSLR.Classes
         private double _lastDuration;
         private string _lastFileName;
 
-        public PentaxCamera()
+        public PentaxCamera(List<CameraModel> cameraModelsHistory) : base(cameraModelsHistory)
         {
         }
-
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;

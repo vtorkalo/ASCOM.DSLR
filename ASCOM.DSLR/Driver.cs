@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace ASCOM.DSLR
 {
@@ -365,7 +366,12 @@ namespace ASCOM.DSLR
         {
             using (Profile driverProfile = new Profile())
             {
+                var model = ApiContainer.DslrCamera.CameraModel;
                 driverProfile.DeviceType = "Camera";
+                if (model != null && !CameraSettings.CameraModelsHistory.Any(c=>c.Name == model.Name ))
+                {
+                    CameraSettings.CameraModelsHistory.Add(model);
+                }
                 string cameraSettingsString = _settingsProvider.SaveSettings(CameraSettings);
                 driverProfile.WriteValue(driverID, cameraSettingsProfileName, cameraSettingsString);
                 ApiContainer.SetSettings(CameraSettings);

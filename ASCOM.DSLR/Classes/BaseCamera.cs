@@ -12,10 +12,16 @@ namespace ASCOM.DSLR.Classes
 {
     public abstract class BaseCamera
     {
+        public BaseCamera(List<CameraModel> cameraModelsHistory)
+        {
+            _cameraModelsHistory = cameraModelsHistory;
+        }
+
         protected CameraModel _cameraModel;
+        protected List<CameraModel> _cameraModelsHistory;
 
         public CameraModel CameraModel
-        {`  
+        {
             get
             {
                 if (_cameraModel == null)
@@ -78,9 +84,14 @@ namespace ASCOM.DSLR.Classes
 
         public CameraModel GetCameraModel(string cameraDescription)
         {
-            var cameraModelDetector = new CameraModelDetector(new ImageDataProcessor());
-            var model = cameraModelDetector.GetCameraModel((IDslrCamera)this);
-            return model;
+            var cameraModel = _cameraModelsHistory.FirstOrDefault(c => c.Name == cameraDescription); //try get sensor params from history
+            if (cameraModel == null)
+            {
+                var cameraModelDetector = new CameraModelDetector(new ImageDataProcessor());
+                cameraModel = cameraModelDetector.GetCameraModel((IDslrCamera)this);//make test shot to determine height/width
+            }
+
+            return cameraModel;
         }
 
         public short Iso

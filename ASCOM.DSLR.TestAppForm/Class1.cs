@@ -48,6 +48,8 @@ namespace ASCOM.DSLR
 
         public ConnectionMethod IntegrationApi => throw new NotImplementedException();
 
+        public CameraModel CameraModel => throw new NotImplementedException();
+
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<LiveViewImageReadyEventArgs> LiveViewImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;

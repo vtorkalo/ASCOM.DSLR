@@ -40,21 +40,21 @@ namespace ASCOM.DSLR
         {
             if (_cameraSettings.IntegrationApi == ConnectionMethod.CanonSdk)
             {
-                _dslrCamera = new CanonSdkCamera();
+                _dslrCamera = new CanonSdkCamera(_cameraSettings.CameraModelsHistory);
                 _dslrCamera.IsLiveViewMode = _cameraSettings.LiveViewCaptureMode;
                 _dslrCamera.LiveViewZoom = _cameraSettings.LiveViewZoom;
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {
-                _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort);
+                _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort, _cameraSettings.CameraModelsHistory);
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
             {
-                _dslrCamera = new DigiCamControlCamera(TraceLogger);
+                _dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.Pentax)
             {
-                _dslrCamera = new PentaxCamera();
+                _dslrCamera = new PentaxCamera(_cameraSettings.CameraModelsHistory);
             }
         }
 
@@ -173,7 +173,7 @@ namespace ASCOM.DSLR
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
         {
             cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
-            //cameraImageArray = color;
+
             cameraImageArray = _imageDataProcessor.ToMonochrome(cameraImageArray, _imageDataProcessor.From8To16Bit);
             cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
