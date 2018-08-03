@@ -27,19 +27,22 @@ namespace ASCOM.DSLR.Classes
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
         public event EventHandler<LiveViewImageReadyEventArgs> LiveViewImageReady;
+        private string _modelStr;
 
         public string Model
         {
             get
             {
-                var result = ExecuteCommand("-s");
-                var parsedStatus = ParseStatus(result);
-                string cameraStr = string.Empty;
-                if (parsedStatus.ContainsKey("pktriggercord - cli"))
+                if (string.IsNullOrEmpty(_modelStr))
                 {
-                    cameraStr = parsedStatus["pktriggercord - cli"];
+                    var result = ExecuteCommand("-s");
+                    var parsedStatus = ParseStatus(result);
+                    if (parsedStatus.ContainsKey("pktriggercord-cli"))
+                    {
+                        _modelStr = parsedStatus["pktriggercord-cli"];
+                    }
                 }
-                return cameraStr;
+                return _modelStr;
             }
         }
 
@@ -76,10 +79,10 @@ namespace ASCOM.DSLR.Classes
         public void StartExposure(double Duration, bool Light)
         {
             string fileName = GetFileName(Duration, DateTime.Now);
+            MarkWaitingForExposure(Duration, fileName);
+            watch();
 
             ExecuteCommand(string.Format("--file_format dng -o {0} --iso {1} --shutter_speed {2}", fileName, Iso, Duration));
-
-            MarkWaitingForExposure(Duration, fileName);
         }
 
         private string _fileNameWaiting;
@@ -97,6 +100,11 @@ namespace ASCOM.DSLR.Classes
 
         private void watch()
         {
+            if (!Directory.Exists(StorePath))
+            {
+                Directory.CreateDirectory(StorePath);
+            }
+
             watcher = new FileSystemWatcher();
             watcher.Path = StorePath;
             watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
@@ -109,10 +117,6 @@ namespace ASCOM.DSLR.Classes
         private void OnChanged(object source, FileSystemEventArgs e)
         {
             var fileName = e.FullPath;
-            if (!Directory.Exists(StorePath))
-            {
-                Directory.CreateDirectory(StorePath);
-            }
 
             var destinationFilePath = Path.ChangeExtension(Path.Combine(StorePath, Path.Combine(StorePath, _fileNameWaiting)), ".dng");
             File.Copy(fileName, destinationFilePath);
@@ -171,11 +175,11 @@ namespace ASCOM.DSLR.Classes
             {
                 process.StartInfo = procStartInfo;
                 process.Start();
-
-                process.WaitForExit(5000);
+                process.WaitForExit();
 
                 result = process.StandardOutput.ReadToEnd();
             }
+            //result = "pktriggercord-cli: K-5IIs Connected...";
             return result;
         }
 

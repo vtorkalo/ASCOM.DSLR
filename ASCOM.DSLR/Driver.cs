@@ -98,7 +98,7 @@ namespace ASCOM.DSLR
                 var result = F.ShowDialog(new Form { TopMost = true });
                 if (result == DialogResult.OK)
                 {
-                    CameraSettings = F.Settings;
+                    CameraSettings = F.Settings;                    
                     WriteProfile(); // Persist device configuration values to the ASCOM Profile store
                 }
             }
@@ -364,6 +364,9 @@ namespace ASCOM.DSLR
         /// </summary>
         internal void WriteProfile()
         {
+            ApiContainer.SetSettings(CameraSettings);
+            SetCameraSettings(ApiContainer.DslrCamera, CameraSettings);
+
             using (Profile driverProfile = new Profile())
             {
                 var model = ApiContainer.DslrCamera.CameraModel;

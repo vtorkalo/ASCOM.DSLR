@@ -19,14 +19,15 @@ namespace ASCOM.DSLR.Classes
             _imageDataProcessor = imageDataProcessor;
         }
 
-        public CameraModel GetCameraModel(IDslrCamera camera)
+        public CameraModel GetCameraModel(IDslrCamera camera, string storePath)
         {
             _imageData = null;
             camera.ConnectCamera();
             var model = camera.Model;
             camera.ImageReady += Camera_ImageReady;
+            camera.StorePath = storePath;
+            camera.Iso = 200;
             camera.StartExposure(1, true);
-            camera.StorePath = @"d:\EOS";
 
             oSignalEvent.WaitOne(60*1000); 
             oSignalEvent.Reset();
