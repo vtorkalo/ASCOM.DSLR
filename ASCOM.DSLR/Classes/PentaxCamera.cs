@@ -2,7 +2,10 @@
 using ASCOM.DSLR.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +32,14 @@ namespace ASCOM.DSLR.Classes
         {
             get
             {
-                return "" ; //_backyardTcpClient.SendCommand("getcameramodel");;
+                var result = ExecuteCommand("-s");
+                var parsedStatus = ParseStatus(result);
+                string cameraStr = string.Empty;
+                if (parsedStatus.ContainsKey("pktriggercord - cli"))
+                {
+                    cameraStr = parsedStatus["pktriggercord - cli"];
+                }
+                return cameraStr;
             }
         }
 
@@ -39,7 +49,7 @@ namespace ASCOM.DSLR.Classes
 
         public void AbortExposure()
         {
-            //_backyardTcpClient.SendCommand("abort");
+
         }
 
         public void ConnectCamera()
@@ -53,133 +63,120 @@ namespace ASCOM.DSLR.Classes
 
         public void Dispose()
         {
-            //   _backyardTcpClient?.Dispose();
+            
         }
 
         public override CameraModel ScanCameras()
         {
-            //     _backyardTcpClient.SendCommand("connect");
-            //   var modelStr = _backyardTcpClient.SendCommand("getcameramodel");
-            //    if (!string.IsNullOrEmpty(modelStr))
-            //  {
-            //    _cameraModel = GetCameraModel(modelStr);
-            //}
-            //if (_cameraModel == null)
-            //{
-            //    throw new NotConnectedException(ErrorMessages.NotConnected);
-            //}
-            //return _cameraModel;
+            var cameraModel = GetCameraModel(Model);
 
-            throw new NotImplementedException();
+            return cameraModel;
         }
 
         public void StartExposure(double Duration, bool Light)
         {
-            string quality = GetQualityStr();
-            var command = string.Format("takepicture quality:{0} duration:{1} iso:{2} bin:1", quality, Duration, Iso);
-      //      _backyardTcpClient.SendCommand(command);
+            string fileName = GetFileName(Duration, DateTime.Now);
 
-            MarkWaitingForExposure(Duration);
+            ExecuteCommand(string.Format("--file_format dng -o {0} --iso {1} --shutter_speed {2}", fileName, Iso, Duration));
 
-            ThreadPool.QueueUserWorkItem(state =>
-            {
-                CheckDownload();
-            });
+            MarkWaitingForExposure(Duration, fileName);
         }
 
-        private string GetQualityStr()
-        {
-            string quality = null;
-            switch (ImageFormat)
-            {
-                case ImageFormat.RAW:
-                    quality = "raw";
-                    break;
-                case ImageFormat.JPEG:
-                    quality = "jpg";
-                    break;
-            }
+        private string _fileNameWaiting;
 
-            return quality;
-        }
 
-        private void MarkWaitingForExposure(double Duration)
+        private void MarkWaitingForExposure(double Duration, string fileName)
         {
             _exposureStartTime = DateTime.Now;
             _lastDuration = Duration;
             _waitingForImage = true;
+            _fileNameWaiting = fileName;
         }
 
-        private bool IsTimeout(string status)
-        {
-            var timeElapsed = DateTime.Now - _exposureStartTime;
-            bool isTimeout = status == "busy" && timeElapsed.TotalSeconds > _lastDuration + timeout;
+        FileSystemWatcher watcher;
 
-            return isTimeout;
+        private void watch()
+        {
+            watcher = new FileSystemWatcher();
+            watcher.Path = StorePath;
+            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+                                   | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            watcher.Filter = "*.dng";
+            watcher.Changed += new FileSystemEventHandler(OnChanged);
+            watcher.EnableRaisingEvents = true;
         }
 
-        private bool CheckStatus()
+        private void OnChanged(object source, FileSystemEventArgs e)
         {
-            //bool isOk = true;
-            //var status = _backyardTcpClient.SendCommand("getstatus");
-            //if (status == "error")
-            //{
-            //    CallExposureFailed(ErrorMessages.CameraError);
-            //    isOk = false;
-            //}
-            //else if (IsTimeout(status))
-            //{
-            //    CallExposureFailed(ErrorMessages.ConnectionTimeout);
-            //    isOk = false;
-            //}
-
-            //return isOk;
-            throw new NotImplementedException();
-        }
-
-        private bool TryDownload()
-        {
-            throw new NotImplementedException();
-            //bool downloaded = false;
-            //var readyStr = _backyardTcpClient.SendCommand("getispictureready");
-            //bool ready = readyStr.Equals(bool.TrueString);
-            //if (ready)
-            //{
-            //    var filepath = _backyardTcpClient.SendCommand("getpicturepath").Trim();
-
-            //    if (ImageReady != null && _waitingForImage && !string.IsNullOrEmpty(filepath) && filepath != _lastFileName)
-            //    {
-            //        ImageReady(this, new ImageReadyEventArgs(filepath));
-            //        _lastFileName = filepath;
-            //        _waitingForImage = false;
-            //        SensorTemperature = GetSensorTemperature(filepath);
-            //        downloaded = true;
-            //    }
-            //}
-
-            //return downloaded;
-        }
-
-
-        private void CheckDownload()
-        {
-            while (true)
+            var fileName = e.FullPath;
+            if (!Directory.Exists(StorePath))
             {
-                try
-                {
-                    if (!CheckStatus() || TryDownload())
-                    {
-                        break;
-                    }
+                Directory.CreateDirectory(StorePath);
+            }
 
-                    Thread.Sleep(1000);
-                }
-                catch (Exception e)
+            var destinationFilePath = Path.ChangeExtension(Path.Combine(StorePath, Path.Combine(StorePath, _fileNameWaiting)), ".dng");
+            File.Copy(fileName, destinationFilePath);
+            File.Delete(fileName);
+            if (ImageReady != null)
+            {
+                ImageReady(this, new ImageReadyEventArgs(destinationFilePath));
+            }
+            watcher.Changed -= OnChanged;
+            watcher.EnableRaisingEvents = false;
+            watcher = null;
+        }
+
+        private string GetAppPath()
+        {
+            string AppPath;
+            AppPath = Assembly.GetExecutingAssembly().Location;
+            AppPath = Path.GetDirectoryName(AppPath);
+
+            return AppPath;
+        }
+
+        private Dictionary<string, string> ParseStatus(string status)
+        {
+            var result = new Dictionary<string, string>();
+
+            using (StringReader sr = new StringReader(status))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
                 {
-                    CallExposureFailed(e.Message, e.StackTrace);
-                    break;
+                    var parts = line.Split(':').Select(p => p.Trim()).ToList();
+                    if (parts.Count == 2)
+                    {
+                        result.Add(parts[0], parts[1]);
+                    }
                 }
             }
+
+            return result;
+        }
+
+        public string ExecuteCommand(string args)
+        {
+            string exeDir = Path.Combine(GetAppPath(), "pktriggercord", "pktriggercord-cli.exe");
+            ProcessStartInfo procStartInfo = new ProcessStartInfo();
+
+            procStartInfo.FileName = exeDir;
+            procStartInfo.Arguments = args + " --timeout 10";
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.UseShellExecute = false;
+            procStartInfo.CreateNoWindow = true;
+
+            string result = string.Empty;
+            using (Process process = new Process())
+            {
+                process.StartInfo = procStartInfo;
+                process.Start();
+
+                process.WaitForExit(5000);
+
+                result = process.StandardOutput.ReadToEnd();
+            }
+            return result;
         }
 
         private void CallExposureFailed(string message, string stackTrace = null)

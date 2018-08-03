@@ -1,6 +1,8 @@
 ﻿using ASCOM.DSLR.Classes;
 using CameraControl.Plugins.ExternalDevices;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -19,18 +21,18 @@ namespace ASCOM.DSLR
         [STAThread]
         static void Main()
         {
-            var p1 =(int) Math.Pow(2, 14);
-            var a = p1 >> 6;
+            ExecuteCommand("--status --debug --timeout 3");
+
+            var d = ParseStatus(File.ReadAllText(@"c:\git-vtorkalo\ASCOM.DSLR\testdata\status.txt"));
 
 
 
             var p = new ImageDataProcessor();
 
             var detector = new CameraModelDetector(p);
-            var m = detector.GetCameraModel(new CanonSdkCamera(new System.Collections.Generic.List<CameraModel>()));
 
             var data0 = p.ReadRaw(@"d:\ascomdev\git\ASCOM.DSLR\testdata\test.dng-0000.dng");
-      
+
 
             
 
@@ -40,49 +42,52 @@ namespace ASCOM.DSLR
             Application.Run(new Form1());
         }
 
-        static void SaveData(int[,] data, string name)
+        public static string ExecuteCommand(string args)
         {
-            var width = data.GetLength(0);
-            var height = data.GetLength(1);
-            Bitmap bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            var exeDir = @"c:\Program Files (x86)\Common Files\ASCOM\Camera\ASCOM.DSLR.Camera\pktriggercord\pktriggercord-cli.exe";
 
+            ProcessStartInfo procStartInfo = new ProcessStartInfo();
 
-            //create random pixels
-            for (int y = 0; y < height; y++)
+            procStartInfo.FileName = exeDir;
+            procStartInfo.Arguments = args;
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.UseShellExecute = false;
+            procStartInfo.CreateNoWindow = true;
+
+            string result = string.Empty;
+            using (Process process = new Process())
             {
-                for (int x = 0; x < width; x++)
+                process.StartInfo = procStartInfo;
+                process.Start();
+
+                process.WaitForExit();
+
+                result = process.StandardOutput.ReadToEnd();
+            }
+            return result;
+        }
+
+        static Dictionary<string, string> ParseStatus(string status)
+        {
+            var result = new Dictionary<string, string>();
+
+            using (StringReader sr = new StringReader(status))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null)
                 {
-                    byte r= 0;
-                    byte g = 0;
-                    byte b =0;
-
-                    if (x % 2 == 0 && y % 2 == 0)
-                    {//R
-                        r = (byte)(data[x, y] >> 4);
+                    var parts = line.Split(':').Select(p=>p.Trim()).ToList();
+                    if (parts.Count == 2)
+                    {
+                        result.Add(parts[0], parts[1]);
                     }
-                    else if (x % 2 == 0 && y % 2 == 1)
-                    {//G
-                        g = (byte)(data[x, y] >> 4);
-                    }
-
-                    else if (x % 2 == 1 && y % 2 == 0)
-                    {//G2
-                        g= (byte)(data[x, y] >> 4);
-                    }
-                    else if (x % 2 == 1 && y % 2 == 1)
-                    {//B
-                        b = (byte)(data[x, y] >> 4);
-                    }
-
-                    var color = Color.FromArgb(g, r, b);
-
-                    //set ARGB value
-                    bmp.SetPixel(x, y, color);
                 }
             }
 
-            bmp.Save(@"D:\eos\"+ name);
+            return result;
         }
+
+     
 
     }
 }
