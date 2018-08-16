@@ -357,12 +357,9 @@ namespace EOSDigital.API
 
                 if (Severe) throw new SDKException(errorCode);
                 else
-                    NonSevereErrorHappenedEvent.BeginInvoke(sender, errorCode, (a) =>
-                    {
-                        var ar = a as AsyncResult;
-                        var invokedMethod = ar.AsyncDelegate as SDKExceptionHandler;
-                        invokedMethod.EndInvoke(a);
-                    }, null);
+                {
+                    Task.Run(() => NonSevereErrorHappenedEvent.Invoke(sender, errorCode));
+                }
             }
         }
 
