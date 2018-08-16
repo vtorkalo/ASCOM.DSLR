@@ -53,6 +53,7 @@ namespace ASCOM.DSLR
     /// <summary>
     /// ASCOM Camera Driver for DSLR.
     /// </summary>
+    [ComVisible(true)]
     [Guid("37206417-4b15-49f0-ae46-a1e52aa20c2e")]
     [ClassInterface(ClassInterfaceType.None)]
     public partial class Camera : ICameraV2
