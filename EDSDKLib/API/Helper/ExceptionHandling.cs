@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Threading.Tasks;
 using EOSDigital.SDK;
 
 namespace EOSDigital.API
@@ -305,10 +306,12 @@ namespace EOSDigital.API
         /// If an error happened, that does not break the program, this event is fired (e.g. a focus error)
         /// </summary>
         public static event SDKExceptionHandler NonSevereErrorHappened;
+
         /// <summary>
         /// If an error happened on a thread that does not fall into the non-severe category, this event is fired
         /// </summary>
         public static event GeneralExceptionHandler SevereErrorHappened;
+
         /// <summary>
         /// List of all non-severe errors. Items can be added or removed.
         /// </summary>
@@ -353,12 +356,13 @@ namespace EOSDigital.API
                 if (!Severe) Severe = NonSevereErrorHappenedEvent == null;
 
                 if (Severe) throw new SDKException(errorCode);
-                else NonSevereErrorHappenedEvent.BeginInvoke(sender, errorCode, (a) =>
-                {
-                    var ar = a as AsyncResult;
-                    var invokedMethod = ar.AsyncDelegate as SDKExceptionHandler;
-                    invokedMethod.EndInvoke(a);
-                }, null);
+                else
+                    NonSevereErrorHappenedEvent.BeginInvoke(sender, errorCode, (a) =>
+                    {
+                        var ar = a as AsyncResult;
+                        var invokedMethod = ar.AsyncDelegate as SDKExceptionHandler;
+                        invokedMethod.EndInvoke(a);
+                    }, null);
             }
         }
 
@@ -380,7 +384,7 @@ namespace EOSDigital.API
         /// <returns>The number of references for the pointer that was used for the SDK call</returns>
         public static int CheckError(int countOrError)
         {
-            if (countOrError == unchecked((int)0xFFFFFFFF)) throw new SDKException(ErrorCode.INVALID_HANDLE);
+            if (countOrError == unchecked((int) 0xFFFFFFFF)) throw new SDKException(ErrorCode.INVALID_HANDLE);
             else return countOrError;
         }
 
@@ -404,18 +408,14 @@ namespace EOSDigital.API
         /// <returns>True if the error could be passed on; false otherwise</returns>
         public static bool ReportError(object sender, Exception ex)
         {
-            var SevereErrorHappenedEvent = SevereErrorHappened;
-            if (SevereErrorHappenedEvent == null) return false;
-            else
+            var onSevereErrorHappened = SevereErrorHappened;
+            if (onSevereErrorHappened != null)
             {
-                SevereErrorHappenedEvent.BeginInvoke(sender, ex, (a) =>
-                {
-                    var ar = a as AsyncResult;
-                    var invokedMethod = ar.AsyncDelegate as GeneralExceptionHandler;
-                    invokedMethod.EndInvoke(a);
-                }, null);
+                Task.Run(() => onSevereErrorHappened?.Invoke(sender, ex));
                 return true;
             }
+
+            return false;
         }
     }
 }
