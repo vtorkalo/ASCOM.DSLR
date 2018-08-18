@@ -14,12 +14,18 @@ namespace ASCOM.DSLR.Classes
         private IntPtr LoadRaw(string fileName)
         {
             IntPtr data = NativeMethods.libraw_init(LibRaw_constructor_flags.LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
-            NativeMethods.libraw_open_file(data, fileName);
-            NativeMethods.libraw_unpack(data);
-            NativeMethods.libraw_raw2image(data);
-            NativeMethods.libraw_subtract_black(data);
+            CheckError(NativeMethods.libraw_open_file(data, fileName), "open file");
+            CheckError(NativeMethods.libraw_unpack(data), "unpack");
+            CheckError(NativeMethods.libraw_raw2image(data), "raw2image");
+            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
 
             return data;
+        }
+
+        private void CheckError(int errorCode, string action)
+        {
+            if (errorCode != 0)
+                throw new Exception($"LibRaw returned error code {errorCode} when {action}");
         }
 
         public int[,,] ReadAndDebayerRaw(string fileName)
