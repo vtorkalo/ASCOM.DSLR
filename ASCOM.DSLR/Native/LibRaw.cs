@@ -79,9 +79,9 @@ namespace ASCOM.DSLR.Native
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x10000)] short[] curve;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4102)] uint[] cblack;
-        uint black;
-        uint data_maximum;
-        uint maximum;
+        public uint black;
+        public uint data_maximum;
+        public uint maximum;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] int[] linear_max;
         float fmaximum;
         float fnorm;

@@ -184,6 +184,21 @@ namespace ASCOM.DSLR.Classes
                     ptr += 4;
                 }
             }
+
+            if (dataStructure.color.maximum > 0)
+            {
+                int multiplier = (int) Math.Pow(2, Math.Floor(Math.Log(32768.0 / dataStructure.color.maximum, 2)));
+                if (multiplier > 1)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            pixels[x, y] *= multiplier;
+                        }
+                    }
+                }
+            }
             NativeMethods.libraw_close(data);
 
             return pixels;
