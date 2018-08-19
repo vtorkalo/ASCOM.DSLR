@@ -17,7 +17,8 @@ namespace ASCOM.DSLR.Classes
             CheckError(NativeMethods.libraw_open_file(data, fileName), "open file");
             CheckError(NativeMethods.libraw_unpack(data), "unpack");
             CheckError(NativeMethods.libraw_raw2image(data), "raw2image");
-            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
+            // Don't subtract black level as that pushes the histogram right down to the left hand side for dark areas - ie data being lost
+//            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
 
             return data;
         }
