@@ -22,7 +22,7 @@ Compression=lzma
 SolidCompression=yes
 ; Put there by Platform if Driver Installer Support selected
 WizardImageFile="C:\Program Files (x86)\ASCOM\Platform 6 Developer Components\Installer Generator\Resources\WizardImage.bmp"
-LicenseFile="C:\Program Files (x86)\ASCOM\Platform 6 Developer Components\Installer Generator\Resources\CreativeCommons.txt"
+LicenseFile="LICENSE"
 ; {cf}\ASCOM\Uninstall\Camera folder created by Platform, always
 UninstallFilesDir="{cf}\ASCOM\Uninstall\Camera\DSLR.Camera"
 
@@ -35,7 +35,7 @@ Name: "{cf}\ASCOM\Uninstall\Camera\DSLR.Camera"
 
 [Files]
 Source: "bin\ASCOM.DSLR.Camera.dll"; DestDir: "{app}"
-Source: "bin\ReadMe.htm"; DestDir: "{app}"; Flags: isreadme
+;Source: "bin\ReadMe.htm"; DestDir: "{app}"; Flags: isreadme
 Source: "bin\libraw.dll"; DestDir: "{app}"
 Source: "bin\EDSDK.dll"; DestDir: "{app}"
 Source: "bin\EDSDKLib.dll"; DestDir: "{app}"
