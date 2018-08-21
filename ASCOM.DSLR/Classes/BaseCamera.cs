@@ -89,6 +89,7 @@ namespace ASCOM.DSLR.Classes
             {
                 var cameraModelDetector = new CameraModelDetector(new ImageDataProcessor());
                 cameraModel = cameraModelDetector.GetCameraModel((IDslrCamera)this, StorePath ?? Path.GetTempPath());//make test shot to determine height/width
+                _cameraModelsHistory.Add(cameraModel);
             }
 
             return cameraModel;
