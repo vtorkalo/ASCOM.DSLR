@@ -84,12 +84,13 @@ namespace ASCOM.DSLR.Classes
 
         public CameraModel GetCameraModel(string cameraDescription)
         {
-            var cameraModel = _cameraModelsHistory.FirstOrDefault(c => c.Name == cameraDescription); //try get sensor params from history
+            var cameraModel = _cameraModelsHistory.FirstOrDefault(c => c?.Name == cameraDescription); //try get sensor params from history
             if (cameraModel == null)
             {
                 var cameraModelDetector = new CameraModelDetector(new ImageDataProcessor());
                 cameraModel = cameraModelDetector.GetCameraModel((IDslrCamera)this, StorePath ?? Path.GetTempPath());//make test shot to determine height/width
-                _cameraModelsHistory.Add(cameraModel);
+                if (cameraModel != null)
+                    _cameraModelsHistory.Add(cameraModel);
             }
 
             return cameraModel;
