@@ -183,7 +183,7 @@ namespace EOSDigital.API
         /// <returns>An STA thread</returns>
         public static Thread CreateThread(Action action)
         {
-            var thread = new Thread(new ThreadStart(action));
+            var thread = new Thread(new ThreadStart(action)) {IsBackground = true}; 
             thread.SetApartmentState(ApartmentState.STA);
             return thread;
         }

@@ -131,6 +131,8 @@ namespace ASCOM.DSLR
 
         public void StartExposure(double Duration, bool Light)
         {
+            if (_cameraState != CameraStates.cameraIdle) throw new InvalidOperationException("Cannot start exposure - camera is not idle");
+
             cameraImageReady = false;
             if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
             cameraLastExposureDuration = Duration;
