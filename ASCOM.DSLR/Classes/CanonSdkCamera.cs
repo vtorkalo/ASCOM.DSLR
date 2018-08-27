@@ -53,14 +53,19 @@ namespace ASCOM.DSLR.Classes
 
         public override CameraModel ScanCameras()
         {
+            ScanForCameras();
+            _mainCamera = CamList.First();
+            var cameraModel = GetCameraModel(_mainCamera.DeviceName);
+            return cameraModel;
+        }
+
+        private void ScanForCameras()
+        {
             CamList = APIHandler.GetCameraList();
             if (!CamList.Any())
             {
                 throw new NotConnectedException(ErrorMessages.NotConnected);
             }
-            _mainCamera = CamList.First();
-            var cameraModel = GetCameraModel(_mainCamera.DeviceName);
-            return cameraModel;
         }
 
 
@@ -118,7 +123,7 @@ namespace ASCOM.DSLR.Classes
 
         private void OpenSession()
         {
-            ScanCameras();
+            ScanForCameras();
             if (!MainCamera.SessionOpen)
             {
                 MainCamera.OpenSession();
