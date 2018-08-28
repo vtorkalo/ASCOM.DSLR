@@ -17,7 +17,8 @@ namespace ASCOM.DSLR.Classes
             CheckError(NativeMethods.libraw_open_file(data, fileName), "open file");
             CheckError(NativeMethods.libraw_unpack(data), "unpack");
             CheckError(NativeMethods.libraw_raw2image(data), "raw2image");
-            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
+            // Don't subtract black level as that pushes the histogram right down to the left hand side for dark areas - ie data being lost
+//            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
 
             return data;
         }
@@ -125,49 +126,77 @@ namespace ASCOM.DSLR.Classes
 
         }
 
-        public int[,] ReadRaw(string fileName)
+        public unsafe int[,] ReadRaw(string fileName)
         {
             IntPtr data = LoadRaw(fileName);
 
             var dataStructure = GetStructure<libraw_data_t>(data);
 
             var colorsStr = dataStructure.idata.cdesc;
-            int rIndex = colorsStr.IndexOf('R');
-            int gIndex = colorsStr.IndexOf('G');
-            int bIndex = colorsStr.IndexOf('B');
-            int g2Index = colorsStr.LastIndexOf('G');
 
+            if (colorsStr != "RGBG")
+                throw new NotImplementedException();
 
-            var pixels = new int[dataStructure.sizes.iwidth, dataStructure.sizes.iheight];
+            int xoffs = 0;
+            int yoffs = 0;
+
+            string cameraPattern = "";
+            cameraPattern += colorsStr[NativeMethods.libraw_COLOR(data, 0, 0)];
+            cameraPattern += colorsStr[NativeMethods.libraw_COLOR(data, 0, 1)];
+            cameraPattern += colorsStr[NativeMethods.libraw_COLOR(data, 1, 0)];
+            cameraPattern += colorsStr[NativeMethods.libraw_COLOR(data, 1, 1)];
+
+            switch (cameraPattern)
+            {
+                case "RGGB":
+                    break;
+                case "GRBG":
+                    xoffs = 1;
+                    break;
+                case "BGGR":
+                    xoffs = 1;
+                    yoffs = 1;
+                    break;
+                case "GBRG":
+                    yoffs = 1;
+                    break;
+                default:
+                    throw new System.NotImplementedException();
+            }
+
             ushort width = dataStructure.sizes.iwidth;
             ushort height = dataStructure.sizes.iheight;
 
-            for (int rc = 0; rc < width * height; rc++)
+            var pixels = new int[width, height];
+
+            for (int y = 0; y < height - yoffs; y++)
             {
-                int row = rc / width;
-                int col = rc - width * row;
+                int i0 = NativeMethods.libraw_COLOR(data, y,0);
+                int i1 = NativeMethods.libraw_COLOR(data, y,1);
 
-                var colorIndex = NativeMethods.libraw_COLOR(data, row, col);
-                short pixelValue  = Marshal.ReadInt16(dataStructure.image, rc * 8 + colorIndex * 2);
+                ushort* ptr = (ushort*) ((byte*)dataStructure.image.ToPointer() + width*8 * y);
 
-                int blockRow = row / 2;
-                int blockCol = col / 2;
+                for (int x = 0; x < width - xoffs; x+=2)
+                {
+                    pixels[x + xoffs, y + yoffs] = *(ptr + i0);
+                    ptr += 4;
+                    pixels[x + xoffs+1, y + yoffs] = *(ptr + i1);
+                    ptr += 4;
+                }
+            }
 
-                if (colorIndex == rIndex)
-                {//R
-                    pixels[blockCol * 2, blockRow * 2] = pixelValue;
-                }
-                else if (colorIndex == gIndex)
-                {//G
-                    pixels[blockCol * 2 + 1, blockRow * 2] = pixelValue;
-                }
-                else if (colorIndex == g2Index)
-                {//G2
-                    pixels[blockCol * 2 , blockRow * 2 + 1] = pixelValue;
-                }
-                else if (colorIndex == bIndex)
-                {//B
-                    pixels[blockCol * 2 + 1, blockRow * 2 + 1] = pixelValue;
+            if (dataStructure.color.maximum > 0)
+            {
+                int multiplier = (int) Math.Pow(2, Math.Floor(Math.Log(32768.0 / dataStructure.color.maximum, 2)));
+                if (multiplier > 1)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            pixels[x, y] *= multiplier;
+                        }
+                    }
                 }
             }
             NativeMethods.libraw_close(data);

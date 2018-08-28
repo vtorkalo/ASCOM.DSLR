@@ -254,13 +254,12 @@ namespace ASCOM.DSLR.Classes
             var selectedIsoValue = ISOList.SingleOrDefault(v => v.DoubleValue == Iso && v.DoubleValue > 0);
             if (selectedIsoValue == null)
             {
-                var nearest = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0)
+                // EOS700D rejects ISO not in ISOList with BUSY error, assuming we need to stick to the values the camera advertises in its list
+                var nearest = ISOList.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0)
                     .Select(v => new { value = v, difference = Math.Abs(v.DoubleValue - Iso) }).OrderBy(d => d.difference).First().value;
 
                 selectedIsoValue = nearest;
             }
-
-            var isoValue = ISOValues.GetValue((double)Iso);
 
             return selectedIsoValue;
         }

@@ -363,8 +363,10 @@ namespace ASCOM.DSLR
         {
             get
             {
-                var iso = ApiContainer.DslrCamera.IsoValues.Select(i => "ISO" + i.ToString()).ToArray();
-                return new ArrayList(iso);
+                // ASCOM Camera drivers should implement either Gains or GainMin/GainMax, not both
+                // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
+                // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
+                throw new PropertyNotImplementedException("The Gains property is not implemented");
             }
         }
 
