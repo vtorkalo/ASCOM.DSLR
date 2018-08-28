@@ -5,13 +5,13 @@
 [Setup]
 AppID={{64931281-9e67-4d94-bc2a-083a023714fd}
 AppName=ASCOM DSLR.Camera Camera Driver
-AppVerName=ASCOM DSLR.Camera Camera Driver 0.0.2
-AppVersion=0.0.1
+AppVerName=ASCOM DSLR.Camera Camera Driver {#ApplicationVersion}
+AppVersion={#ApplicationVersion}
 AppPublisher=Volodymyr Torkalo <Torkalo@gmail.com>
 AppPublisherURL=mailto:Torkalo@gmail.com
 AppSupportURL=http://tech.groups.yahoo.com/group/ASCOM-Talk/
 AppUpdatesURL=http://ascom-standards.org/
-VersionInfoVersion=1.0.0
+VersionInfoVersion={#ApplicationVersion}
 MinVersion=0,5.0.2195sp4
 DefaultDirName="{cf}\ASCOM\Camera\ASCOM.DSLR.Camera"
 DisableDirPage=yes
@@ -81,7 +81,7 @@ Source: "pktriggercord\Changelog"; DestDir: "{app}/pktriggercord"
 [Run]
 ; Only for .NET assembly/in-proc drivers
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
-Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
+;Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
 
 
 
@@ -90,8 +90,8 @@ Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.C
 ; Only for .NET assembly/in-proc drivers
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "-u ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
 ; This helps to give a clean uninstall
-Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
-Filename: "{dotnet4064}\regasm.exe"; Parameters: "-u ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
+;Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
+;Filename: "{dotnet4064}\regasm.exe"; Parameters: "-u ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
 
 
 [CODE]
