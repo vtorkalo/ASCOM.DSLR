@@ -170,7 +170,15 @@ namespace ASCOM.DSLR
                 if (value)
                 {
                     connectedState = true;
+                    var previousModelHistory = CameraSettings.CameraModelsHistory.ToList();
                     ApiContainer.DslrCamera.ConnectCamera();
+                    var model = ApiContainer.DslrCamera.CameraModel;
+                    if (model != null && previousModelHistory.All(c => c.Name != model.Name))
+                    {
+                        WriteProfile(); // save the model info to avoid having to run test exposures next time
+                        ApiContainer.DslrCamera.ConnectCamera(); // reconnect the camera because write profile disconnects it.
+                    }
+
                 }
                 else
                 {
