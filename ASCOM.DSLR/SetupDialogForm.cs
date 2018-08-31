@@ -280,26 +280,29 @@ namespace ASCOM.DSLR
 
         private void LiveViewModeChagned()
         {
-            bool isLiveView = IsLiveView();
+            if (IsCanon())
+            {
+                bool isLiveView = IsLiveView();
 
-            chkUseExternalShutter.Visible = !isLiveView;
-            cbShutterPort.Visible = !isLiveView;
+                chkUseExternalShutter.Visible = !isLiveView;
+                cbShutterPort.Visible = !isLiveView;
 
-            chkEnableBin.Visible = !isLiveView;
-            cbBinningMode.Visible = !isLiveView;
+                chkEnableBin.Visible = !isLiveView;
+                cbBinningMode.Visible = !isLiveView;
 
-            lblSavePhotosTo.Visible = !isLiveView;
-            tbSavePath.Visible = !isLiveView;
-            btnBrowse.Visible = !isLiveView;
+                lblSavePhotosTo.Visible = !isLiveView;
+                tbSavePath.Visible = !isLiveView;
+                btnBrowse.Visible = !isLiveView;
 
-            lblIso.Visible = !isLiveView;
-            cbIso.Visible = !isLiveView;
+                lblIso.Visible = !isLiveView;
+                cbIso.Visible = !isLiveView;
 
-            lblLiveViewZoom.Visible = isLiveView;
-            cbLiveViewZoom.Visible = isLiveView;
+                lblLiveViewZoom.Visible = isLiveView;
+                cbLiveViewZoom.Visible = isLiveView;
 
-            cbImageMode.Visible = !isLiveView;
-            lbImageMode.Visible = !isLiveView;
+                cbImageMode.Visible = !isLiveView;
+                lbImageMode.Visible = !isLiveView;
+            }
         }
 
         private bool IsLiveView()
