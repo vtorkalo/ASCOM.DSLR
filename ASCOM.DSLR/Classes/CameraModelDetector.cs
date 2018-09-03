@@ -27,6 +27,7 @@ namespace ASCOM.DSLR.Classes
             camera.ImageReady += Camera_ImageReady;
             camera.StorePath = storePath;
             camera.Iso = 200;
+            camera.ImageFormat = Enums.ImageFormat.RAW;
             camera.StartExposure(1, true);
 
             oSignalEvent.WaitOne(60*1000); 
@@ -46,7 +47,6 @@ namespace ASCOM.DSLR.Classes
             return result;
         }
 
-        private CameraModel cameraModel;
         private int[,] _imageData;
 
         private void Camera_ImageReady(object sender, ImageReadyEventArgs e)
