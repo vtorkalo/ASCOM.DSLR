@@ -232,7 +232,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                string name = "Short driver name - please customise";
+                string name = "ASCOM.DSLR";
                 tl.LogMessage("Name Get", name);
                 return name;
             }
