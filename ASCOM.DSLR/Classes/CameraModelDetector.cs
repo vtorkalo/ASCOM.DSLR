@@ -28,6 +28,7 @@ namespace ASCOM.DSLR.Classes
             camera.StorePath = storePath;
             camera.Iso = 200;
             camera.ImageFormat = Enums.ImageFormat.RAW;
+            camera.IsLiveViewMode = false;
             camera.StartExposure(1, true);
 
             oSignalEvent.WaitOne(60*1000); 
