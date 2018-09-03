@@ -48,14 +48,6 @@ namespace ASCOM.DSLR
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort, _cameraSettings.CameraModelsHistory);
             }
-            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
-            {
-                _dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
-            }
-            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Pentax)
-            {
-                _dslrCamera = new PentaxCamera(_cameraSettings.CameraModelsHistory);
-            }
         }
 
         private static CameraSettings _cameraSettings { get; set; }
@@ -169,14 +161,12 @@ namespace ASCOM.DSLR
         private void LvExposure(double duration)
         {
             ApiContainer.DslrCamera.LiveViewImageReady += DslrCamera_LiveViewImageReady;
-            ApiContainer.DslrCamera.StartExposure(duration, true);            
+            ApiContainer.DslrCamera.StartExposure(duration, true);
         }
 
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
         {
             cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
-
-            cameraImageArray = _imageDataProcessor.ToMonochrome(cameraImageArray, _imageDataProcessor.From8To16Bit);
             cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
 
@@ -229,9 +219,6 @@ namespace ASCOM.DSLR
                     camera.ImageFormat = ImageFormat.JPEG;
                     break;
             }
-
-            camera.UseExternalShutter = settings.UseExternalShutter;
-            camera.ExternalShutterPort = settings.ExternalShutterPortName;
         }
 
         private void PrepareCameraImageArray(string rawFileName)
@@ -248,10 +235,6 @@ namespace ASCOM.DSLR
             else if (CameraSettings.CameraMode == Enums.CameraMode.RGGB)
             {
                 cameraImageArray = _imageDataProcessor.ReadRaw(rawFileName);
-            }
-            if (BinX > 1 || BinY > 1)
-            {
-                cameraImageArray = _imageDataProcessor.Binning(cameraImageArray, BinX, BinY, CameraSettings.BinningMode);
             }
 
             cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
@@ -377,8 +360,8 @@ namespace ASCOM.DSLR
         public object ImageArray
         {
             get
-            {            
-                return cameraImageArray;                
+            {
+                return cameraImageArray;
             }
         }
 
@@ -441,16 +424,23 @@ namespace ASCOM.DSLR
             get
             {
                 int maxValue = 0;
-                switch (CameraSettings.CameraMode)
+                if (CameraSettings.LiveViewCaptureMode)
                 {
-                    case Enums.CameraMode.RGGB:
-                    case Enums.CameraMode.Color16:
-                        maxValue = short.MaxValue;
-                        break;
+                    maxValue = byte.MaxValue;
+                }
+                else
+                {
+                    switch (CameraSettings.CameraMode)
+                    {
+                        case Enums.CameraMode.RGGB:
+                        case Enums.CameraMode.Color16:
+                            maxValue = ushort.MaxValue;
+                            break;
 
-                    case Enums.CameraMode.ColorJpg:
-                        maxValue = byte.MaxValue;
-                        break;
+                        case Enums.CameraMode.ColorJpg:
+                            maxValue = byte.MaxValue;
+                            break;
+                    }
                 }
 
                 return maxValue;
@@ -461,7 +451,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return (short)(CameraSettings.EnableBinning ? 4 : 1);
+                return 1;
             }
         }
 
@@ -519,25 +509,15 @@ namespace ASCOM.DSLR
             {
                 SensorType sensorType;
 
-                if (CameraSettings.LiveViewCaptureMode)
+                switch (CameraSettings.CameraMode)
                 {
-                    sensorType = SensorType.Monochrome;
-                }
-                else
-                {
-                    switch (CameraSettings.CameraMode)
-                    {
-                        case CameraMode.RGGB:
-                            sensorType = CameraSettings.EnableBinning ? SensorType.Monochrome : SensorType.RGGB;
-                            break;
-                        case CameraMode.Color16:
-                        case CameraMode.ColorJpg:
-                            sensorType = SensorType.Color;
-                            break;
-                        default:
-                            sensorType = SensorType.RGGB;
-                            break;
-                    }
+                    case CameraMode.Color16:
+                    case CameraMode.ColorJpg:
+                        sensorType = SensorType.Color;
+                        break;
+                    default:
+                        sensorType = SensorType.RGGB;
+                        break;
                 }
 
                 return sensorType;
@@ -554,8 +534,6 @@ namespace ASCOM.DSLR
             {
             }
         }
-
-       
 
         #endregion
     }

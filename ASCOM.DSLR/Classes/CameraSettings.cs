@@ -16,10 +16,7 @@ namespace ASCOM.DSLR.Classes
             IntegrationApi = ConnectionMethod.CanonSdk;
             Iso = 400;
             BackyardEosPort = 1491;
-            EnableBinning = false;
-            ExternalShutterPortName = string.Empty;
             LiveViewZoom = LiveViewZoom.Fit;
-            BinningMode = BinningMode.Sum;
             CameraModelsHistory = new List<CameraModel>();
         }
 
@@ -34,14 +31,6 @@ namespace ASCOM.DSLR.Classes
         public short Iso { get; set; }
 
         public int BackyardEosPort { get; set; }
-
-        public bool EnableBinning { get; set; }
-
-        public BinningMode BinningMode { get; set; }
-
-        public bool UseExternalShutter { get; set; }
-
-        public string ExternalShutterPortName { get; set; }
 
         public bool LiveViewCaptureMode { get; set; }
 

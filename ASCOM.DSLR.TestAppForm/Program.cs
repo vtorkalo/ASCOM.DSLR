@@ -1,5 +1,4 @@
 ﻿using ASCOM.DSLR.Classes;
-using CameraControl.Plugins.ExternalDevices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

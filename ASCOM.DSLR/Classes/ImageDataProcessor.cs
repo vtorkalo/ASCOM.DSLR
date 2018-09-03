@@ -72,21 +72,6 @@ namespace ASCOM.DSLR.Classes
             return result;
         }
 
-        public int[,] ToMonochrome(Array data, Func<int, int> process)
-        {
-            var result = new int[data.GetLength(0), data.GetLength(1)];
-            for (int x = 0; x < data.GetLength(0); x++)
-                for (int y = 0; y < data.GetLength(1); y++)
-                {
-                    for (int c = 0; c < 3; c++)
-                    {
-                        result[x, y] += (int)data.GetValue(x, y, c);
-                    }
-                    result[x, y] = process(result[x, y]);
-                }
-
-            return result;
-        }
         
         public int[,,] ReadBitmap(Bitmap img)
         {
@@ -105,9 +90,9 @@ namespace ASCOM.DSLR.Classes
 
             for (int rc = 0; rc < width * height; rc++)
             {
-                var r = bytesArray[rc * 3];
+                var b = bytesArray[rc * 3];
                 var g = bytesArray[rc * 3 + 1];
-                var b = bytesArray[rc * 3 + 2];
+                var r = bytesArray[rc * 3 + 2];
 
                 int row = rc / width;
                 int col = rc - width * row;
@@ -202,41 +187,6 @@ namespace ASCOM.DSLR.Classes
             NativeMethods.libraw_close(data);
 
             return pixels;
-        }
-
-        public Array Binning(Array data, int binx, int biny, BinningMode binningMode)
-        {
-            int width = data.GetLength(0);
-            int height = data.GetLength(1);
-            int binWidth = width / binx;
-            int binHeight = height / biny;
-
-            var result = Array.CreateInstance(typeof(int), binWidth, binHeight);
-
-            for (int x = 0; x < binWidth; x++)
-                for (int y = 0; y < binHeight; y++)
-                {
-                    var binBlockData = new List<int>();
-                    for (int x2 = x * binx; x2 < x * binx + binx; x2++)
-                        for (int y2 = y * biny; y2 < y * biny + biny; y2++)
-                        {
-                            binBlockData.Add((int)data.GetValue(x2, y2));
-                        }
-
-                    int value = 0;
-                    switch (binningMode)
-                    {
-                        case BinningMode.Sum:
-                            value = GetSum(binBlockData, binx, biny);
-                            break;
-                        case BinningMode.Median:
-                            value = GetMedian(binBlockData);
-                            break;
-                    }
-                    result.SetValue(value, x, y);
-                }
-
-            return result;
         }
 
         public Array CutArray(Array data, int StartX, int StartY, int NumX, int NumY, int CameraXSize, int CameraYSize)
