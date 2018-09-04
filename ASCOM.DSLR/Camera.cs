@@ -5,7 +5,6 @@ using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using System;
 using System.Collections;
-using System.Linq;
 
 namespace ASCOM.DSLR
 {
@@ -434,7 +433,7 @@ namespace ASCOM.DSLR
                     {
                         case Enums.CameraMode.RGGB:
                         case Enums.CameraMode.Color16:
-                            maxValue = ushort.MaxValue;
+                            maxValue = short.MaxValue;
                             break;
 
                         case Enums.CameraMode.ColorJpg:
