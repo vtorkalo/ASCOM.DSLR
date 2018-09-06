@@ -18,7 +18,7 @@ using System.IO.Ports;
 
 namespace ASCOM.DSLR
 {
-    [ComVisible(false)]					
+    [ComVisible(false)]
     public partial class SetupDialogForm : Form
     {
         public SetupDialogForm(CameraSettings settings)
@@ -91,12 +91,12 @@ namespace ASCOM.DSLR
             cbImageMode.Items.Add(CameraMode.Color16);
             cbImageMode.Items.Add(CameraMode.ColorJpg);
             SetSelectedItem(cbImageMode, Settings.CameraMode);
-            
+
             cbIntegrationApi.Items.Add(ConnectionMethod.CanonSdk);
             cbIntegrationApi.Items.Add(ConnectionMethod.BackyardEOS);
             SetSelectedItem(cbIntegrationApi, Settings.IntegrationApi);
 
-            var isoValues = ISOValues.Values.Where(v => v.DoubleValue <= short.MaxValue && v.DoubleValue>0).Select(v => (short)v.DoubleValue);
+            var isoValues = ISOValues.Values.Where(v => v.DoubleValue <= short.MaxValue && v.DoubleValue > 0).Select(v => (short)v.DoubleValue);
             cbIso.DisplayMember = "display";
             cbIso.ValueMember = "value";
             cbIso.DataSource = isoValues.Select(v => new { value = v, display = v.ToString() }).ToArray();
@@ -124,7 +124,7 @@ namespace ASCOM.DSLR
                 folderBrowserDialog.SelectedPath = tbSavePath.Text;
             }
 
-            var thread = new Thread(new ParameterizedThreadStart(param => 
+            var thread = new Thread(new ParameterizedThreadStart(param =>
             {
                 if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
                 {
@@ -208,28 +208,25 @@ namespace ASCOM.DSLR
 
         private void cbImageMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void LiveViewModeChagned()
         {
-            if (IsCanon())
-            {
-                bool isLiveView = IsLiveView();
+            bool isLiveView = IsLiveView() && IsCanon();
 
-                lblSavePhotosTo.Visible = !isLiveView;
-                tbSavePath.Visible = !isLiveView;
-                btnBrowse.Visible = !isLiveView;
+            lblSavePhotosTo.Visible = !isLiveView;
+            tbSavePath.Visible = !isLiveView;
+            btnBrowse.Visible = !isLiveView;
 
-                lblIso.Visible = !isLiveView;
-                cbIso.Visible = !isLiveView;
+            lblIso.Visible = !isLiveView;
+            cbIso.Visible = !isLiveView;
 
-                lblLiveViewZoom.Visible = isLiveView;
-                cbLiveViewZoom.Visible = isLiveView;
+            lblLiveViewZoom.Visible = isLiveView;
+            cbLiveViewZoom.Visible = isLiveView;
 
-                cbImageMode.Visible = !isLiveView;
-                lbImageMode.Visible = !isLiveView;
-            }
+            cbImageMode.Visible = !isLiveView;
+            lbImageMode.Visible = !isLiveView;
         }
 
         private bool IsLiveView()
