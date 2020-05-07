@@ -91,6 +91,9 @@ namespace ASCOM.DSLR
         /// the new settings are saved, otherwise the old values are reloaded.
         /// THIS IS THE ONLY PLACE WHERE SHOWING USER INTERFACE IS ALLOWED!
         /// </summary>
+        /// 
+
+
         public void SetupDialog()
         {
             Connected = false;

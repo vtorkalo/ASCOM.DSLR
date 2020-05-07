@@ -31,6 +31,7 @@ namespace ASCOM.DSLR
         private void cmdOK_Click(object sender, EventArgs e) // OK button event handler
         {
             Settings.TraceLog = chkTrace.Checked;
+            Settings.SaveFile = chkSaveFile.Checked;
             Settings.CameraMode = (CameraMode)cbImageMode.SelectedItem;
 
             Settings.IntegrationApi = (ConnectionMethod)cbIntegrationApi.SelectedItem;
@@ -48,6 +49,8 @@ namespace ASCOM.DSLR
 
             Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
             Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
+
+  
         }
 
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
@@ -85,6 +88,8 @@ namespace ASCOM.DSLR
         private void InitUI()
         {
             chkTrace.Checked = Settings.TraceLog;
+
+            chkSaveFile.Checked = Settings.SaveFile;
 
             cbImageMode.Items.Clear();
             cbImageMode.Items.Add(CameraMode.RGGB);
@@ -243,6 +248,16 @@ namespace ASCOM.DSLR
         {
             var aboutForm = new About();
             aboutForm.ShowDialog(this);
+        }
+
+        private void chkTrace_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SetupDialogForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

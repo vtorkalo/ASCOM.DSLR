@@ -62,5 +62,10 @@ namespace ASCOM.DSLR
         {
             driver.StartExposure(2, true);
         }
+
+        private void labelDriverId_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace ASCOM.DSLR.Classes
             TraceLog = true;
             CameraMode = CameraMode.RGGB;
             StorePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "ASCOM_DSLR");
+            SaveFile = false;
             IntegrationApi = ConnectionMethod.CanonSdk;
             Iso = 400;
             BackyardEosPort = 1491;
@@ -27,6 +28,8 @@ namespace ASCOM.DSLR.Classes
         public ConnectionMethod IntegrationApi { get; set; }
 
         public string StorePath { get; set; }
+
+        public bool SaveFile { get; set; }
 
         public short Iso { get; set; }
 

@@ -36,9 +36,10 @@
             // 
             // buttonChoose
             // 
-            this.buttonChoose.Location = new System.Drawing.Point(309, 10);
+            this.buttonChoose.Location = new System.Drawing.Point(618, 19);
+            this.buttonChoose.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.buttonChoose.Name = "buttonChoose";
-            this.buttonChoose.Size = new System.Drawing.Size(72, 23);
+            this.buttonChoose.Size = new System.Drawing.Size(144, 44);
             this.buttonChoose.TabIndex = 0;
             this.buttonChoose.Text = "Choose";
             this.buttonChoose.UseVisualStyleBackColor = true;
@@ -46,9 +47,10 @@
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(309, 39);
+            this.buttonConnect.Location = new System.Drawing.Point(618, 75);
+            this.buttonConnect.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.buttonConnect.Name = "buttonConnect";
-            this.buttonConnect.Size = new System.Drawing.Size(72, 23);
+            this.buttonConnect.Size = new System.Drawing.Size(144, 44);
             this.buttonConnect.TabIndex = 1;
             this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
@@ -58,18 +60,21 @@
             // 
             this.labelDriverId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelDriverId.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ASCOM.DSLR.Properties.Settings.Default, "DriverId", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.labelDriverId.Location = new System.Drawing.Point(12, 40);
+            this.labelDriverId.Location = new System.Drawing.Point(24, 77);
+            this.labelDriverId.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.labelDriverId.Name = "labelDriverId";
-            this.labelDriverId.Size = new System.Drawing.Size(291, 21);
+            this.labelDriverId.Size = new System.Drawing.Size(580, 39);
             this.labelDriverId.TabIndex = 2;
             this.labelDriverId.Text = global::ASCOM.DSLR.Properties.Settings.Default.DriverId;
             this.labelDriverId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelDriverId.Click += new System.EventHandler(this.labelDriverId_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(309, 93);
+            this.button1.Location = new System.Drawing.Point(618, 179);
+            this.button1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(150, 44);
             this.button1.TabIndex = 3;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
@@ -77,13 +82,14 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(409, 262);
+            this.ClientSize = new System.Drawing.Size(818, 504);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.labelDriverId);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.buttonChoose);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "Form1";
             this.Text = "TEMPLATEDEVICETYPE Test";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);

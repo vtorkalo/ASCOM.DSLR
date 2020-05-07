@@ -11,6 +11,8 @@ namespace ASCOM.DSLR.Classes
 {
     public class ImageDataProcessor
     {
+       
+
         private IntPtr LoadRaw(string fileName)
         {
             IntPtr data = NativeMethods.libraw_init(LibRaw_constructor_flags.LIBRAW_OPIONS_NO_DATAERR_CALLBACK);

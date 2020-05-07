@@ -207,6 +207,7 @@ namespace ASCOM.DSLR
         {
             camera.Iso = Gain > 0 ? Gain : settings.Iso;
             camera.StorePath = settings.StorePath;
+            camera.SaveFile = settings.SaveFile;
 
             switch (CameraSettings.CameraMode)
             {
@@ -329,17 +330,24 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return ApiContainer.DslrCamera.Iso;
+                if (ApiContainer.DslrCamera.Iso == 0)
+                { return CameraSettings.Iso; } else
+                { return ApiContainer.DslrCamera.Iso; }    
             }
             set
             {
                 ApiContainer.DslrCamera.Iso = value;
+                CameraSettings.Iso = value;
             }
         }
 
         public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
+        
 
         public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
+     
+
+        private ArrayList _gains;
 
         public ArrayList Gains
         {
@@ -348,7 +356,19 @@ namespace ASCOM.DSLR
                 // ASCOM Camera drivers should implement either Gains or GainMin/GainMax, not both
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
-                throw new PropertyNotImplementedException("The Gains property is not implemented");
+                //throw new PropertyNotImplementedException("The Gains property is not implemented");
+                if (_gains == null)
+                {
+                    _gains = new ArrayList();
+                }
+
+                for (int i = 0; i < ApiContainer.DslrCamera.IsoValues.Count; i++)
+                {
+                    _gains.Add(ApiContainer.DslrCamera.IsoValues[i]);
+                }
+                    
+
+                return _gains;
             }
         }
 
@@ -531,6 +551,7 @@ namespace ASCOM.DSLR
             }
             set
             {
+                
             }
         }
 

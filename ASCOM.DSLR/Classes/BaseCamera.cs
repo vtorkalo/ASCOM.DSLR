@@ -78,6 +78,7 @@ namespace ASCOM.DSLR.Classes
         }
 
         public string StorePath { get; set; }
+        public bool SaveFile { get; set; }
         public double SensorTemperature { get; protected set; }
 
         public abstract CameraModel ScanCameras();
@@ -98,7 +99,7 @@ namespace ASCOM.DSLR.Classes
 
         public short Iso
         {
-            get; set;
+            get;set;
         }
 
         public virtual short MinIso

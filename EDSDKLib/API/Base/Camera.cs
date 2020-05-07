@@ -566,7 +566,7 @@ namespace EOSDigital.API
 
             try
             {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
             }
             catch (ExecutionException)
             {
