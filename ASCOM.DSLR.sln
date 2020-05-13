@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Registrar", "Registrar\Regi
 		{64308775-BD4A-469C-BCAB-3ED830B811AF} = {64308775-BD4A-469C-BCAB-3ED830B811AF}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nikoncswrapper", "nikoncswrapper\nikoncswrapper.csproj", "{AADE1DF5-4C46-4760-B72B-474D90336F5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Capture.Workflow|Any CPU = Capture.Workflow|Any CPU
@@ -86,6 +88,18 @@ Global
 		{2F2993A5-1A52-4BFE-8A09-86B7BB97820C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F2993A5-1A52-4BFE-8A09-86B7BB97820C}.Release|x86.ActiveCfg = Release|Any CPU
 		{2F2993A5-1A52-4BFE-8A09-86B7BB97820C}.Release|x86.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|Any CPU.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|Any CPU.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|x86.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|x86.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|x86.Build.0 = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|x86.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
