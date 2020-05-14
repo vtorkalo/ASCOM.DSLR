@@ -47,6 +47,14 @@ namespace ASCOM.DSLR
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort, _cameraSettings.CameraModelsHistory);
             }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
+            {
+                _dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
+            }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Pentax)
+            {
+                _dslrCamera = new PentaxCamera(_cameraSettings.CameraModelsHistory);
+            }
         }
 
         private static CameraSettings _cameraSettings { get; set; }
@@ -78,8 +86,21 @@ namespace ASCOM.DSLR
             connectedState = false;
             ApiContainer.TraceLogger = tl;
 
+            // for test
+            /*if (CameraSettings.EnableBinning == true)
+            {
+                BinX = 2;
+                BinY = 2;
+            }
+            else {
+                BinX = 1;
+                BinY = 1;
+            }*/
+
             BinX = 1;
             BinY = 1;
+
+
         }
 
         private void _dslrCamera_ImageReady(object sender, ImageReadyEventArgs args)
@@ -209,8 +230,11 @@ namespace ASCOM.DSLR
             camera.StorePath = settings.StorePath;
             camera.SaveFile = settings.SaveFile;
 
+            
+
             switch (CameraSettings.CameraMode)
             {
+
                 case CameraMode.RGGB:
                 case CameraMode.Color16:
                     camera.ImageFormat = ImageFormat.RAW;
@@ -219,6 +243,10 @@ namespace ASCOM.DSLR
                     camera.ImageFormat = ImageFormat.JPEG;
                     break;
             }
+
+            camera.UseExternalShutter = settings.UseExternalShutter;
+            camera.ExternalShutterPort = settings.ExternalShutterPortName;
+
         }
 
         private void PrepareCameraImageArray(string rawFileName)
@@ -235,6 +263,10 @@ namespace ASCOM.DSLR
             else if (CameraSettings.CameraMode == Enums.CameraMode.RGGB)
             {
                 cameraImageArray = _imageDataProcessor.ReadRaw(rawFileName);
+            }
+            if (BinX > 1 || BinY > 1)
+            {
+                cameraImageArray = _imageDataProcessor.Binning(cameraImageArray, BinX, BinY, CameraSettings.BinningMode);
             }
 
             cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
@@ -470,7 +502,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return 1;
+                return (short)(CameraSettings.EnableBinning ? 2 : 1);
             }
         }
 
@@ -528,15 +560,26 @@ namespace ASCOM.DSLR
             {
                 SensorType sensorType;
 
-                switch (CameraSettings.CameraMode)
+                if (CameraSettings.LiveViewCaptureMode)
                 {
-                    case CameraMode.Color16:
-                    case CameraMode.ColorJpg:
-                        sensorType = SensorType.Color;
-                        break;
-                    default:
-                        sensorType = SensorType.RGGB;
-                        break;
+                    sensorType = SensorType.Monochrome;
+                }
+                else
+                {
+                    switch (CameraSettings.CameraMode)
+                    {
+                        case CameraMode.RGGB:
+                            sensorType = CameraSettings.EnableBinning ? SensorType.Monochrome : SensorType.RGGB;
+                            //sensorType = SensorType.RGGB;
+                            break;
+                        case CameraMode.Color16:
+                        case CameraMode.ColorJpg:
+                            sensorType = SensorType.Color;
+                            break;
+                        default:
+                            sensorType = SensorType.RGGB;
+                            break;
+                    }
                 }
 
                 return sensorType;

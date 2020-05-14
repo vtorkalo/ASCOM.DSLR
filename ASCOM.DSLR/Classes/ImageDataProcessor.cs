@@ -191,6 +191,41 @@ namespace ASCOM.DSLR.Classes
             return pixels;
         }
 
+        public Array Binning(Array data, int binx, int biny, BinningMode binningMode)
+        {
+            int width = data.GetLength(0);
+            int height = data.GetLength(1);
+            int binWidth = width / binx;
+            int binHeight = height / biny;
+
+            var result = Array.CreateInstance(typeof(int), binWidth, binHeight);
+
+            for (int x = 0; x < binWidth; x++)
+                for (int y = 0; y < binHeight; y++)
+                {
+                    var binBlockData = new List<int>();
+                    for (int x2 = x * binx; x2 < x * binx + binx; x2++)
+                        for (int y2 = y * biny; y2 < y * biny + biny; y2++)
+                        {
+                            binBlockData.Add((int)data.GetValue(x2, y2));
+                        }
+
+                    int value = 0;
+                    switch (binningMode)
+                    {
+                        case BinningMode.Sum:
+                            value = GetSum(binBlockData, binx, biny);
+                            break;
+                        case BinningMode.Median:
+                            value = GetMedian(binBlockData);
+                            break;
+                    }
+                    result.SetValue(value, x, y);
+                }
+
+            return result;
+        }
+
         public Array CutArray(Array data, int StartX, int StartY, int NumX, int NumY, int CameraXSize, int CameraYSize)
         {
             Array result = null;

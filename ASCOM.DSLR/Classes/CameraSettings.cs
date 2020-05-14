@@ -18,6 +18,7 @@ namespace ASCOM.DSLR.Classes
             Iso = 400;
             BackyardEosPort = 1491;
             LiveViewZoom = LiveViewZoom.Fit;
+            BinningMode = BinningMode.Sum;
             CameraModelsHistory = new List<CameraModel>();
         }
 
@@ -40,5 +41,14 @@ namespace ASCOM.DSLR.Classes
         public LiveViewZoom LiveViewZoom { get; set; }
 
         public List<CameraModel> CameraModelsHistory { get; set; }
+
+        public BinningMode BinningMode { get; set; }
+
+        public bool EnableBinning { get; set; }
+
+        public bool UseExternalShutter { get; set; }
+
+        public string ExternalShutterPortName { get; set; }
+
     }
 }

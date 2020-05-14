@@ -97,9 +97,13 @@
     <Compile Include="Classes\CameraSettings.cs" />
     <Compile Include="Classes\CameraSettingsProvider.cs" />
     <Compile Include="Classes\CanonSdkCamera.cs" />
+    <Compile Include="Classes\DigiCamControlCamera.cs" />
     <Compile Include="Classes\ErrorMessages.cs" />
     <Compile Include="Classes\ExifToolWrapper.cs" />
+    <Compile Include="Classes\PentaxCamera.cs" />
+    <Compile Include="Classes\SerialPortShutterRelease.cs" />
     <Compile Include="Driver.cs" />
+    <Compile Include="Enums\BinningMode.cs" />
     <Compile Include="Enums\CameraMode.cs" />
     <Compile Include="Enums\ImageFormat.cs" />
     <Compile Include="Enums\ConnectionMethod.cs" />
@@ -191,6 +195,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DigiCamControl\CameraControl.Devices\CameraControl.Devices.csproj">
+      <Project>{e8572d8b-c987-4d20-bd88-1f8925a64a82}</Project>
+      <Name>CameraControl.Devices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EDSDKLib\EDSDKLib.csproj">
       <Project>{15e99248-6161-46a4-9183-609ca62406a6}</Project>
       <Name>EDSDKLib</Name>
