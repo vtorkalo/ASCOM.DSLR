@@ -502,7 +502,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return (short)(CameraSettings.EnableBinning ? 2 : 1);
+                return (short)(CameraSettings.EnableBinning ? 4 : 1);
             }
         }
 
