@@ -174,6 +174,9 @@ namespace ASCOM.DSLR
                 {
                     connectedState = true;
                     var previousModelHistory = CameraSettings.CameraModelsHistory.ToList();
+
+                    // TODO: add exception handling here, the camera may not connect!
+
                     ApiContainer.DslrCamera.ConnectCamera();
                     var model = ApiContainer.DslrCamera.CameraModel;
                     if (model != null && previousModelHistory.All(c => c.Name != model.Name))

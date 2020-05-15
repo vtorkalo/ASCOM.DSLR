@@ -55,6 +55,9 @@ namespace ASCOM.DSLR.Classes
         {
             ScanForCameras();
             _mainCamera = CamList.First();
+
+            // TODO: handle exceptions here, this can fail!
+
             var cameraModel = GetCameraModel(_mainCamera.DeviceName);
             return cameraModel;
         }
