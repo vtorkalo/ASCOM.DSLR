@@ -86,17 +86,6 @@ namespace ASCOM.DSLR
             connectedState = false;
             ApiContainer.TraceLogger = tl;
 
-            // for test
-            /*if (CameraSettings.EnableBinning == true)
-            {
-                BinX = 2;
-                BinY = 2;
-            }
-            else {
-                BinX = 1;
-                BinY = 1;
-            }*/
-
             BinX = 1;
             BinY = 1;
 
@@ -364,7 +353,9 @@ namespace ASCOM.DSLR
             {
                 if (ApiContainer.DslrCamera.Iso == 0)
                 { return CameraSettings.Iso; } else
-                { return ApiContainer.DslrCamera.Iso; }    
+                { return ApiContainer.DslrCamera.Iso; }
+
+                //return ApiContainer.DslrCamera.Iso;
             }
             set
             {
@@ -373,11 +364,12 @@ namespace ASCOM.DSLR
             }
         }
 
+  
         public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
-        
+        //public short GainMax { get; }
 
         public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
-     
+        //public short GainMin { get; }
 
         private ArrayList _gains;
 
@@ -389,19 +381,10 @@ namespace ASCOM.DSLR
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
                 //throw new PropertyNotImplementedException("The Gains property is not implemented");
-                if (_gains == null)
-                {
-                    _gains = new ArrayList();
-                }
+                return new ArrayList(ApiContainer.DslrCamera.IsoValues);
 
-                for (int i = 0; i < ApiContainer.DslrCamera.IsoValues.Count; i++)
-                {
-                    _gains.Add(ApiContainer.DslrCamera.IsoValues[i]);
-                }
-                    
-
-                return _gains;
             }
+ 
         }
 
         public bool HasShutter { get { return true; } }

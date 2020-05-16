@@ -113,7 +113,7 @@ namespace ASCOM.DSLR
             cbBinningMode.Items.Add(BinningMode.Sum);
             cbBinningMode.Items.Add(BinningMode.Median);
             SetSelectedItem(cbBinningMode, Settings.BinningMode);
-
+           
             var isoValues = ISOValues.Values.Where(v => v.DoubleValue <= short.MaxValue && v.DoubleValue>0).Select(v => (short)v.DoubleValue);
             cbIso.DisplayMember = "display";
             cbIso.ValueMember = "value";
