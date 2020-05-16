@@ -6,6 +6,9 @@ namespace Canon.Eos.Framework.Internal.SDK
 
     public partial class Edsdk
     {
+        public const string DllPath32 = "SDK/X86/EDSDK";
+
+        public const string DllPath64 = "SDK/X64/EDSDK";
 
 
         #region Callback Functions
@@ -866,8 +869,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsInitializeSDK();
+        [DllImport(DllPath32, EntryPoint = "EdsInitializeSDK")]
+        public extern static uint EdsInitializeSDK_32();
+
+        [DllImport(DllPath64, EntryPoint = "EdsInitializeSDK")]
+        public extern static uint EdsInitializeSDK_64();
+
+        public static uint EdsInitializeSDK()
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsInitializeSDK_32() : EdsInitializeSDK_64();
+        }
 
         /*-----------------------------------------------------------------------------
         //
@@ -884,9 +895,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsTerminateSDK();
+        [DllImport(DllPath32, EntryPoint = "EdsTerminateSDK")]
+        public extern static uint EdsTerminateSDK_32();
 
+        [DllImport(DllPath64, EntryPoint = "EdsTerminateSDK")]
+        public extern static uint EdsTerminateSDK_64();
+
+        public static uint EdsTerminateSDK()
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsTerminateSDK_32() : EdsTerminateSDK_64();
+        }
 
         /*-------------------------------------------
          Reference-counter operating functions
@@ -904,8 +922,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsRetain(  IntPtr inRef );
+        [DllImport(DllPath32, EntryPoint = "EdsRetain")]
+        public extern static uint EdsRetain_32(IntPtr inRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsRetain")]
+        public extern static uint EdsRetain_64(IntPtr inRef);
+
+        public static uint EdsRetain(IntPtr inRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsRetain_32(inRef) : EdsRetain_64(inRef);
+        }
 
         /*-----------------------------------------------------------------------------
         //
@@ -920,9 +946,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //      Out:    None
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsRelease( IntPtr inRef );
+        [DllImport(DllPath32, EntryPoint = "EdsRelease")]
+        public extern static uint EdsRelease_32(IntPtr inRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsRelease")]
+        public extern static uint EdsRelease_64(IntPtr inRef);
+
+        public static uint EdsRelease(IntPtr inRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsRelease_32(inRef) : EdsRelease_64(inRef);
+        }
 
         /*----------------------------------
          Item-tree operating functions
@@ -941,8 +974,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetChildCount( IntPtr inRef, out int outCount );
+        [DllImport(DllPath32, EntryPoint = "EdsGetChildCount")]
+        public extern static uint EdsGetChildCount_32(IntPtr inRef, out int outCount);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetChildCount")]
+        public extern static uint EdsGetChildCount_64(IntPtr inRef, out int outCount);
+
+        public static uint EdsGetChildCount(IntPtr inRef, out int outCount)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetChildCount_32(inRef, out outCount) : EdsGetChildCount_64(inRef, out outCount);
+        }
 
         /*-----------------------------------------------------------------------------
         //
@@ -958,9 +999,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //                           specified index .
         //
         //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/ 
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetChildAtIndex( IntPtr inRef, int inIndex, out IntPtr outRef);
+        -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsGetChildAtIndex")]
+        public extern static uint EdsGetChildAtIndex_32(IntPtr inRef, int inIndex, out IntPtr outRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetChildAtIndex")]
+        public extern static uint EdsGetChildAtIndex_64(IntPtr inRef, int inIndex, out IntPtr outRef);
+
+        public static uint EdsGetChildAtIndex(IntPtr inRef, int inIndex, out IntPtr outRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetChildAtIndex_32(inRef, inIndex, out outRef) : EdsGetChildAtIndex_64(inRef, inIndex, out outRef);
+        }
 
         /*-----------------------------------------------------------------------------
         //
@@ -975,13 +1024,20 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetParent( IntPtr inRef, out IntPtr outParentRef);
-    
-    
+        [DllImport(DllPath32, EntryPoint = "EdsGetParent")]
+        public extern static uint EdsGetParent_32(IntPtr inRef, out IntPtr outParentRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetParent")]
+        public extern static uint EdsGetParent_64(IntPtr inRef, out IntPtr outParentRef);
+
+        public static uint EdsGetParent(IntPtr inRef, out IntPtr outParentRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetParent_32(inRef, out outParentRef) : EdsGetParent_64(inRef, out outParentRef);
+        }
+
         /*----------------------------------
           Property operating functions
-        ----------------------------------*/    
+        ----------------------------------*/
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetPropertySize
@@ -1002,11 +1058,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //                        size.
         //
         //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/ 
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetPropertySize(IntPtr inRef, uint inPropertyID, int inParam,
-             out EdsDataType outDataType, out int outSize);
-        
+        -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsGetPropertySize")]
+        public extern static uint EdsGetPropertySize_32(IntPtr inRef, uint inPropertyID, int inParam, out EdsDataType outDataType, out int outSize);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPropertySize")]
+        public extern static uint EdsGetPropertySize_64(IntPtr inRef, uint inPropertyID, int inParam, out EdsDataType outDataType, out int outSize);
+
+        public static uint EdsGetPropertySize(IntPtr inRef, uint inPropertyID, int inParam, out EdsDataType outDataType, out int outSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPropertySize_32(inRef, inPropertyID, inParam, out outDataType, out outSize) : EdsGetPropertySize_64(inRef, inPropertyID, inParam, out outDataType, out outSize);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetPropertyData
@@ -1025,10 +1087,18 @@ namespace Canon.Eos.Framework.Internal.SDK
         //       Out:   outPropertyData - The buffer pointer to receive property-value.
         //
         //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/      
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetPropertyData(IntPtr inRef, uint inPropertyID, int inParam,
-             int inPropertySize, IntPtr outPropertyData);
+        -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsGetPropertyData")]
+        public extern static uint EdsGetPropertyData_32(IntPtr inRef, uint inPropertyID, int inParam, int inPropertySize, IntPtr outPropertyData);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPropertyData")]
+        public extern static uint EdsGetPropertyData_64(IntPtr inRef, uint inPropertyID, int inParam, int inPropertySize, IntPtr outPropertyData);
+
+
+        public static uint EdsGetPropertyData(IntPtr inRef, uint inPropertyID, int inParam, int inPropertySize, IntPtr outPropertyData)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPropertyData_32(inRef, inPropertyID, inParam, inPropertySize, outPropertyData) : EdsGetPropertyData_64(inRef, inPropertyID, inParam, inPropertySize, outPropertyData);
+        }
 
         #region GetPorpertyData Wrapper
 
@@ -1085,10 +1155,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetPropertyData( IntPtr inRef, uint inPropertyID,
-             int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData);
-    
+        [DllImport(DllPath32, EntryPoint = "EdsSetPropertyData")]
+        public extern static uint EdsSetPropertyData_32(IntPtr inRef, uint inPropertyID, int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetPropertyData")]
+        public extern static uint EdsSetPropertyData_64(IntPtr inRef, uint inPropertyID, int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData);
+
+        public static uint EdsSetPropertyData(IntPtr inRef, uint inPropertyID, int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetPropertyData_32(inRef, inPropertyID, inParam, inPropertySize, inPropertyData) : EdsSetPropertyData_64(inRef, inPropertyID, inParam, inPropertySize, inPropertyData);
+        }
         /*-----------------------------------------------------------------------------
         //  
         //  Function:   EdsGetPropertyDesc
@@ -1104,14 +1180,20 @@ namespace Canon.Eos.Framework.Internal.SDK
         //       Out:   outPropertyDesc - Array of the value which can be set up.
         //
         //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/ 
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetPropertyDesc( IntPtr inRef, uint inPropertyID,
-             out EdsPropertyDesc outPropertyDesc);
+        -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsGetPropertyDesc")]
+        public extern static uint EdsGetPropertyDesc_32(IntPtr inRef, uint inPropertyID, out EdsPropertyDesc outPropertyDesc);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetPropertyDesc")]
+        public extern static uint EdsGetPropertyDesc_64(IntPtr inRef, uint inPropertyID, out EdsPropertyDesc outPropertyDesc);
+
+        public static uint EdsGetPropertyDesc(IntPtr inRef, uint inPropertyID, out EdsPropertyDesc outPropertyDesc)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPropertyDesc_32(inRef, inPropertyID, out outPropertyDesc) : EdsGetPropertyDesc_64(inRef, inPropertyID, out outPropertyDesc);
+        }
         /*--------------------------------------------
           Device-list and device operating functions
-        ---------------------------------------------*/     
+        ---------------------------------------------*/
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetCameraList
@@ -1125,12 +1207,20 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetCameraList( out IntPtr  outCameraListRef);
+        [DllImport(DllPath32, EntryPoint = "EdsGetCameraList")]
+        public extern static uint EdsGetCameraList_32(out IntPtr outCameraListRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetCameraList")]
+        public extern static uint EdsGetCameraList_64(out IntPtr outCameraListRef);
+
+        public static uint EdsGetCameraList(out IntPtr outCameraListRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetCameraList_32(out outCameraListRef) : EdsGetCameraList_64(out outCameraListRef);
+        }
 
         /*--------------------------------------------
           Camera operating functions
-        ---------------------------------------------*/ 
+        ---------------------------------------------*/
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetDeviceInfo
@@ -1148,10 +1238,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetDeviceInfo( IntPtr  inCameraRef, out EdsDeviceInfo  outDeviceInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetDeviceInfo")]
+        public extern static uint EdsGetDeviceInfo_32(IntPtr inCameraRef, out EdsDeviceInfo outDeviceInfo);
 
-        /*-----------------------------------------------------------------------------
+        [DllImport(DllPath64, EntryPoint = "EdsGetDeviceInfo")]
+        public extern static uint EdsGetDeviceInfo_64(IntPtr inCameraRef, out EdsDeviceInfo outDeviceInfo);
+
+        public static uint EdsGetDeviceInfo(IntPtr inCameraRef, out EdsDeviceInfo outDeviceInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetDeviceInfo_32(inCameraRef, out outDeviceInfo) : EdsGetDeviceInfo_64(inCameraRef, out outDeviceInfo);
+        }        /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsOpenSession
         //
@@ -1165,9 +1261,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsOpenSession( IntPtr inCameraRef);
+        [DllImport(DllPath32, EntryPoint = "EdsOpenSession")]
+        public extern static uint EdsOpenSession_32(IntPtr inCameraRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsOpenSession")]
+        public extern static uint EdsOpenSession_64(IntPtr inCameraRef);
+
+        public static uint EdsOpenSession(IntPtr inCameraRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsOpenSession_32(inCameraRef) : EdsOpenSession_64(inCameraRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsCloseSession
@@ -1181,9 +1284,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCloseSession( IntPtr inCameraRef);
-    
+        [DllImport(DllPath32, EntryPoint = "EdsCloseSession")]
+        public extern static uint EdsCloseSession_32(IntPtr inCameraRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCloseSession")]
+        public extern static uint EdsCloseSession_64(IntPtr inCameraRef);
+
+        public static uint EdsCloseSession(IntPtr inCameraRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCloseSession_32(inCameraRef) : EdsCloseSession_64(inCameraRef);
+        }
+
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSendCommand
@@ -1199,10 +1310,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //      Out:    None
         //
         //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/ 
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSendCommand( IntPtr inCameraRef, uint inCommand, int inParam);
+        -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsSendCommand")]
+        public extern static uint EdsSendCommand_32(IntPtr inCameraRef, uint inCommand, int inParam);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSendCommand")]
+        public extern static uint EdsSendCommand_64(IntPtr inCameraRef, uint inCommand, int inParam);
+
+        public static uint EdsSendCommand(IntPtr inCameraRef, uint inCommand, int inParam)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSendCommand_32(inCameraRef, inCommand, inParam) : EdsSendCommand_64(inCameraRef, inCommand, inParam);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSendStatusCommand
@@ -1219,9 +1337,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSendStatusCommand(IntPtr inCameraRef, uint inCameraState, int inParam);
+        [DllImport(DllPath32, EntryPoint = "EdsSendStatusCommand")]
+        public extern static uint EdsSendStatusCommand_32(IntPtr inCameraRef, uint inCameraState, int inParam);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSendStatusCommand")]
+        public extern static uint EdsSendStatusCommand_64(IntPtr inCameraRef, uint inCameraState, int inParam);
+
+
+        public static uint EdsSendStatusCommand(IntPtr inCameraRef, uint inCameraState, int inParam)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSendStatusCommand_32(inCameraRef, inCameraState, inParam) : EdsSendStatusCommand_64(inCameraRef, inCameraState, inParam);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSetCapacity
@@ -1247,13 +1373,20 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetCapacity( IntPtr inCameraRef, EdsCapacity inCapacity);
+        [DllImport(DllPath32, EntryPoint = "EdsSetCapacity")]
+        public extern static uint EdsSetCapacity_32(IntPtr inCameraRef, EdsCapacity inCapacity);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSetCapacity")]
+        public extern static uint EdsSetCapacity_64(IntPtr inCameraRef, EdsCapacity inCapacity);
+
+        public static uint EdsSetCapacity(IntPtr inCameraRef, EdsCapacity inCapacity)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetCapacity_32(inCameraRef, inCapacity) : EdsSetCapacity_64(inCameraRef, inCapacity);
+        }
 
         /*--------------------------------------------
           Volume operating functions
-        ---------------------------------------------*/ 
+        ---------------------------------------------*/
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetVolumeInfo
@@ -1267,9 +1400,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetVolumeInfo( IntPtr inCameraRef, out EdsVolumeInfo outVolumeInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetVolumeInfo")]
+        public extern static uint EdsGetVolumeInfo_32(IntPtr inCameraRef, out EdsVolumeInfo outVolumeInfo);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetVolumeInfo")]
+        public extern static uint EdsGetVolumeInfo_64(IntPtr inCameraRef, out EdsVolumeInfo outVolumeInfo);
+
+        public static uint EdsGetVolumeInfo(IntPtr inCameraRef, out EdsVolumeInfo outVolumeInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetVolumeInfo_32(inCameraRef, out outVolumeInfo) : EdsGetVolumeInfo_64(inCameraRef, out outVolumeInfo);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsFormatVolume
@@ -1282,13 +1422,20 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsFormatVolume(IntPtr inVolumeRef);
+        [DllImport(DllPath32, EntryPoint = "EdsFormatVolume")]
+        public extern static uint EdsFormatVolume_32(IntPtr inVolumeRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsFormatVolume")]
+        public extern static uint EdsFormatVolume_64(IntPtr inVolumeRef);
+
+        public static uint EdsFormatVolume(IntPtr inVolumeRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsFormatVolume_32(inVolumeRef) : EdsFormatVolume_64(inVolumeRef);
+        }
 
         /*--------------------------------------------
           Directory-item operating functions
-        ---------------------------------------------*/ 
+        ---------------------------------------------*/
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetDirectoryItemInfo
@@ -1303,10 +1450,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetDirectoryItemInfo( IntPtr inDirItemRef,
-             out EdsDirectoryItemInfo outDirItemInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetDirectoryItemInfo")]
+        public extern static uint EdsGetDirectoryItemInfo_32(IntPtr inDirItemRef, out EdsDirectoryItemInfo outDirItemInfo);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetDirectoryItemInfo")]
+        public extern static uint EdsGetDirectoryItemInfo_64(IntPtr inDirItemRef, out EdsDirectoryItemInfo outDirItemInfo);
+
+        public static uint EdsGetDirectoryItemInfo(IntPtr inDirItemRef, out EdsDirectoryItemInfo outDirItemInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetDirectoryItemInfo_32(inDirItemRef, out outDirItemInfo) : EdsGetDirectoryItemInfo_64(inDirItemRef, out outDirItemInfo);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsDeleteDirectoryItem
@@ -1324,9 +1477,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsDeleteDirectoryItem( IntPtr inDirItemRef);
+        [DllImport(DllPath32, EntryPoint = "EdsDeleteDirectoryItem")]
+        public extern static uint EdsDeleteDirectoryItem_32(IntPtr inDirItemRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsDeleteDirectoryItem")]
+        public extern static uint EdsDeleteDirectoryItem_64(IntPtr inDirItemRef);
+
+        public static uint EdsDeleteDirectoryItem(IntPtr inDirItemRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDeleteDirectoryItem_32(inDirItemRef) : EdsDeleteDirectoryItem_64(inDirItemRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsDownload
@@ -1347,9 +1507,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsDownload(IntPtr inDirItemRef, UInt64 inReadSize, IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsDownload")]
+        public extern static uint EdsDownload_32(IntPtr inDirItemRef, UInt64 inReadSize, IntPtr outStream);
 
+        [DllImport(DllPath64, EntryPoint = "EdsDownload")]
+        public extern static uint EdsDownload_64(IntPtr inDirItemRef, UInt64 inReadSize, IntPtr outStream);
+
+        public static uint EdsDownload(IntPtr inDirItemRef, UInt64 inReadSize, IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownload_32(inDirItemRef, inReadSize, outStream) : EdsDownload_64(inDirItemRef, inReadSize, outStream);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsDownloadCancel
@@ -1365,9 +1532,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsDownloadCancel ( IntPtr inDirItemRef);
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadCancel")]
+        public extern static uint EdsDownloadCancel_32(IntPtr inDirItemRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadCancel")]
+        public extern static uint EdsDownloadCancel_64(IntPtr inDirItemRef);
+
+        public static uint EdsDownloadCancel(IntPtr inDirItemRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadCancel_32(inDirItemRef) : EdsDownloadCancel_64(inDirItemRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsDownloadComplete
@@ -1385,9 +1559,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsDownloadComplete ( IntPtr inDirItemRef);
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadComplete")]
+        public extern static uint EdsDownloadComplete_32(IntPtr inDirItemRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadComplete")]
+        public extern static uint EdsDownloadComplete_64(IntPtr inDirItemRef);
+
+        public static uint EdsDownloadComplete(IntPtr inDirItemRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadComplete_32(inDirItemRef) : EdsDownloadComplete_64(inDirItemRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsDownloadThumbnail
@@ -1405,9 +1586,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsDownloadThumbnail( IntPtr inDirItemRef, IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadThumbnail")]
+        public extern static uint EdsDownloadThumbnail_32(IntPtr inDirItemRef, IntPtr outStream);
 
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadThumbnail")]
+        public extern static uint EdsDownloadThumbnail_64(IntPtr inDirItemRef, IntPtr outStream);
+
+        public static uint EdsDownloadThumbnail(IntPtr inDirItemRef, IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadThumbnail_32(inDirItemRef, outStream) : EdsDownloadThumbnail_64(inDirItemRef, outStream);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetAttribute
@@ -1425,9 +1613,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetAttribute( IntPtr inDirItemRef, out EdsFileAttribute outFileAttribute);
+        [DllImport(DllPath32, EntryPoint = "EdsGetAttribute")]
+        public extern static uint EdsGetAttribute_32(IntPtr inDirItemRef, out EdsFileAttribute outFileAttribute);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetAttribute")]
+        public extern static uint EdsGetAttribute_64(IntPtr inDirItemRef, out EdsFileAttribute outFileAttribute);
+
+        public static uint EdsDeleteDirectoryItem(IntPtr inDirItemRef, out EdsFileAttribute outFileAttribute)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetAttribute_32(inDirItemRef, out outFileAttribute) : EdsGetAttribute_64(inDirItemRef, out outFileAttribute);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSetAttribute
@@ -1444,9 +1639,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetAttribute( IntPtr inDirItemRef, EdsFileAttribute inFileAttribute);
+        [DllImport(DllPath32, EntryPoint = "EdsSetAttribute")]
+        public extern static uint EdsSetAttribute_32(IntPtr inDirItemRef, EdsFileAttribute inFileAttribute);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSetAttribute")]
+        public extern static uint EdsSetAttribute_64(IntPtr inDirItemRef, EdsFileAttribute inFileAttribute);
+
+        public static uint EdsSetAttribute(IntPtr inDirItemRef, EdsFileAttribute inFileAttribute)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetAttribute_32(inDirItemRef, inFileAttribute) : EdsSetAttribute_64(inDirItemRef, inFileAttribute);
+        }
         /*--------------------------------------------
           Stream operating functions
         ---------------------------------------------*/
@@ -1470,11 +1672,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //      Out:    outStream - The reference of the stream.
         //
         //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/     
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCreateFileStream( string inFileName, EdsFileCreateDisposition inCreateDisposition,
-             EdsAccess inDesiredAccess, out IntPtr outStream);
+        -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsCreateFileStream")]
+        public extern static uint EdsCreateFileStream_32(string inFileName, EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, out IntPtr outStream);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateFileStream")]
+        public extern static uint EdsCreateFileStream_64(string inFileName, EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, out IntPtr outStream);
+
+        public static uint EdsCreateFileStream(string inFileName, EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateFileStream_32(inFileName, inCreateDisposition, inDesiredAccess, out outStream) : EdsCreateFileStream_64(inFileName, inCreateDisposition, inDesiredAccess, out outStream);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsCreateMemoryStream
@@ -1490,9 +1698,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCreateMemoryStream(UInt64 inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStream")]
+        public extern static uint EdsCreateMemoryStream_32(UInt64 inBufferSize, out IntPtr outStream);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStream")]
+        public extern static uint EdsCreateMemoryStream_64(UInt64 inBufferSize, out IntPtr outStream);
+
+
+        public static uint EdsCreateMemoryStream(UInt64 inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStream_32(inBufferSize, out outStream) : EdsCreateMemoryStream_64(inBufferSize, out outStream);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsCreateStreamEx
@@ -1511,13 +1727,22 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCreateStreamEx( 
-           string                       inFileName,
-           EdsFileCreateDisposition     inCreateDisposition,
-           EdsAccess                    inDesiredAccess,
-           out IntPtr                   outStream 
+        [DllImport(DllPath32, EntryPoint = "EdsCreateStreamEx")]
+        public extern static uint EdsCreateStreamEx_32(
+           string inFileName,
+           EdsFileCreateDisposition inCreateDisposition,
+           EdsAccess inDesiredAccess,
+           out IntPtr outStream
            );
+        [DllImport(DllPath64, EntryPoint = "EdsCreateStreamEx")]
+        public extern static uint EdsCreateStreamEx_64(
+           string inFileName,  EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, out IntPtr outStream
+           );
+
+        public static uint EdsCreateStreamEx(string inFileName, EdsFileCreateDisposition inCreateDisposition, EdsAccess inDesiredAccess, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateStreamEx_32(inFileName, inCreateDisposition, inDesiredAccess, out outStream) : EdsCreateStreamEx_64(inFileName, inCreateDisposition, inDesiredAccess, out outStream);
+        }
 
         /*-----------------------------------------------------------------------------
         //
@@ -1534,10 +1759,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCreateMemoryStreamFromPointer(byte[] inUserBuffer,
-             UInt64 inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static uint EdsCreateMemoryStreamFromPointer_32(byte[] inUserBuffer, UInt64 inBufferSize, out IntPtr outStream);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static uint EdsCreateMemoryStreamFromPointer_64(byte[] inUserBuffer, UInt64 inBufferSize, out IntPtr outStream);
+
+        public static uint EdsCreateMemoryStreamFromPointer(byte[] inUserBuffer, UInt64 inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStreamFromPointer_32(inUserBuffer, inBufferSize, out outStream) : EdsCreateMemoryStreamFromPointer_64(inUserBuffer, inBufferSize, out outStream);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetPointer
@@ -1559,9 +1790,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetPointer(IntPtr inStreamRef, out IntPtr outPointer);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPointer")]
+        public extern static uint EdsGetPointer_32(IntPtr inStreamRef, out IntPtr outPointer);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetPointer")]
+        public extern static uint EdsGetPointer_64(IntPtr inStreamRef, out IntPtr outPointer);
+
+
+        public static uint EdsGetPointer(IntPtr inStreamRef, out IntPtr outPointe)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPointer_32(inStreamRef, out outPointe) : EdsGetPointer_64(inStreamRef, out outPointe);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsRead
@@ -1580,9 +1819,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsRead(IntPtr inStreamRef, UInt64 inReadSize, IntPtr outBuffer,
-             out UInt64 outReadSize);
+        [DllImport(DllPath32, EntryPoint = "EdsRead")]
+        public extern static uint EdsRead_32(IntPtr inStreamRef, UInt64 inReadSize, IntPtr outBuffer, out UInt64 outReadSize);
+
+        [DllImport(DllPath64, EntryPoint = "EdsRead")]
+        public extern static uint EdsRead_64(IntPtr inStreamRef, UInt64 inReadSize, IntPtr outBuffer, out UInt64 outReadSize);
+
+        public static uint EdsRead(IntPtr inStreamRef, UInt64 inReadSize, IntPtr outBuffer, out UInt64 outReadSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsRead_32(inStreamRef, inReadSize, outBuffer, out outReadSize) : EdsRead_64(inStreamRef, inReadSize, outBuffer, out outReadSize);
+        }
 
         /*-----------------------------------------------------------------------------
         //
@@ -1601,10 +1847,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsWrite(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr inBuffer,
-             out uint outWrittenSize);
+        [DllImport(DllPath32, EntryPoint = "EdsWrite")]
+        public extern static uint EdsWrite_32(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr inBuffer, out uint outWrittenSize);
 
+        [DllImport(DllPath64, EntryPoint = "EdsWrite")]
+        public extern static uint EdsWrite_64(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr inBuffer, out uint outWrittenSize);
+
+        public static uint EdsWrite(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr inBuffer, out uint outWrittenSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsWrite_32(inStreamRef, inWriteSize, inBuffer, out outWrittenSize) : EdsWrite_64(inStreamRef, inWriteSize, inBuffer, out outWrittenSize);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSeek
@@ -1627,9 +1879,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSeek(IntPtr inStreamRef, Int64 inSeekOffset, EdsSeekOrigin inSeekOrigin);
+        [DllImport(DllPath32, EntryPoint = "EdsSeek")]
+        public extern static uint EdsSeek_32(IntPtr inStreamRef, Int64 inSeekOffset, EdsSeekOrigin inSeekOrigin);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSeek")]
+        public extern static uint EdsSeek_64(IntPtr inStreamRef, Int64 inSeekOffset, EdsSeekOrigin inSeekOrigin);
+
+        public static uint EdsSeek(IntPtr inStreamRef, Int64 inSeekOffset, EdsSeekOrigin inSeekOrigin)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSeek_32(inStreamRef, inSeekOffset, inSeekOrigin) : EdsSeek_64(inStreamRef, inSeekOffset, inSeekOrigin);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetPosition
@@ -1644,9 +1903,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetPosition(IntPtr inStreamRef, out UInt64 outPosition);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPosition")]
+        public extern static uint EdsGetPosition_32(IntPtr inStreamRef, out UInt64 outPosition);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetPosition")]
+        public extern static uint EdsGetPosition_64(IntPtr inStreamRef, out UInt64 outPosition);
+
+        public static uint EdsGetPosition(IntPtr inStreamRef, out UInt64 outPosition)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPosition_32(inStreamRef, out outPosition) : EdsGetPosition_64(inStreamRef, out outPosition);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetLength
@@ -1660,9 +1926,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetLength(IntPtr inStreamRef, out UInt64 outLength);
+        [DllImport(DllPath32, EntryPoint = "EdsGetLength")]
+        public extern static uint EdsGetLength_32(IntPtr inStreamRef, out UInt64 outLength);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetLength")]
+        public extern static uint EdsGetLength_64(IntPtr inStreamRef, out UInt64 outLength);
+
+        public static uint EdsGetLength(IntPtr inStreamRef, out UInt64 outLength)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetLength_32(inStreamRef, out outLength) : EdsGetLength_64(inStreamRef, out outLength);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsCopyData
@@ -1682,9 +1955,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCopyData(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr outStreamRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCopyData")]
+        public extern static uint EdsCopyData_32(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr outStreamRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCopyData")]
+        public extern static uint EdsCopyData_64(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr outStreamRef);
+
+        public static uint EdsCopyData(IntPtr inStreamRef, UInt64 inWriteSize, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCopyData_32(inStreamRef, inWriteSize, outStreamRef) : EdsCopyData_64(inStreamRef, inWriteSize, outStreamRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSetProgressCallback
@@ -1715,14 +1995,20 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetProgressCallback( IntPtr inRef, EdsProgressCallback inProgressFunc,
-             EdsProgressOption inProgressOption, IntPtr inContext);
-    
+        [DllImport(DllPath32, EntryPoint = "EdsSetProgressCallback")]
+        public extern static uint EdsSetProgressCallback_32(IntPtr inRef, EdsProgressCallback inProgressFunc, EdsProgressOption inProgressOption, IntPtr inContext);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetProgressCallback")]
+        public extern static uint EdsSetProgressCallback_64(IntPtr inRef, EdsProgressCallback inProgressFunc, EdsProgressOption inProgressOption, IntPtr inContext);
+
+        public static uint EdsSetProgressCallback(IntPtr inRef, EdsProgressCallback inProgressFunc, EdsProgressOption inProgressOption, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetProgressCallback_32(inRef, inProgressFunc, inProgressOption, inContext) : EdsSetProgressCallback_64(inRef, inProgressFunc, inProgressOption, inContext);
+        }
 
         /*--------------------------------------------
           Image operating functions
-        ---------------------------------------------*/ 
+        ---------------------------------------------*/
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsCreateImageRef
@@ -1743,9 +2029,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCreateImageRef( IntPtr inStreamRef,  out IntPtr outImageRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateImageRef")]
+        public extern static uint EdsCreateImageRef_32(IntPtr inStreamRef, out IntPtr outImageRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateImageRef")]
+        public extern static uint EdsCreateImageRef_64(IntPtr inStreamRef, out IntPtr outImageRef);
+
+        public static uint EdsCreateImageRef(IntPtr inStreamRef, out IntPtr outImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateImageRef_32(inStreamRef, out outImageRef) : EdsCreateImageRef_64(inStreamRef, out outImageRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetImageInfo
@@ -1777,10 +2070,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetImageInfo( IntPtr inImageRef, EdsImageSource inImageSource,
-              out EdsImageInfo outImageInfo );
+        [DllImport(DllPath32, EntryPoint = "EdsGetImageInfo")]
+        public extern static uint EdsGetImageInfo_32(IntPtr inImageRef, EdsImageSource inImageSource, out EdsImageInfo outImageInfo);
 
+        [DllImport(DllPath64, EntryPoint = "EdsGetImageInfo")]
+        public extern static uint EdsGetImageInfo_64(IntPtr inImageRef, EdsImageSource inImageSource, out EdsImageInfo outImageInfo);
+
+        public static uint EdsGetImageInfo(IntPtr inImageRef, EdsImageSource inImageSource, out EdsImageInfo outImageInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetImageInfo_32(inImageRef, inImageSource, out outImageInfo) : EdsGetImageInfo_64(inImageRef, inImageSource, out outImageInfo);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsGetImage                         
@@ -1821,10 +2120,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //                      the image.
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsGetImage( IntPtr inImageRef, EdsImageSource inImageSource,
-             EdsTargetImageType inImageType, EdsRect inSrcRect, EdsSize inDstSize, IntPtr outStreamRef );
-    
+        [DllImport(DllPath32, EntryPoint = "EdsGetImage")]
+        public extern static uint EdsGetImage_32(IntPtr inImageRef, EdsImageSource inImageSource, EdsTargetImageType inImageType, EdsRect inSrcRect, EdsSize inDstSize, IntPtr outStreamRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetImage")]
+        public extern static uint EdsGetImage_64(IntPtr inImageRef, EdsImageSource inImageSource, EdsTargetImageType inImageType, EdsRect inSrcRect, EdsSize inDstSize, IntPtr outStreamRef);
+
+        public static uint EdsGetImage(IntPtr inImageRef, EdsImageSource inImageSource, EdsTargetImageType inImageType, EdsRect inSrcRect, EdsSize inDstSize, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetImage_32(inImageRef, inImageSource, inImageType, inSrcRect, inDstSize, outStreamRef) : EdsGetImage_64(inImageRef, inImageSource, inImageType, inSrcRect, inDstSize, outStreamRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSaveImage            
@@ -1848,11 +2153,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //          outStreamRef - Specifies the output file stream. The memory stream 
         //                  cannot be specified here.
         //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/ 
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSaveImage( IntPtr inImageRef, EdsTargetImageType inImageType,
-             EdsSaveImageSetting inSaveSetting, IntPtr outStreamRef );
+        -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsSaveImage")]
+        public extern static uint EdsSaveImage_32(IntPtr inImageRef, EdsTargetImageType inImageType, EdsSaveImageSetting inSaveSetting, IntPtr outStreamRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSaveImage")]
+        public extern static uint EdsSaveImage_64(IntPtr inImageRef, EdsTargetImageType inImageType, EdsSaveImageSetting inSaveSetting, IntPtr outStreamRef);
+
+        public static uint EdsSaveImage(IntPtr inImageRef, EdsTargetImageType inImageType, EdsSaveImageSetting inSaveSetting, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSaveImage_32(inImageRef, inImageType, inSaveSetting, outStreamRef) : EdsSaveImage_64(inImageRef, inImageType, inSaveSetting, outStreamRef);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsCacheImage                       
@@ -1872,9 +2183,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsCacheImage( IntPtr inImageRef, bool inUseCache );
+        [DllImport(DllPath32, EntryPoint = "EdsCacheImage")]
+        public extern static uint EdsCacheImage_32(IntPtr inImageRef, bool inUseCache);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCacheImage")]
+        public extern static uint EdsCacheImage_64(IntPtr inImageRef, bool inUseCache);
+
+        public static uint EdsCacheImage(IntPtr inImageRef, bool inUseCache)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCacheImage_32(inImageRef, inUseCache) : EdsCacheImage_64(inImageRef, inUseCache);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsReflectImageProperty         
@@ -1888,32 +2206,45 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsReflectImageProperty( IntPtr inImageRef );
+        [DllImport(DllPath32, EntryPoint = "EdsReflectImageProperty")]
+        public extern static uint EdsReflectImageProperty_32(IntPtr inImageRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsReflectImageProperty")]
+        public extern static uint EdsReflectImageProperty_64(IntPtr inImageRef);
+
+        public static uint EdsReflectImageProperty(IntPtr inImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsReflectImageProperty_32(inImageRef) : EdsReflectImageProperty_64(inImageRef);
+        }
         //----------------------------------------------
         //   Event handler registering functions
         //----------------------------------------------            
-         /*-----------------------------------------------------------------------------
-        //
-        //  Function:   EdsSetCameraAddedHandler
-        //
-        //  Description:
-        //      Registers a callback function for when a camera is detected.
-        //
-        //  Parameters:
-        //       In:    inCameraAddedHandler - Pointer to a callback function
-        //                          called when a camera is connected physically
-        //              inContext - Specifies an application-defined value to be sent to
-        //                          the callback function pointed to by CallBack parameter.
-        //      Out:    None
-        //
-        //  Returns:    Any of the sdk errors.
-        -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetCameraAddedHandler(EdsCameraAddedHandler inCameraAddedHandler,
-              IntPtr inContext);
+        /*-----------------------------------------------------------------------------
+       //
+       //  Function:   EdsSetCameraAddedHandler
+       //
+       //  Description:
+       //      Registers a callback function for when a camera is detected.
+       //
+       //  Parameters:
+       //       In:    inCameraAddedHandler - Pointer to a callback function
+       //                          called when a camera is connected physically
+       //              inContext - Specifies an application-defined value to be sent to
+       //                          the callback function pointed to by CallBack parameter.
+       //      Out:    None
+       //
+       //  Returns:    Any of the sdk errors.
+       -----------------------------------------------------------------------------*/
+        [DllImport(DllPath32, EntryPoint = "EdsSetCameraAddedHandler")]
+        public extern static uint EdsSetCameraAddedHandler_32(EdsCameraAddedHandler inCameraAddedHandler, IntPtr inContext);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSetCameraAddedHandler")]
+        public extern static uint EdsSetCameraAddedHandler_64(EdsCameraAddedHandler inCameraAddedHandler, IntPtr inContext);
+
+        public static uint EdsSetCameraAddedHandler(EdsCameraAddedHandler inCameraAddedHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetCameraAddedHandler_32(inCameraAddedHandler, inContext) : EdsSetCameraAddedHandler_64(inCameraAddedHandler, inContext);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSetPropertyEventHandler
@@ -1934,10 +2265,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetPropertyEventHandler( IntPtr inCameraRef,  uint inEvnet,
-             EdsPropertyEventHandler  inPropertyEventHandler, IntPtr inContext );
+        [DllImport(DllPath32, EntryPoint = "EdsSetPropertyEventHandler")]
+        public extern static uint EdsSetPropertyEventHandler_32(IntPtr inCameraRef, uint inEvent, EdsPropertyEventHandler inPropertyEventHandler, IntPtr inContext);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSetPropertyEventHandler")]
+        public extern static uint EdsSetPropertyEventHandler_64(IntPtr inCameraRef, uint inEvent, EdsPropertyEventHandler inPropertyEventHandler, IntPtr inContext);
+
+        public static uint EdsSetPropertyEventHandler(IntPtr inCameraRef, uint inEvent, EdsPropertyEventHandler inPropertyEventHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetPropertyEventHandler_32(inCameraRef, inEvent, inPropertyEventHandler, inContext) : EdsSetPropertyEventHandler_64(inCameraRef, inEvent, inPropertyEventHandler, inContext);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:   EdsSetObjectEventHandler
@@ -1960,10 +2297,16 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetObjectEventHandler( IntPtr  inCameraRef, uint inEvnet,
-             EdsObjectEventHandler  inObjectEventHandler, IntPtr inContext );
+        [DllImport(DllPath32, EntryPoint = "EdsSetObjectEventHandler")]
+        public extern static uint EdsSetObjectEventHandler_32(IntPtr inCameraRef, uint inEvent, EdsObjectEventHandler inObjectEventHandler, IntPtr inContext);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSetObjectEventHandler")]
+        public extern static uint EdsSetObjectEventHandler_64(IntPtr inCameraRef, uint inEvent, EdsObjectEventHandler inObjectEventHandler, IntPtr inContext);
+
+        public static uint EdsSetObjectEventHandler(IntPtr inCameraRef, uint inEvent, EdsObjectEventHandler inObjectEventHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetObjectEventHandler_32(inCameraRef, inEvent, inObjectEventHandler, inContext) : EdsSetObjectEventHandler_64(inCameraRef, inEvent, inObjectEventHandler, inContext);
+        }
         /*-----------------------------------------------------------------------------
         //
         //  Function:  EdsSetCameraStateEventHandler
@@ -1985,11 +2328,17 @@ namespace Canon.Eos.Framework.Internal.SDK
         //
         //  Returns:    Any of the sdk errors.
         -----------------------------------------------------------------------------*/
-        [DllImport("EDSDK.dll")]
-        public extern static uint EdsSetCameraStateEventHandler( IntPtr inCameraRef, uint inEvnet,
-             EdsStateEventHandler  inStateEventHandler, IntPtr inContext );
+        [DllImport(DllPath32, EntryPoint = "EdsSetCameraStateEventHandler")]
+        public extern static uint EdsSetCameraStateEventHandler_32(IntPtr inCameraRef, uint inEvent, EdsStateEventHandler inStateEventHandler, IntPtr inContext);
 
-		/*-----------------------------------------------------------------------------
+        [DllImport(DllPath64, EntryPoint = "EdsSetCameraStateEventHandler")]
+        public extern static uint EdsSetCameraStateEventHandler_64(IntPtr inCameraRef, uint inEvent, EdsStateEventHandler inStateEventHandler, IntPtr inContext);
+
+        public static uint EdsSetCameraStateEventHandler(IntPtr inCameraRef, uint inEvent, EdsStateEventHandler inStateEventHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetCameraStateEventHandler_32(inCameraRef, inEvent, inStateEventHandler, inContext) : EdsSetCameraStateEventHandler_64(inCameraRef, inEvent, inStateEventHandler, inContext);
+        }
+        /*-----------------------------------------------------------------------------
 		//
 		//  Function:   EdsCreateEvfImageRef         
 		//  Description:
@@ -2001,11 +2350,18 @@ namespace Canon.Eos.Framework.Internal.SDK
 		//
 		//  Returns:    Any of the sdk errors.
 		-----------------------------------------------------------------------------*/
-		[DllImport("EDSDK.dll")]
-		public extern static uint EdsCreateEvfImageRef(IntPtr inStreamRef, out IntPtr outEvfImageRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateEvfImageRef")]
+        public extern static uint EdsCreateEvfImageRef_32(IntPtr inStreamRef, out IntPtr outEvfImageRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateEvfImageRef")]
+        public extern static uint EdsCreateEvfImageRef_64(IntPtr inStreamRef, out IntPtr outEvfImageRef);
 
-		/*-----------------------------------------------------------------------------
+        public static uint EdsCreateEvfImageRef(IntPtr inStreamRef, out IntPtr outEvfImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateEvfImageRef_32(inStreamRef, out outEvfImageRef) : EdsCreateEvfImageRef_64(inStreamRef, out outEvfImageRef);
+        }
+
+        /*-----------------------------------------------------------------------------
 		//
 		//  Function:   EdsDownloadEvfImage         
 		//  Description:
@@ -2024,9 +2380,16 @@ namespace Canon.Eos.Framework.Internal.SDK
 		//
 		//  Returns:    Any of the sdk errors.
 		-----------------------------------------------------------------------------*/
-		[DllImport("EDSDK.dll")]
-		public extern static uint EdsDownloadEvfImage(IntPtr inCameraRef, IntPtr outEvfImageRef);   
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadEvfImage")]
+        public extern static uint EdsDownloadEvfImage_32(IntPtr inCameraRef, IntPtr outEvfImageRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadEvfImage")]
+        public extern static uint EdsDownloadEvfImage_64(IntPtr inCameraRef, IntPtr outEvfImageRef);
+
+        public static uint EdsDownloadEvfImage(IntPtr inCameraRef, IntPtr outEvfImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadEvfImage_32(inCameraRef, outEvfImageRef) : EdsDownloadEvfImage_64(inCameraRef, outEvfImageRef);
+        }
         #endregion
 
 

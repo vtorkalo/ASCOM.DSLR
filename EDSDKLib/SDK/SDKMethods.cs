@@ -1058,7 +1058,7 @@ namespace EOSDigital.SDK
         [DllImport(DllPath64, EntryPoint = "EdsSaveImage")]
         public extern static ErrorCode EdsSaveImage_64(IntPtr inImageRef, SaveImageType inImageType, SaveImageSetting inSaveSetting, IntPtr outStreamRef);
 
-        public static ErrorCode EdsGetImage(IntPtr inImageRef, SaveImageType inImageType, SaveImageSetting inSaveSetting, IntPtr outStreamRef)
+        public static ErrorCode EdsSaveImage(IntPtr inImageRef, SaveImageType inImageType, SaveImageSetting inSaveSetting, IntPtr outStreamRef)
         {
             return IntPtr.Size == 4 /* 64bit */ ? EdsSaveImage_32(inImageRef, inImageType, inSaveSetting, outStreamRef) : EdsSaveImage_64(inImageRef, inImageType, inSaveSetting, outStreamRef);
         }
