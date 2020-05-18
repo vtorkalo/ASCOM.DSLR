@@ -432,6 +432,8 @@ namespace EOSDigital.API
 
         #endregion
 
+
+
         #region Methods
 
         #region Take Photo
