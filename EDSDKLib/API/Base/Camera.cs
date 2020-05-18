@@ -475,11 +475,15 @@ namespace EOSDigital.API
         public void TakePhotoShutter()
         {
             CheckState();
-            MainThread.Invoke(() =>
-            {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
-            });
+            try
+                {
+                    MainThread.Invoke(() =>
+                {
+                    SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                    SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                });
+            }
+            catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
         }
 
         /// <summary>
@@ -498,7 +502,7 @@ namespace EOSDigital.API
                     MainThread.Invoke(() =>
                     {
                         SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                        SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+                        SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                     });
                 }
                 catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
