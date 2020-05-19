@@ -480,7 +480,7 @@ namespace EOSDigital.API
                     MainThread.Invoke(() =>
                 {
                     SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                    SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                    //SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                 });
             }
             catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
@@ -502,7 +502,7 @@ namespace EOSDigital.API
                     MainThread.Invoke(() =>
                     {
                         SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                        SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                        //SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                     });
                 }
                 catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
@@ -824,7 +824,21 @@ namespace EOSDigital.API
         public void SendCommand(CameraCommand command, int inParam = 0)
         {
             CheckState();
-            MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendCommand(CamRef, command, inParam)));
+            if (command == CameraCommand.TakePicture)
+            {
+                ErrorCode errorTK = CanonSDK.EdsSendCommand(CamRef, CameraCommand.PressShutterButton, (int)ShutterButton.Completely_NonAF);
+                // Older Canon cameras, such as Xti Rebel 300D, don't support the PressShutterButton command. If this fails,
+                // fall back to the basic TakePicture command.
+                if (errorTK != ErrorCode.OK)
+                {
+                    errorTK = CanonSDK.EdsSendCommand(CamRef, command, inParam);
+                }
+            }
+            else
+            {
+                MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendCommand(CamRef, command, inParam)));
+            }
+            
         }
 
         /// <summary>
