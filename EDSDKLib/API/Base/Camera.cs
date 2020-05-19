@@ -573,6 +573,7 @@ namespace EOSDigital.API
             try
             {
                 SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF); // Test for new cameras
             }
             catch (ExecutionException)
             {
@@ -841,6 +842,10 @@ namespace EOSDigital.API
             
         }
 
+
+
+
+        
         /// <summary>
         /// Sends a Status Command to the camera
         /// </summary>
