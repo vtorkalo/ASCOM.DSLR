@@ -827,7 +827,7 @@ namespace EOSDigital.API
             CheckState();
             if (command == CameraCommand.TakePicture)
             {
-                ErrorCode errorTK = CanonSDK.EdsSendCommand(CamRef, CameraCommand.PressShutterButton, (int)ShutterButton.Completely_NonAF);
+                ErrorCode errorTK = CanonSDK.EdsSendCommand(CamRef, CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                 // Older Canon cameras, such as Xti Rebel 300D, don't support the PressShutterButton command. If this fails,
                 // fall back to the basic TakePicture command.
                 if (errorTK != ErrorCode.OK)

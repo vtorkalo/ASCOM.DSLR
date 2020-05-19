@@ -43,6 +43,7 @@ Source: "bin\SDK\X86\libraw.dll"; DestDir: "{app}\SDK\X86\"
 Source: "bin\SDK\X86\EDSDK.dll"; DestDir: "{app}\SDK\X86\"
 Source: "bin\EDSDKLib.dll"; DestDir: "{app}"
 Source: "bin\exiftool.exe"; DestDir: "{app}"
+Source: "bin\Registrar.exe"; DestDir: "{app}"
 Source: "bin\OTelescope.API.dll"; DestDir: "{app}"
 ;Source: "bin\Newtonsoft.Json.dll"; DestDir: "{app}"
 ;Nikon and Pentax
@@ -54,6 +55,7 @@ Source: "bin\Newtonsoft.Json.dll"; DestDir: "{app}"
 Source: "bin\PortableDeviceLib.dll"; DestDir: "{app}"
 Source: "bin\Rssdp.dll"; DestDir: "{app}"
 Source: "bin\websocket-sharp.dll"; DestDir: "{app}"
+
 
 Source: "pktriggercord\zlib1.dll"; DestDir: "{app}/pktriggercord"
 Source: "pktriggercord\pktriggercord_commandline.html"; DestDir: "{app}/pktriggercord"
@@ -90,16 +92,11 @@ Source: "ASCOM.DSLR.TestAppForm\bin\Debug\ASCOM.DSLR.Test.exe"; DestDir: "{app}"
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
 Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
 
-
-
 ; Only if driver is .NET
 [UninstallRun]
 ; Only for .NET assembly/in-proc drivers
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "-u ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
-; This helps to give a clean uninstall
-;Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
 Filename: "{dotnet4064}\regasm.exe"; Parameters: "-u ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
-
 
 [CODE]
 //
