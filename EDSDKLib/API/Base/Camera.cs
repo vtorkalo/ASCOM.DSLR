@@ -6,6 +6,7 @@ using FileAccess = EOSDigital.SDK.FileAccess;
 using System.Collections.Generic;
 using System.Linq;
 using EDSDKLib.API.Base;
+using Logging;
 
 namespace EOSDigital.API
 {
@@ -825,6 +826,11 @@ namespace EOSDigital.API
         public void SendCommand(CameraCommand command, int inParam = 0)
         {
             CheckState();
+
+            Logger lgr = new Logger();
+
+            lgr.WriteMessage("Sending Command = " + command.ToString() + "'");
+
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendCommand(CamRef, command, inParam)));
         }
 
