@@ -348,9 +348,7 @@ namespace EOSDigital.API
         /// event is null with a non-severe error, it will be thrown as an exception</exception>
         public static void CheckError(object sender, ErrorCode errorCode)
         {
-            Logger lgr = new Logger();
-
-            lgr.WriteMessage("CheckError errorCode = " + errorCode.ToString() + "'");
+            Logger.WriteMessage("CheckError errorCode = " + errorCode.ToString() + "'");
 
             if (errorCode == ErrorCode.OK) return;
             else

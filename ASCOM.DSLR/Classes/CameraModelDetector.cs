@@ -63,9 +63,9 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
-                    Logger lgr = new Logger();
+                    
 
-                    lgr.WriteMessage("CameraModelDetector.GetCameraModel: Camera Exposure failed, msg = " + exposureFailedEventArgs.Message + "'");
+                    Logger.WriteMessage("CameraModelDetector.GetCameraModel: Camera Exposure failed, msg = " + exposureFailedEventArgs.Message + "'");
 
                     throw new DriverException("Camera Exposure failed, msg = '" + exposureFailedEventArgs.Message + "'");
                 }
@@ -76,7 +76,7 @@ namespace ASCOM.DSLR.Classes
 
                 Logger lgr = new Logger();
 
-                lgr.WriteMessage("CameraModelDetector.GetCameraModel: timeout waiting for setup exposure");
+                Logger.WriteMessage("CameraModelDetector.GetCameraModel: timeout waiting for setup exposure");
 
                 throw new DriverException("Timeout waiting for setup exposure");
                       
@@ -87,9 +87,7 @@ namespace ASCOM.DSLR.Classes
 
         private void Camera_ImageReady(object sender, ImageReadyEventArgs e)
         {
-            Logger lgr  = new Logger();
-
-            lgr.WriteMessage("CameraModelDetector.Camera_ImageReady: filename = '" + e.RawFileName.ToString() + "'");
+            Logger.WriteMessage("CameraModelDetector.Camera_ImageReady: filename = '" + e.RawFileName.ToString() + "'");
 
             var fileName = e.RawFileName;
             _imageData = _imageDataProcessor.ReadRaw(fileName);
@@ -98,9 +96,7 @@ namespace ASCOM.DSLR.Classes
 
         private void Camera_ExposureFailed(object sender, ExposureFailedEventArgs e)
         {
-            Logger lgr = new Logger();
-
-            lgr.WriteMessage("CameraModelDetector.Camera_Exposurefailed: message = '" + e.Message + "'");
+            Logger.WriteMessage("CameraModelDetector.Camera_Exposurefailed: message = '" + e.Message + "'");
 
             exposureFailedEventArgs = e;
             boolCameraError = true;
