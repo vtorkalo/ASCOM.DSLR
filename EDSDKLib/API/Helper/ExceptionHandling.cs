@@ -348,7 +348,7 @@ namespace EOSDigital.API
         /// event is null with a non-severe error, it will be thrown as an exception</exception>
         public static void CheckError(object sender, ErrorCode errorCode)
         {
-            Logger.WriteMessage("CheckError errorCode = " + errorCode.ToString() + "'");
+            Logger.WriteMessage("CheckError(object, errorCode) errorCode = '" + errorCode.ToString() + "'");
 
             if (errorCode == ErrorCode.OK) return;
             else
@@ -358,9 +358,16 @@ namespace EOSDigital.API
                 var NonSevereErrorHappenedEvent = NonSevereErrorHappened;
                 if (!Severe) Severe = NonSevereErrorHappenedEvent == null;
 
-                if (Severe) throw new SDKException(errorCode);
+                if (Severe)
+                {
+                    Logger.WriteMessage("CheckError, throwing SKDException");
+
+                    throw new SDKException(errorCode);
+                }
                 else
                 {
+                    Logger.WriteMessage("CheckError, invoking '" + sender.ToString() + "'");
+
                     Task.Run(() => NonSevereErrorHappenedEvent.Invoke(sender, errorCode));
                 }
             }
@@ -373,6 +380,8 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">If <paramref name="errorCode"/> is something other than <see cref="ErrorCode.OK"/></exception>
         public static void CheckError(ErrorCode errorCode)
         {
+            Logger.WriteMessage("CheckError(errorCode) errorCode = '" + errorCode.ToString() + "'");
+
             if (errorCode != ErrorCode.OK) throw new SDKException(errorCode);
         }
 
@@ -384,6 +393,8 @@ namespace EOSDigital.API
         /// <returns>The number of references for the pointer that was used for the SDK call</returns>
         public static int CheckError(int countOrError)
         {
+            Logger.WriteMessage("CheckError(countOrError) countOrError = '" + countOrError.ToString() + "'");
+
             if (countOrError == unchecked((int) 0xFFFFFFFF)) throw new SDKException(ErrorCode.INVALID_HANDLE);
             else return countOrError;
         }
@@ -397,6 +408,7 @@ namespace EOSDigital.API
         /// <returns>The number of references for the pointer that was used for the SDK call</returns>
         public static int CheckError(object sender, int countOrError)
         {
+            Logger.WriteMessage("CheckError(object, countOrError) errorCode = '" + countOrError.ToString() + "'");
             return CheckError(countOrError);
         }
 

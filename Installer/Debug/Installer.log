@@ -145,17 +145,17 @@
   Compiling [Code] section
   Deleting DSLR.Camera Setup.exe from output directory
   Creating setup files
-     Compressing: D:\Dev\ASCOM.DSLR\bin\ASCOM.DSLR.Camera.dll   (0.5.79.0)
+     Compressing: D:\Dev\ASCOM.DSLR\bin\ASCOM.DSLR.Camera.dll   (0.5.80.0)
      Compressing: D:\Dev\ASCOM.DSLR\bin\SDK\X64\libraw.dll
      Compressing: D:\Dev\ASCOM.DSLR\bin\SDK\X64\EDSDK.dll   (13.11.10.6400)
      Compressing: D:\Dev\ASCOM.DSLR\bin\SDK\X86\libraw.dll
      Compressing: D:\Dev\ASCOM.DSLR\bin\SDK\X86\EDSDK.dll   (13.12.1.0)
-     Compressing: D:\Dev\ASCOM.DSLR\bin\EDSDKLib.dll   (1.1.1.0)
+     Compressing: D:\Dev\ASCOM.DSLR\bin\EDSDKLib.dll   (0.5.80.0)
      Compressing: D:\Dev\ASCOM.DSLR\bin\exiftool.exe   (10.7.5.0)
-     Compressing: D:\Dev\ASCOM.DSLR\bin\Registrar.exe   (1.0.0.0)
-     Compressing: D:\Dev\ASCOM.DSLR\bin\OTelescope.API.dll   (1.0.0.0)
+     Compressing: D:\Dev\ASCOM.DSLR\bin\Registrar.exe   (0.5.80.0)
+     Compressing: D:\Dev\ASCOM.DSLR\bin\OTelescope.API.dll   (0.5.80.0)
      Compressing: D:\Dev\ASCOM.DSLR\bin\Nlog.dll   (4.7.2.11786)
-     Compressing: D:\Dev\ASCOM.DSLR\bin\ErrorLogging.dll   (1.0.0.0)
+     Compressing: D:\Dev\ASCOM.DSLR\bin\ErrorLogging.dll   (0.5.80.0)
      Compressing: D:\Dev\ASCOM.DSLR\bin\CameraControl.Devices.dll   (2.0.74.3)
      Compressing: D:\Dev\ASCOM.DSLR\bin\Canon.Eos.Framework.dll   (2.0.74.3)
      Compressing: D:\Dev\ASCOM.DSLR\bin\Interop.PortableDeviceApiLib.dll
@@ -190,10 +190,10 @@
      Compressing: D:\Dev\ASCOM.DSLR\pktriggercord\COPYING
      Compressing: D:\Dev\ASCOM.DSLR\pktriggercord\Changelog
      Compressing: D:\Dev\ASCOM.DSLR\pktriggercord\pentax_settings.json
-     Compressing: D:\Dev\ASCOM.DSLR\ASCOM.DSLR.TestAppForm\bin\Debug\ASCOM.DSLR.Test.exe   (6.2.0.0)
+     Compressing: D:\Dev\ASCOM.DSLR\ASCOM.DSLR.TestAppForm\bin\Debug\ASCOM.DSLR.Test.exe   (0.5.80.0)
      Compressing Setup program executable
      Updating version info
   
   
-  Successful compile (7.735 sec). Resulting Setup program filename is:
+  Successful compile (7.390 sec). Resulting Setup program filename is:
   D:\Dev\ASCOM.DSLR\DSLR.Camera Setup.exe

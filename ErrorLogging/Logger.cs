@@ -73,6 +73,8 @@ namespace Logging
 
         static public void WriteMessage(string message)
         {
+            checkAndInitLogger();
+
             LogParams.nlog.Error(message);
         }
 
