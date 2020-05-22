@@ -219,8 +219,6 @@ namespace ASCOM.DSLR
             camera.StorePath = settings.StorePath;
             camera.SaveFile = settings.SaveFile;
 
-            
-
             switch (CameraSettings.CameraMode)
             {
 
@@ -352,10 +350,10 @@ namespace ASCOM.DSLR
             get
             {
                 if (ApiContainer.DslrCamera.Iso == 0)
-                { return CameraSettings.Iso; } else
+                { return CameraSettings.Iso; }
+                else
                 { return ApiContainer.DslrCamera.Iso; }
 
-                //return ApiContainer.DslrCamera.Iso;
             }
             set
             {
@@ -364,14 +362,11 @@ namespace ASCOM.DSLR
             }
         }
 
-  
         public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
-        //public short GainMax { get; }
+        //public short GainMax { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
         public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
-        //public short GainMin { get; }
-
-        private ArrayList _gains;
+        //public short GainMin { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
         public ArrayList Gains
         {
@@ -380,8 +375,8 @@ namespace ASCOM.DSLR
                 // ASCOM Camera drivers should implement either Gains or GainMin/GainMax, not both
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
-                throw new PropertyNotImplementedException("The Gains property is not implemented");
-                //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
+                //throw new PropertyNotImplementedException("The Gains property is not implemented");
+                return new ArrayList(ApiContainer.DslrCamera.IsoValues);
 
             }
  
@@ -467,6 +462,8 @@ namespace ASCOM.DSLR
                     switch (CameraSettings.CameraMode)
                     {
                         case Enums.CameraMode.RGGB:
+                            maxValue = short.MaxValue;
+                            break;
                         case Enums.CameraMode.Color16:
                             maxValue = short.MaxValue;
                             break;

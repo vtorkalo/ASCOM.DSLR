@@ -84,7 +84,6 @@ namespace ASCOM.DSLR.Classes
 
         public bool SupportsViewView { get { return true; } }
         
-
         private DateTime _startTime;
 
         private void MainCamera_DownloadReady(EOSDigital.API.Camera sender, DownloadInfo Info)
@@ -203,7 +202,6 @@ namespace ASCOM.DSLR.Classes
             else
             {
              
-
                 MainCamera.SetSetting(PropertyID.Evf_Zoom, (UInt32)LiveViewZoom);
                 var currentZoom = MainCamera.GetUInt32Setting(PropertyID.Evf_Zoom);
                 if (currentZoom == (int)LiveViewZoom)
@@ -227,8 +225,6 @@ namespace ASCOM.DSLR.Classes
         }        
 
         public ConnectionMethod IntegrationApi => ConnectionMethod.CanonSdk;
-
-      
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;

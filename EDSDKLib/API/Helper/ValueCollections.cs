@@ -399,6 +399,9 @@ namespace EOSDigital.API
             values = new List<CameraValue>()
             {
                 Auto,
+                new CameraValue("ISO 6", 0x00000028, 6, PropertyID.ISO),
+                new CameraValue("ISO 12", 0x00000030, 12, PropertyID.ISO),
+                new CameraValue("ISO 25", 0x00000038, 25, PropertyID.ISO),
                 new CameraValue("ISO 50", 0x00000040, 50, PropertyID.ISO),
                 new CameraValue("ISO 100", 0x00000048, 100, PropertyID.ISO),
                 new CameraValue("ISO 125", 0x0000004b, 125, PropertyID.ISO),

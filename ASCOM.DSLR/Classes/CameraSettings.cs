@@ -15,7 +15,7 @@ namespace ASCOM.DSLR.Classes
             StorePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "ASCOM_DSLR");
             SaveFile = false;
             IntegrationApi = ConnectionMethod.CanonSdk;
-            Iso = 400;
+            Iso = 100;
             BackyardEosPort = 1491;
             LiveViewZoom = LiveViewZoom.Fit;
             BinningMode = BinningMode.Sum;

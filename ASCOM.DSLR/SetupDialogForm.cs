@@ -113,12 +113,14 @@ namespace ASCOM.DSLR
             cbBinningMode.Items.Add(BinningMode.Sum);
             cbBinningMode.Items.Add(BinningMode.Median);
             SetSelectedItem(cbBinningMode, Settings.BinningMode);
-           
+
+
             var isoValues = ISOValues.Values.Where(v => v.DoubleValue <= short.MaxValue && v.DoubleValue>0).Select(v => (short)v.DoubleValue);
             cbIso.DisplayMember = "display";
             cbIso.ValueMember = "value";
-            cbIso.DataSource = isoValues.Select(v => new { value = v, display = v.ToString() }).ToArray();
+            cbIso.DataSource =  isoValues.Select(v => new { value = v, display = v.ToString() }).ToArray();
             cbIso.SelectedValue = Settings.Iso;
+
 
             tbSavePath.Text = Settings.StorePath;
 
@@ -321,10 +323,15 @@ namespace ASCOM.DSLR
 
         private void SetupDialogForm_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         private void chkSaveFile_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbIso_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
