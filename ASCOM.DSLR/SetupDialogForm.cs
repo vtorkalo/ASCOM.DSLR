@@ -28,35 +28,6 @@ namespace ASCOM.DSLR
             InitUI();
         }
 
-        private void cmdOK_Click(object sender, EventArgs e) // OK button event handler
-        {
-            Settings.TraceLog = chkTrace.Checked;
-            Settings.CameraMode = (CameraMode)cbImageMode.SelectedItem;
-
-            Settings.SaveFile = chkSaveFile.Checked;
-
-            Settings.IntegrationApi = (ConnectionMethod)cbIntegrationApi.SelectedItem;
-
-            if (Directory.Exists(tbSavePath.Text))
-            {
-                Settings.StorePath = tbSavePath.Text;
-            }
-            Settings.Iso = (short)cbIso.SelectedValue;
-
-            if (!string.IsNullOrEmpty(tbBackyardEosPort.Text))
-            {
-                Settings.BackyardEosPort = int.Parse(tbBackyardEosPort.Text);
-            }
-            Settings.EnableBinning = chkEnableBin.Checked;
-            Settings.BinningMode = (BinningMode)cbBinningMode.SelectedItem;
-
-            Settings.UseExternalShutter = chkUseExternalShutter.Checked;
-            Settings.ExternalShutterPortName = cbShutterPort.SelectedItem as string;
-
-            Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
-            Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
-        }
-
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
         {
             Close();
@@ -145,7 +116,36 @@ namespace ASCOM.DSLR
             UpdateUiState();
 
         }
+        private void cmdOK_Click(object sender, EventArgs e)
+        {
+            Settings.TraceLog = chkTrace.Checked;
+            Settings.CameraMode = (CameraMode)cbImageMode.SelectedItem;
 
+            Settings.SaveFile = chkSaveFile.Checked;
+
+            Settings.IntegrationApi = (ConnectionMethod)cbIntegrationApi.SelectedItem;
+
+            if (Directory.Exists(tbSavePath.Text))
+            {
+                Settings.StorePath = tbSavePath.Text;
+            }
+            Settings.Iso = (short)cbIso.SelectedValue;
+
+            if (!string.IsNullOrEmpty(tbBackyardEosPort.Text))
+            {
+                Settings.BackyardEosPort = int.Parse(tbBackyardEosPort.Text);
+            }
+
+            Settings.EnableBinning = chkEnableBin.Checked;
+            Settings.BinningMode = (BinningMode)cbBinningMode.SelectedItem;
+
+            Settings.UseExternalShutter = chkUseExternalShutter.Checked;
+            Settings.ExternalShutterPortName = cbShutterPort.SelectedItem as string;
+
+            Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
+            Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
+
+        }
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(tbSavePath.Text))
@@ -328,5 +328,7 @@ namespace ASCOM.DSLR
         {
 
         }
+
+
     }
 }

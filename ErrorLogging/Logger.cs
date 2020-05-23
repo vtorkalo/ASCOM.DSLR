@@ -71,11 +71,36 @@ namespace Logging
             }
         }
 
-        static public void WriteMessage(string message)
+        static public void WriteErrorMessage(string message)
         {
             checkAndInitLogger();
 
             LogParams.nlog.Error(message);
+        }
+
+        static public void WriteDebugMessage(string message)
+        {
+            checkAndInitLogger();
+
+            LogParams.nlog.Debug(message);
+        }
+
+        static public void WriteInfoMessage(string message)
+        {
+            checkAndInitLogger();
+
+            LogParams.nlog.Info(message);
+        }
+
+        static public void WriteTraceMessage(string message)
+        {
+            checkAndInitLogger();
+
+            LogParams.nlog.Trace(message);
+        }
+        static public void WriteMessage(string message)
+        {
+            WriteErrorMessage(message);
         }
 
     }

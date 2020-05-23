@@ -171,7 +171,9 @@ namespace ASCOM.DSLR.Classes
         public string ExecuteCommand(string args)
         {
             Logger.WriteMessage("ExecuteCommand(), args = '" + args + "'");
-                
+            
+            // TODO: using GetAppPath() below is not the right thing to do here..  need to fix this as it won't find the commands 
+
             string exeDir = Path.Combine(GetAppPath(), "pktriggercord", "pktriggercord-cli.exe");
         
             ProcessStartInfo procStartInfo = new ProcessStartInfo();
@@ -182,7 +184,7 @@ namespace ASCOM.DSLR.Classes
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
 
-            Logger.WriteMessage("about to start process with procStartInfo = '" + procStartInfo.ToString() + "'");
+            Logger.WriteMessage("about to start process with command = '" + procStartInfo.FileName + " " + procStartInfo.Arguments + "'");
 
             string result = string.Empty;
             using (Process process = new Process())
