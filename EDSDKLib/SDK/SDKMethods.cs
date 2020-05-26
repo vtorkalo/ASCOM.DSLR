@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.IO;
+using Logging;
 
 namespace EOSDigital.SDK
 {
@@ -272,6 +273,8 @@ namespace EOSDigital.SDK
 
         public static ErrorCode EdsSendCommand(IntPtr inCameraRef, CameraCommand inCommand, int inParam)
         {
+            Logger.WriteTraceMessage("EdsSendCommand(), inCommand = '" + inCommand.ToString() + "'");
+
             return IntPtr.Size == 4 /* 64bit */ ? EdsSendCommand_32(inCameraRef, inCommand, inParam) : EdsSendCommand_64(inCameraRef, inCommand, inParam);
         }
 
@@ -291,6 +294,8 @@ namespace EOSDigital.SDK
 
         public static ErrorCode EdsSendStatusCommand(IntPtr inCameraRef, CameraStatusCommand inCameraState, int inParam)
         {
+            Logger.WriteTraceMessage("EdsSendStatusCommand(), inCameraState = '" + inCameraState.ToString() + "'");
+
             return IntPtr.Size == 4 /* 64bit */ ? EdsSendStatusCommand_32(inCameraRef, inCameraState, inParam) : EdsSendStatusCommand_64(inCameraRef, inCameraState, inParam);
         }
 

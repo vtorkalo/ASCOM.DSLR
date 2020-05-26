@@ -79,7 +79,7 @@ namespace ASCOM.DSLR.Classes
 
         public void StartExposure(double Duration, bool Light)
         {
-            Logger.WriteMessage("PentaxCamera.StartExposure(Duration, Light), duration ='" + Duration.ToString() + "', Light = '" + Light.ToString() + "'");
+            Logger.WriteTraceMessage("PentaxCamera.StartExposure(Duration, Light), duration ='" + Duration.ToString() + "', Light = '" + Light.ToString() + "'");
 
             string fileName = GetFileName(Duration, DateTime.Now);
             MarkWaitingForExposure(Duration, fileName);
@@ -170,7 +170,7 @@ namespace ASCOM.DSLR.Classes
 
         public string ExecuteCommand(string args)
         {
-            Logger.WriteMessage("ExecuteCommand(), args = '" + args + "'");
+            Logger.WriteTraceMessage("ExecuteCommand(), args = '" + args + "'");
             
             // TODO: using GetAppPath() below is not the right thing to do here..  need to fix this as it won't find the commands 
 
@@ -184,7 +184,7 @@ namespace ASCOM.DSLR.Classes
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
 
-            Logger.WriteMessage("about to start process with command = '" + procStartInfo.FileName + " " + procStartInfo.Arguments + "'");
+            Logger.WriteTraceMessage("about to start process with command = '" + procStartInfo.FileName + " " + procStartInfo.Arguments + "'");
 
             string result = string.Empty;
             using (Process process = new Process())
@@ -194,7 +194,7 @@ namespace ASCOM.DSLR.Classes
                 process.WaitForExit();
 
                 result = process.StandardOutput.ReadToEnd();
-                Logger.WriteMessage("result of command = '" + result + "'");
+                Logger.WriteTraceMessage("result of command = '" + result + "'");
             }
 
             //result = "pktriggercord-cli: K-5IIs Connected...";

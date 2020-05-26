@@ -15,6 +15,7 @@ using System.Linq;
 using EOSDigital.API;
 using System.Threading;
 using System.IO.Ports;
+using Logging;
 
 namespace ASCOM.DSLR
 {
@@ -113,6 +114,15 @@ namespace ASCOM.DSLR
             chkEnableLiveView.Checked = Settings.LiveViewCaptureMode;
             SetSelectedItem(cbLiveViewZoom, Settings.LiveViewZoom);
 
+            cbTraceLevel.Items.Add("Trace");
+            cbTraceLevel.Items.Add("Debug");
+            cbTraceLevel.Items.Add("Info");
+            cbTraceLevel.Items.Add("Warn");
+            cbTraceLevel.Items.Add("Error");
+            cbTraceLevel.Items.Add("Fatal");
+
+            cbTraceLevel.SelectedValue = "Error";
+
             UpdateUiState();
 
         }
@@ -145,6 +155,23 @@ namespace ASCOM.DSLR
             Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
             Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
 
+            if (cbTraceLevel.SelectedItem.Equals("Trace"))
+                Logger.SetLogLevelTrace();
+
+            if (cbTraceLevel.SelectedItem.Equals("Debug"))
+                Logger.SetLogLevelDebug();
+
+            if (cbTraceLevel.SelectedItem.Equals("Info"))
+                Logger.SetLogLevelInfo();
+
+            if (cbTraceLevel.SelectedItem.Equals("Warn"))
+                Logger.SetLogLevelWarn();
+
+            if (cbTraceLevel.SelectedItem.Equals("Error"))
+                Logger.SetLogLevelError();
+
+            if (cbTraceLevel.SelectedItem.Equals("Fatal"))
+                Logger.SetLogLevelFatal();
         }
         private void btnBrowse_Click(object sender, EventArgs e)
         {
@@ -329,6 +356,9 @@ namespace ASCOM.DSLR
 
         }
 
+        private void cbIso_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
+        }
     }
 }

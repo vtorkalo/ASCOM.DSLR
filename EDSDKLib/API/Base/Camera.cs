@@ -827,7 +827,7 @@ namespace EOSDigital.API
         {
             CheckState();
 
-            Logger.WriteMessage("Sending Command = " + command.ToString() + "'");
+            Logger.WriteTraceMessage("Sending Command = " + command.ToString() + "'");
 
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendCommand(CamRef, command, inParam)));
         }
@@ -847,7 +847,7 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SendStatusCommand(CameraStatusCommand command, int inParam = 0)
         {
-            Logger.WriteMessage("SendStatusCommand = " + command.ToString() + "'");
+            Logger.WriteTraceMessage("SendStatusCommand = " + command.ToString() + "'");
 
             CheckState();
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendStatusCommand(CamRef, command, inParam)));

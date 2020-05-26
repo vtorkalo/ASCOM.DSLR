@@ -38,7 +38,7 @@ namespace ASCOM.DSLR
 
         private static void CreateCamera()
         {
-            Logger.WriteMessage("CreateCamera(), _cameraSettings.IntegrationAPI = '" + _cameraSettings.IntegrationApi.ToString() + "'");
+            Logger.WriteTraceMessage("CreateCamera(), _cameraSettings.IntegrationAPI = '" + _cameraSettings.IntegrationApi.ToString() + "'");
 
             if (_cameraSettings.IntegrationApi == ConnectionMethod.CanonSdk)
             {
