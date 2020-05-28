@@ -43,7 +43,7 @@ namespace ASCOM.DSLR
                 _dslrCamera.IsLiveViewMode = _cameraSettings.LiveViewCaptureMode;
                 _dslrCamera.LiveViewZoom = _cameraSettings.LiveViewZoom;
                 //Future Test
-                //_dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
+                //_dslrCamera = new DigiCamControlCameraEOS(TraceLogger, _cameraSettings.CameraModelsHistory);
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {
