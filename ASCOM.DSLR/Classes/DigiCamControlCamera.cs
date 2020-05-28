@@ -3,7 +3,7 @@ using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using CameraControl.Devices;
 using CameraControl.Devices.Classes;
-using CameraControl.Devices.Wifi;
+//using CameraControl.Devices.Wifi;
 using CameraControl.Plugins.ExternalDevices;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -49,9 +49,9 @@ namespace ASCOM.DSLR.Classes
         {
             _tl = tl;
             DeviceManager = new CameraDeviceManager();
+            DeviceManager.PhotoCaptured += DeviceManager_PhotoCaptured;
             DeviceManager.CameraSelected += DeviceManager_CameraSelected;
             DeviceManager.CameraConnected += DeviceManager_CameraConnected;
-            DeviceManager.PhotoCaptured += DeviceManager_PhotoCaptured;
             DeviceManager.CameraDisconnected += DeviceManager_CameraDisconnected;
 
             // For experimental Canon driver support- to use canon driver the canon sdk files should be copied in application folder
@@ -237,7 +237,8 @@ namespace ASCOM.DSLR.Classes
         {
             _tl.LogMessage(e.Message.ToString(), e.Exception?.Message);
         }
-    
+
+
         private void PhotoCaptured(PhotoCapturedEventArgs eventArgs)
         {
             _tl.LogMessage("Photo captured filename", eventArgs.FileName);
@@ -286,7 +287,7 @@ namespace ASCOM.DSLR.Classes
 
         void DeviceManager_PhotoCaptured(object sender, PhotoCapturedEventArgs eventArgs)
         {
-            PhotoCaptured(eventArgs);
+                PhotoCaptured(eventArgs);
         }
 
         void DeviceManager_CameraConnected(ICameraDevice cameraDevice)

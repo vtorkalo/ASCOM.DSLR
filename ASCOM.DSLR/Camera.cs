@@ -42,6 +42,8 @@ namespace ASCOM.DSLR
                 _dslrCamera = new CanonSdkCamera(_cameraSettings.CameraModelsHistory);
                 _dslrCamera.IsLiveViewMode = _cameraSettings.LiveViewCaptureMode;
                 _dslrCamera.LiveViewZoom = _cameraSettings.LiveViewZoom;
+                //Future Test
+                //_dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {

@@ -6,4 +6,3 @@ del version.txt
 
 
 ".\DSLR.Camera Setup.exe" /VERYSILENT /SUPPRESSMSGBOXES
-pause
