@@ -6,6 +6,7 @@ using ASCOM.Utilities;
 using System;
 using System.Collections;
 using Logging;
+using System.Threading;
 
 namespace ASCOM.DSLR
 {
@@ -137,22 +138,77 @@ namespace ASCOM.DSLR
 
         public void StartExposure(double Duration, bool Light)
         {
-            if (_cameraState != CameraStates.cameraIdle) throw new InvalidOperationException("Cannot start exposure - camera is not idle");
 
-            cameraImageReady = false;
-            if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
-            cameraLastExposureDuration = Duration;
-            exposureStart = DateTime.Now;
-            _cameraState = CameraStates.cameraExposing;
+            int retrynum = 0;
+            bool retry = false;
+            
+            do
+            {
+                if (retrynum > 5)
+                {
+                    return;
+                }
+                try
+                {
+                    retry = false;
 
-            if (ApiContainer.DslrCamera.IsLiveViewMode)
-            {
-                LvExposure(Duration);
-            }
-            else
-            {
-                ShutterExposure(Duration, Light);
-            }
+                    if (_cameraState != CameraStates.cameraIdle)
+                    {
+                        //Logger.WriteTraceMessage("GetPropertySize DEVICE BUSY " + _error.ToString());
+                        Thread.Sleep(1000);
+                        retry = true;
+                        retrynum++;
+
+                        //Logger.WriteTraceMessage("GetPropertySize OK " + _error.ToString());
+                    }
+                    else
+                    {
+                        cameraImageReady = false;
+                        if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
+                        cameraLastExposureDuration = Duration;
+                        exposureStart = DateTime.Now;
+                        _cameraState = CameraStates.cameraExposing;
+
+                        if (ApiContainer.DslrCamera.IsLiveViewMode)
+                        {
+                            LvExposure(Duration);
+                        }
+                        else
+                        {
+                            ShutterExposure(Duration, Light);
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.WriteTraceMessage("Cannot start exposure - camera is not idle: " + exception);
+                    throw new InvalidOperationException("Cannot start exposure - camera is not idle");
+                }
+            } while (retry);
+
+
+
+
+           /* if (_cameraState != CameraStates.cameraIdle) throw new InvalidOperationException("Cannot start exposure - camera is not idle");
+
+            //throw new InvalidOperationException("Cannot start exposure - camera is not idle");
+
+                cameraImageReady = false;
+                if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
+                cameraLastExposureDuration = Duration;
+                exposureStart = DateTime.Now;
+                _cameraState = CameraStates.cameraExposing;
+
+                if (ApiContainer.DslrCamera.IsLiveViewMode)
+                {
+                    LvExposure(Duration);
+                }
+                else
+                {
+                    ShutterExposure(Duration, Light);
+                }
+                */
+            
         }
 
         private void ShutterExposure(double Duration, bool Light)
