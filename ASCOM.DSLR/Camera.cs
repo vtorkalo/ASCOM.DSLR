@@ -5,6 +5,7 @@ using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using System;
 using System.Collections;
+using Logging;
 
 namespace ASCOM.DSLR
 {
@@ -37,6 +38,8 @@ namespace ASCOM.DSLR
 
         private static void CreateCamera()
         {
+            Logger.WriteTraceMessage("CreateCamera(), _cameraSettings.IntegrationAPI = '" + _cameraSettings.IntegrationApi.ToString() + "'");
+
             if (_cameraSettings.IntegrationApi == ConnectionMethod.CanonSdk)
             {
                 _dslrCamera = new CanonSdkCamera(_cameraSettings.CameraModelsHistory);

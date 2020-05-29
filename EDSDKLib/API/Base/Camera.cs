@@ -6,6 +6,7 @@ using FileAccess = EOSDigital.SDK.FileAccess;
 using System.Collections.Generic;
 using System.Linq;
 using EDSDKLib.API.Base;
+using Logging;
 
 namespace EOSDigital.API
 {
@@ -827,6 +828,8 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SendCommand(CameraCommand command, int inParam = 0)
         {
+            Logger.WriteTraceMessage("Sending Command = " + command.ToString() + "'");
+
             CheckState();
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendCommand(CamRef, command, inParam)));
         }
@@ -846,6 +849,8 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SendStatusCommand(CameraStatusCommand command, int inParam = 0)
         {
+            Logger.WriteTraceMessage("SendStatusCommand = " + command.ToString() + "'");
+
             CheckState();
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendStatusCommand(CamRef, command, inParam)));
         }
