@@ -45,7 +45,7 @@ namespace ASCOM.DSLR.Classes
             // modified to checked if the signal was set as opposed to a timeout occured
 
             
-            if (oSignalEvent.WaitOne(10 * 1000))
+            if (oSignalEvent.WaitOne(60 * 1000))
             {
                 oSignalEvent.Reset();
 

@@ -967,10 +967,12 @@ namespace EOSDigital.API
 
             MainThread.Invoke(() =>
             {
+                Logger.WriteTraceMessage("SetSetting Start " + propID + "=" + value);
                 int propsize;
                 DataType proptype;
                 ErrorHandler.CheckError(this, CanonSDK.EdsGetPropertySize(CamRef, propID, inParam, out proptype, out propsize));
                 ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value));
+                Logger.WriteTraceMessage("SetSetting End " + propID + "=" + value);
             });
         }
 
@@ -987,7 +989,9 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SetSetting(PropertyID propID, string value, int inParam = 0, int MAX = 32)
         {
+            Logger.WriteTraceMessage("SetSetting Start2 " + propID + "=" + value);
             CheckState();
+
 
             if (value == null) value = string.Empty;
             if (value.Length > MAX - 1) value = value.Substring(0, MAX - 1);
@@ -998,6 +1002,7 @@ namespace EOSDigital.API
                 ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef,
                 propID, inParam, propBytes.Length, propBytes));
             });
+            Logger.WriteTraceMessage("SetSetting End2 " + propID + "=" + value);
         }
 
         /// <summary>

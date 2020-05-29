@@ -295,9 +295,9 @@ namespace ASCOM.DSLR.Classes
 
                 if (Duration >= 1)
                 {
-                    MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
-                    MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
-
+                        
+                        MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
+                        MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
                 }
                 else
                 {
