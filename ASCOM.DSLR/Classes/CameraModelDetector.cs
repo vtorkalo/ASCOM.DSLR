@@ -47,6 +47,7 @@ namespace ASCOM.DSLR.Classes
             oSignalEvent.WaitOne(10 * 1000);
             oSignalEvent.Reset();
 
+
             if (_imageData != null)
             {
                 result = new CameraModel();

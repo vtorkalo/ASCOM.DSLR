@@ -180,7 +180,7 @@ namespace ASCOM.DSLR.Classes
             camera.IsoNumber.Value = GetNearesetValue(camera.IsoNumber, Iso);
             camera.CompressionSetting.Value = camera.CompressionSetting.Values.SingleOrDefault(v => v.ToUpper() == "RAW");
             bool canBulb = camera.GetCapability(CapabilityEnum.Bulb);
-            if (Duration > 30)
+            if (Duration >= 1)
             {
                 int durationMsec = (int)(Duration * 1000);
                 if (UseExternalShutter)
@@ -262,6 +262,8 @@ namespace ASCOM.DSLR.Classes
             }
 
             eventArgs.CameraDevice.IsBusy = false;
+            eventArgs.CameraDevice.ReleaseResurce(eventArgs.Handle);
+            return;
         }
 
         private string GetFileNameForDownload(PhotoCapturedEventArgs eventArgs)

@@ -10,7 +10,7 @@ Development environment preparation
 6. Now you will be able to build solution
 
 Installer building:
-Run build.bat https://github.com/vtorkalo/ASCOM.DSLR/blob/master/build.bat
+Run build.bat https://github.com/FearL0rd/ASCOM.DSLR/blob/master/build.bat
 This script will compile C# project and build installer. Installer will be placed in same folder (filename DSLR.Camera Setup.exe) Note: script is created to work on x64 systems. If you are using x86 - please modify script to correct patch to "Program Filex (x86)"
 
 Install path 

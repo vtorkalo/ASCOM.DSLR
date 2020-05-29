@@ -549,11 +549,12 @@ namespace EOSDigital.API
         {
             try
             {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                SendCommand(CameraCommand.BulbStart);
+                
             }
             catch (ExecutionException)
             {
-                SendCommand(CameraCommand.BulbStart);
+                SendCommand(CameraCommand.PressShutterButton, (int)65539);
             }
 
             int seconds = bulbTime / 1000;
@@ -572,12 +573,14 @@ namespace EOSDigital.API
 
             try
             {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF); // Test for new cameras
+                SendCommand(CameraCommand.BulbEnd);
+
             }
             catch (ExecutionException)
             {
-                SendCommand(CameraCommand.BulbEnd);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF); // Test for new cameras
+
             }
         }
 
