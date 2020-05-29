@@ -380,8 +380,8 @@ namespace ASCOM.DSLR
                 // ASCOM Camera drivers should implement either Gains or GainMin/GainMax, not both
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
-                //throw new PropertyNotImplementedException("The Gains property is not implemented");
-                return new ArrayList(ApiContainer.DslrCamera.IsoValues);
+                throw new PropertyNotImplementedException("The Gains property is not implemented");
+                //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
 
             }
  
