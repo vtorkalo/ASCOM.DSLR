@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Logging;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -78,6 +79,8 @@ namespace ASCOM.DSLR.Classes
 
         public void StartExposure(double Duration, bool Light)
         {
+            Logger.WriteTraceMessage("PentaxCamera.StartExposure(Duration, Light), duration ='" + Duration.ToString() + "', Light = '" + Light.ToString() + "'");
+
             string fileName = GetFileName(Duration, DateTime.Now);
             MarkWaitingForExposure(Duration, fileName);
             watch();
@@ -167,6 +170,8 @@ namespace ASCOM.DSLR.Classes
 
         public string ExecuteCommand(string args)
         {
+            Logger.WriteTraceMessage("ExecuteCommand(), args = '" + args + "'");
+
             string exeDir = Path.Combine(GetAppPath(), "pktriggercord", "pktriggercord-cli.exe");
             ProcessStartInfo procStartInfo = new ProcessStartInfo();
 
@@ -175,6 +180,7 @@ namespace ASCOM.DSLR.Classes
             procStartInfo.RedirectStandardOutput = true;
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
+            Logger.WriteTraceMessage("about to start process with command = '" + procStartInfo.FileName + " " + procStartInfo.Arguments + "'");
 
             string result = string.Empty;
             using (Process process = new Process())
@@ -184,6 +190,7 @@ namespace ASCOM.DSLR.Classes
                 process.WaitForExit();
 
                 result = process.StandardOutput.ReadToEnd();
+                Logger.WriteTraceMessage("result of command = '" + result + "'");
             }
             //result = "pktriggercord-cli: K-5IIs Connected...";
             return result;

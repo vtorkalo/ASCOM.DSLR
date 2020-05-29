@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ASCOM.Utilities;
+using Logging;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -44,21 +45,7 @@ namespace ASCOM.DSLR.Classes
             // modified to checked if the signal was set as opposed to a timeout occured
 
             
-            oSignalEvent.WaitOne(10 * 1000);
-            oSignalEvent.Reset();
-
-            if (_imageData != null)
-            {
-                result = new CameraModel();
-                result.ImageWidth = _imageData.GetLength(0);
-                result.ImageHeight = _imageData.GetLength(1);
-                result.SensorWidth = 22.5;
-                result.SensorHeight = 15;
-                result.Name = model;
-            }
-
-
-            /*if (oSignalEvent.WaitOne(120 * 1000))
+            if (oSignalEvent.WaitOne(10 * 1000))
             {
                 oSignalEvent.Reset();
 
@@ -67,31 +54,33 @@ namespace ASCOM.DSLR.Classes
                     result = new CameraModel();
                     result.ImageWidth = _imageData.GetLength(0);
                     result.ImageHeight = _imageData.GetLength(1);
-
-                    // TODO: figure out how to determine the SensorWidth and SensorHeight properly versus hard coding here
-
                     result.SensorWidth = 22.5;
                     result.SensorHeight = 15;
                     result.Name = model;
                 }
                 else
                 {
+                    Logger.WriteTraceMessage("CameraModelDetector.GetCameraModel: Camera Exposure failed, msg = " + exposureFailedEventArgs.Message + "'");
+
                     throw new DriverException("Camera Exposure failed, msg'" + exposureFailedEventArgs.Message + "'");
                 }
             }
             else
             {
                 // TODO: figure out how to handle this better....  This will just throw an exception to the user and close the app
+                Logger.WriteTraceMessage("CameraModelDetector.GetCameraModel: timeout waiting for setup exposure");
 
                 throw new DriverException("Timeout waiting for setup exposure");
-                      
-            }*/
+
+            }
 
             return result;
         }
 
         private void Camera_ImageReady(object sender, ImageReadyEventArgs e)
         {
+            Logger.WriteTraceMessage("CameraModelDetector.Camera_ImageReady: filename = '" + e.RawFileName.ToString() + "'");
+
             var fileName = e.RawFileName;
             _imageData = _imageDataProcessor.ReadRaw(fileName);
             oSignalEvent.Set();
@@ -99,6 +88,8 @@ namespace ASCOM.DSLR.Classes
 
         private void Camera_ExposureFailed(object sender, ExposureFailedEventArgs e)
         {
+            Logger.WriteTraceMessage("CameraModelDetector.Camera_Exposurefailed: message = '" + e.Message + "'");
+
             exposureFailedEventArgs = e;
             boolCameraError = true;
             oSignalEvent.Set();
