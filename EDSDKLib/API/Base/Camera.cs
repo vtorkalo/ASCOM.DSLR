@@ -970,8 +970,12 @@ namespace EOSDigital.API
                 Logger.WriteTraceMessage("SetSetting Start " + propID + "=" + value);
                 int propsize;
                 DataType proptype;
+                Logger.WriteTraceMessage("GetPropertySize Start " + propID + "=" + value);
                 ErrorHandler.CheckError(this, CanonSDK.EdsGetPropertySize(CamRef, propID, inParam, out proptype, out propsize));
+                Logger.WriteTraceMessage("GetPropertySize End " + propID + "=" + value);
+                Logger.WriteTraceMessage("SetPropertyData Start " + propID + "=" + value);
                 ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value));
+                Logger.WriteTraceMessage("SetPropertyData Start " + propID + "=" + value);
                 Logger.WriteTraceMessage("SetSetting End " + propID + "=" + value);
             });
         }
