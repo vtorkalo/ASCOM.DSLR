@@ -965,6 +965,16 @@ namespace EOSDigital.API
         {
             CheckState();
 
+            //Teste BUSY
+            System.Timers.Timer _timer = new System.Timers.Timer(1000 / 10);
+            ErrorCode _error = 0;
+            int retrynum = 0;
+            bool retry = false;
+            _timer.Start();
+            bool timerstate = _timer.Enabled;
+            _timer.Stop();
+
+
             MainThread.Invoke(() =>
             {
                 Logger.WriteTraceMessage("SetSetting Start " + propID + "=" + value);
@@ -974,7 +984,41 @@ namespace EOSDigital.API
                 ErrorHandler.CheckError(this, CanonSDK.EdsGetPropertySize(CamRef, propID, inParam, out proptype, out propsize));
                 Logger.WriteTraceMessage("GetPropertySize End " + propID + "=" + value);
                 Logger.WriteTraceMessage("SetPropertyData Start " + propID + "=" + value);
-                ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value));
+
+                do {
+                    if (retrynum > 5)
+                    {
+                        return;
+                    }
+                    try {
+                        retry = false;
+                        _error = CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value);
+
+                        if (_error != ErrorCode.OK)
+                        {
+                            if (_error != ErrorCode.DEVICE_BUSY)
+                            {
+                                Thread.Sleep(100);
+                                retry = true;
+                                retrynum++;
+                            }
+                            else
+                            {
+                                ErrorHandler.CheckError(this, _error);
+                            }
+
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.WriteTraceMessage("Error EOS set property :" + propID.ToString("X") + " | " + exception);
+                    }
+                } while (retry);
+                if (timerstate)
+                    _timer.Start();
+                //ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value));
+
+
                 Logger.WriteTraceMessage("SetPropertyData Start " + propID + "=" + value);
                 Logger.WriteTraceMessage("SetSetting End " + propID + "=" + value);
             });
