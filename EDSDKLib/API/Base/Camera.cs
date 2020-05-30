@@ -1000,7 +1000,7 @@ namespace EOSDigital.API
                             if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("GetPropertySize DEVICE BUSY " + _error.ToString());
-                                Thread.Sleep(1000);
+                                Thread.Sleep(200);
                                 retry = true;
                                 retrynum++;
                             }
@@ -1008,11 +1008,11 @@ namespace EOSDigital.API
                             {
                                 ErrorHandler.CheckError(this, _error);
                             }
-                            Logger.WriteTraceMessage("GetPropertySize OK " + _error.ToString());
+                            Logger.WriteTraceMessage("GetPropertySize NOT OK " + _error.ToString());
                         }
                         else
                         {
-                            Logger.WriteTraceMessage("GetPropertySize NOT OK " + _error.ToString());
+                            Logger.WriteTraceMessage("GetPropertySize OK " + _error.ToString());
                         }
                     }
                     catch (Exception exception)
@@ -1044,7 +1044,7 @@ namespace EOSDigital.API
                             if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("SetPropertyData DEVICE BUSY " + _error.ToString());
-                                Thread.Sleep(1000);
+                                Thread.Sleep(200);
                                 retry = true;
                                 retrynum++;
                             }
@@ -1052,12 +1052,12 @@ namespace EOSDigital.API
                             {
                                 ErrorHandler.CheckError(this, _error);
                             }
-                            Logger.WriteTraceMessage("SetPropertyData OK " + _error.ToString());
+                            Logger.WriteTraceMessage("SetPropertyData NOT OK " + _error.ToString());
 
                         }
                         else
                         {
-                            Logger.WriteTraceMessage("SetPropertyData NOT OK " + _error.ToString());
+                            Logger.WriteTraceMessage("SetPropertyData OK " + _error.ToString());
                         }
                     }
                     catch (Exception exception)

@@ -177,6 +177,7 @@ namespace ASCOM.DSLR
                         {
                             ShutterExposure(Duration, Light);
                         }
+
                     }
                 }
                 catch (Exception exception)
