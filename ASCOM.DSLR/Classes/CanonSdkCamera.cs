@@ -269,6 +269,16 @@ namespace ASCOM.DSLR.Classes
             return selectedIsoValue;
         }
 
+        public bool IsOldCanon()
+        {
+            string[] models =
+            {
+                " 1000D", " 40D", " 450D", " 50D", " 400D", " 500D", "Rebel XSi", "Rebel XTi",
+                "Rebel XS", "Rebel T1i", "1Ds Mark III"
+            };
+            return models.Any(model => _mainCamera.DeviceName.ToLower().Contains(model.ToLower()));
+        }
+
         private CameraValue GetSelectedTv(double Duration)
         {
             var nearestTv = TvList.Select(t => new { Tv = t, delta = Math.Abs(t.DoubleValue - Duration) }).OrderBy(d => d.delta);
@@ -301,9 +311,10 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
+                    IsOldCanon();
                     CameraValue tvCameraValue = GetSelectedTv(Duration);
                     MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
-                    MainCamera.TakePhoto();
+                    MainCamera.TakePhoto(IsOldCanon());
                 }
             }
             else

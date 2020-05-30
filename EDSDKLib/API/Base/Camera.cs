@@ -433,8 +433,6 @@ namespace EOSDigital.API
 
         #endregion
 
-
-
         #region Methods
 
         #region Take Photo
@@ -445,6 +443,21 @@ namespace EOSDigital.API
         /// <exception cref="ObjectDisposedException">Camera is disposed</exception>
         /// <exception cref="CameraSessionException">Session is closed</exception>
         /// <exception cref="SDKStateException">Canon SDK is not initialized</exception>
+        public void TakePhoto(bool isOldCanon)
+        {
+            CheckState();
+            //SendCommand(CameraCommand.TakePicture);
+
+                if (isOldCanon)
+                {
+                    SendCommand(CameraCommand.TakePicture);
+                    return;
+                }
+            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+            
+        }
+
         public void TakePhoto()
         {
             CheckState();

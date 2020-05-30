@@ -233,6 +233,7 @@ namespace ASCOM.DSLR
         {
             ApiContainer.DslrCamera.LiveViewImageReady += DslrCamera_LiveViewImageReady;
             ApiContainer.DslrCamera.StartExposure(duration, true);
+            
         }
 
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
