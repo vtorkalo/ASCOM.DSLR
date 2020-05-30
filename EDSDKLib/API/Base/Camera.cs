@@ -997,7 +997,7 @@ namespace EOSDigital.API
 
                         if (_error != ErrorCode.OK)
                         {
-                            if (_error != ErrorCode.DEVICE_BUSY)
+                            if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("GetPropertySize DEVICE BUSY " + _error.ToString());
                                 Thread.Sleep(1000);
@@ -1041,7 +1041,7 @@ namespace EOSDigital.API
 
                         if (_error != ErrorCode.OK)
                         {
-                            if (_error != ErrorCode.DEVICE_BUSY)
+                            if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("SetPropertyData DEVICE BUSY " + _error.ToString());
                                 Thread.Sleep(1000);
