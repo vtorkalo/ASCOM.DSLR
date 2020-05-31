@@ -208,6 +208,35 @@ namespace EOSDigital.API
             Dispose(false);
         }
 
+        public bool IsOldCanon()
+        {
+            string[] models =
+            {
+                " 1000D", " 40D", " 450D", " 50D", " 400D", " 500D", "Rebel XSi", "Rebel XTi",
+                "Rebel XS", "Rebel T1i", "1Ds Mark III"
+            };
+
+            return models.Any(model => Info.DeviceDescription.ToLower().Contains(model.ToLower()));
+        }
+
+
+
+        public bool IsManualMode()
+        {
+            UInt32 mode;
+            CanonSDK.EdsGetPropertyData(CamRef, PropertyID.AEModeSelect, 0, out mode);
+            bool isManual = (mode == 3);
+            return isManual;
+        }
+
+        public bool IsBulbMode()
+        {
+            UInt32 mode;
+            CanonSDK.EdsGetPropertyData(CamRef, PropertyID.AEModeSelect, 0, out mode);
+            bool isBulb = (mode == 4);
+            return isBulb;
+        }
+
         /// <summary>
         /// Open a new session with camera
         /// </summary>
@@ -443,29 +472,22 @@ namespace EOSDigital.API
         /// <exception cref="ObjectDisposedException">Camera is disposed</exception>
         /// <exception cref="CameraSessionException">Session is closed</exception>
         /// <exception cref="SDKStateException">Canon SDK is not initialized</exception>
-        public void TakePhoto(bool isOldCanon)
+        public void TakePhoto()
         {
             CheckState();
             //SendCommand(CameraCommand.TakePicture);
 
-                if (isOldCanon)
+                if (IsOldCanon())
                 {
                     SendCommand(CameraCommand.TakePicture);
                     return;
                 }
-            
+                
             SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
             Logger.WriteTraceMessage("TakePhoto Completely");
             SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
             Logger.WriteTraceMessage("Sending OFF");
 
-        }
-
-        public void TakePhoto()
-        {
-            CheckState();
-            SendCommand(CameraCommand.TakePicture);
-            Logger.WriteTraceMessage("Basic TakePhoto");
         }
 
         /// <summary>
@@ -562,7 +584,7 @@ namespace EOSDigital.API
                 catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
             });
         }
-
+       
         private void BulbExposure(int bulbTime, CanceledFlag canceledFlag)
         {
             try
@@ -1014,7 +1036,7 @@ namespace EOSDigital.API
                             if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("GetPropertySize DEVICE BUSY " + _error.ToString());
-                                Thread.Sleep(500);
+                                Thread.Sleep(100);
                                 retry = true;
                                 retrynum++;
                             }
@@ -1058,7 +1080,7 @@ namespace EOSDigital.API
                             if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("SetPropertyData DEVICE BUSY " + _error.ToString());
-                                Thread.Sleep(500);
+                                Thread.Sleep(100);
                                 retry = true;
                                 retrynum++;
                             }

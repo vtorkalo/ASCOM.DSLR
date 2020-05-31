@@ -214,6 +214,66 @@ namespace EOSDigital.SDK
             return IntPtr.Size == 4 /* 64bit */ ? EdsGetPropertyData_32(inRef, inPropertyID, inParam, inPropertySize,  outPropertyData) : EdsGetPropertyData_64(inRef, inPropertyID, inParam, inPropertySize, outPropertyData);
         }
 
+        #region GetPorpertyData Wrapper
+
+        public static ErrorCode EdsGetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, out uint outPropertyData)
+        {
+            int size = Marshal.SizeOf(typeof(uint));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            ErrorCode err = EdsGetPropertyData(inRef, inPropertyID, inParam, size, ptr);
+
+            outPropertyData = (uint)Marshal.PtrToStructure(ptr, typeof(uint));
+            Marshal.FreeHGlobal(ptr);
+            return err;
+        }
+
+        public static ErrorCode EdsGetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, out short outPropertyData)
+        {
+            int size = Marshal.SizeOf(typeof(short));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            ErrorCode err = EdsGetPropertyData(inRef, inPropertyID, inParam, size, ptr);
+
+            outPropertyData = (short)Marshal.PtrToStructure(ptr, typeof(short));
+            Marshal.FreeHGlobal(ptr);
+            return err;
+        }
+
+        public static ErrorCode EdsGetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, out int outPropertyData)
+        {
+            int size = Marshal.SizeOf(typeof(int));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            ErrorCode err = EdsGetPropertyData(inRef, inPropertyID, inParam, size, ptr);
+
+            outPropertyData = (int)Marshal.PtrToStructure(ptr, typeof(int));
+            Marshal.FreeHGlobal(ptr);
+            return err;
+        }
+
+        public static ErrorCode EdsGetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam,
+             out Time outPropertyData)
+        {
+            int size = Marshal.SizeOf(typeof(Time));
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            ErrorCode err = EdsGetPropertyData(inRef, inPropertyID, inParam, size, ptr);
+
+            outPropertyData = (Time)Marshal.PtrToStructure(ptr, typeof(Time));
+            Marshal.FreeHGlobal(ptr);
+            return err;
+        }
+
+        public static ErrorCode EdsGetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, out string outPropertyData)
+        {
+            IntPtr ptr = Marshal.AllocHGlobal(256);
+            ErrorCode err = EdsGetPropertyData(inRef, inPropertyID, inParam, 256, ptr);
+
+            outPropertyData = Marshal.PtrToStringAnsi(ptr);
+            Marshal.FreeHGlobal(ptr);
+
+            return err;
+        }
+
+        #endregion GetPorpertyData Wrapper
+
         /// <summary>
         /// Sets property data for the object designated in inRef.
         /// </summary>
