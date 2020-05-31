@@ -74,7 +74,7 @@
             // btnTakeImage
             // 
             this.btnTakeImage.Enabled = false;
-            this.btnTakeImage.Location = new System.Drawing.Point(618, 179);
+            this.btnTakeImage.Location = new System.Drawing.Point(618, 131);
             this.btnTakeImage.Margin = new System.Windows.Forms.Padding(6);
             this.btnTakeImage.Name = "btnTakeImage";
             this.btnTakeImage.Size = new System.Drawing.Size(150, 44);
@@ -91,7 +91,7 @@
             "0.5",
             "5",
             "31"});
-            this.cmdExposure.Location = new System.Drawing.Point(376, 186);
+            this.cmdExposure.Location = new System.Drawing.Point(376, 138);
             this.cmdExposure.Name = "cmdExposure";
             this.cmdExposure.Size = new System.Drawing.Size(218, 33);
             this.cmdExposure.TabIndex = 4;
@@ -101,7 +101,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(205, 189);
+            this.label1.Location = new System.Drawing.Point(205, 141);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(157, 25);
             this.label1.TabIndex = 5;
@@ -111,7 +111,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(789, 259);
+            this.ClientSize = new System.Drawing.Size(789, 202);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cmdExposure);
             this.Controls.Add(this.btnTakeImage);
@@ -120,7 +120,7 @@
             this.Controls.Add(this.buttonChoose);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
-            this.Text = "TEMPLATEDEVICETYPE Test";
+            this.Text = "ASCOM DLSR TestAPP";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
