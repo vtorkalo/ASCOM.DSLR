@@ -94,7 +94,7 @@
             this.cmdExposure.Name = "cmdExposure";
             this.cmdExposure.Size = new System.Drawing.Size(218, 33);
             this.cmdExposure.TabIndex = 4;
-            this.cmdExposure.Text = "2";
+            this.cmdExposure.Text = "0.5";
             // 
             // label1
             // 
