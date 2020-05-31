@@ -306,9 +306,10 @@ namespace ASCOM.DSLR.Classes
                 else
                 {
                     Logger.WriteTraceMessage("< 1");
-                    CameraValue tvCameraValue = GetSelectedTv(Duration);
+                    
                     if (MainCamera.IsOldCanon() || MainCamera.IsManualMode())
                     {
+                        CameraValue tvCameraValue = GetSelectedTv(Duration);
                         Logger.WriteTraceMessage("< 1 ManualMode or Oldcanon");
                         MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
                         MainCamera.TakePhoto();
@@ -316,9 +317,9 @@ namespace ASCOM.DSLR.Classes
                     else
                     {
                         Logger.WriteTraceMessage("Not Old or Manual");
-                        if (MainCamera.IsManualMode() || MainCamera.IsBulbMode())
+                        if (MainCamera.IsBulbMode())
                         {
-                            Logger.WriteTraceMessage("New Canon BulbMode or Manual");
+                            Logger.WriteTraceMessage("New Canon BulbMode");
                             MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
                         }
 

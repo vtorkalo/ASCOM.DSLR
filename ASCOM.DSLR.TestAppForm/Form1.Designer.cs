@@ -32,6 +32,8 @@
             this.buttonConnect = new System.Windows.Forms.Button();
             this.labelDriverId = new System.Windows.Forms.Label();
             this.btnTakeImage = new System.Windows.Forms.Button();
+            this.cmdExposure = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonChoose
@@ -81,11 +83,35 @@
             this.btnTakeImage.UseVisualStyleBackColor = true;
             this.btnTakeImage.Click += new System.EventHandler(this.button1_Click);
             // 
+            // cmdExposure
+            // 
+            this.cmdExposure.FormattingEnabled = true;
+            this.cmdExposure.Items.AddRange(new object[] {
+            "0.5",
+            "1",
+            "2"});
+            this.cmdExposure.Location = new System.Drawing.Point(376, 186);
+            this.cmdExposure.Name = "cmdExposure";
+            this.cmdExposure.Size = new System.Drawing.Size(218, 33);
+            this.cmdExposure.TabIndex = 4;
+            this.cmdExposure.Text = "2";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(205, 189);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(157, 25);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Exposure Test:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(789, 259);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cmdExposure);
             this.Controls.Add(this.btnTakeImage);
             this.Controls.Add(this.labelDriverId);
             this.Controls.Add(this.buttonConnect);
@@ -96,6 +122,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -105,6 +132,8 @@
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Label labelDriverId;
         private System.Windows.Forms.Button btnTakeImage;
+        private System.Windows.Forms.ComboBox cmdExposure;
+        private System.Windows.Forms.Label label1;
     }
 }
 

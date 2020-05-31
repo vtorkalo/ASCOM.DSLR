@@ -63,7 +63,7 @@ namespace ASCOM.DSLR
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int exposuretime = 2;
+            double exposuretime =  Convert.ToDouble(cmdExposure.SelectedItem.ToString());
             if (IsConnected)
             {
                     driver.StartExposure(exposuretime, true);                               
