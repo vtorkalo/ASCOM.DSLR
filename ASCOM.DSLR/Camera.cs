@@ -154,13 +154,12 @@ namespace ASCOM.DSLR
 
                     if (_cameraState != CameraStates.cameraIdle)
                     {
-                        //Logger.WriteTraceMessage("GetPropertySize DEVICE BUSY " + _error.ToString());
-                        Thread.Sleep(1000);
+
+                        Thread.Sleep(100);
                         retry = true;
                         retrynum++;
 
-                        //Logger.WriteTraceMessage("GetPropertySize OK " + _error.ToString());
-                    }
+                     }
                     else
                     {
                         cameraImageReady = false;

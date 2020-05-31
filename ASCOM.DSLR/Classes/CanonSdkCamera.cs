@@ -311,7 +311,6 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
-                    IsOldCanon();
                     CameraValue tvCameraValue = GetSelectedTv(Duration);
                     MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
                     MainCamera.TakePhoto(IsOldCanon());
