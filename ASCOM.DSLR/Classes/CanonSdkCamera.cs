@@ -315,6 +315,7 @@ namespace ASCOM.DSLR.Classes
                     }
                     else
                     {
+                        Logger.WriteTraceMessage("Not Old or Manual");
                         if (MainCamera.IsManualMode() || MainCamera.IsBulbMode())
                         {
                             Logger.WriteTraceMessage("New Canon BulbMode or Manual");
