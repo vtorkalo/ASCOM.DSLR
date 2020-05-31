@@ -79,5 +79,10 @@ namespace ASCOM.DSLR
         {
 
         }
+
+        private void cmdExposure_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

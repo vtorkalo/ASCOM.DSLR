@@ -87,14 +87,16 @@
             // 
             this.cmdExposure.FormattingEnabled = true;
             this.cmdExposure.Items.AddRange(new object[] {
+            "0.00025",
             "0.5",
-            "1",
-            "2"});
+            "5",
+            "31"});
             this.cmdExposure.Location = new System.Drawing.Point(376, 186);
             this.cmdExposure.Name = "cmdExposure";
             this.cmdExposure.Size = new System.Drawing.Size(218, 33);
             this.cmdExposure.TabIndex = 4;
             this.cmdExposure.Text = "0.5";
+            this.cmdExposure.SelectedIndexChanged += new System.EventHandler(this.cmdExposure_SelectedIndexChanged);
             // 
             // label1
             // 
