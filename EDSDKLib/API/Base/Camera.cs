@@ -589,14 +589,14 @@ namespace EOSDigital.API
         {
             try
             {
-                Logger.WriteTraceMessage("Try BulbStart");
-                SendCommand(CameraCommand.BulbStart);
-                
+                Logger.WriteTraceMessage("Try Press");
+                //SendCommand(CameraCommand.PressShutterButton, (int)65539);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
             }
             catch (ExecutionException)
             {
-                Logger.WriteTraceMessage("Try Press");
-                SendCommand(CameraCommand.PressShutterButton, (int)65539);
+                Logger.WriteTraceMessage("Try BulbStart");
+                SendCommand(CameraCommand.BulbStart);
             }
 
             int seconds = bulbTime / 1000;
@@ -615,16 +615,14 @@ namespace EOSDigital.API
 
             try
             {
-                Logger.WriteTraceMessage("Try BulbEnd");
-                SendCommand(CameraCommand.BulbEnd);
-
-            }
-            catch (ExecutionException)
-            {
                 Logger.WriteTraceMessage("Try Press");
                 SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                 SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF); // Test for new cameras
-
+            }
+            catch (ExecutionException)
+            {
+                Logger.WriteTraceMessage("Try BulbEnd");
+                SendCommand(CameraCommand.BulbEnd);
             }
         }
 
