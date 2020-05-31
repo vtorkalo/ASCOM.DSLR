@@ -453,6 +453,7 @@ namespace EOSDigital.API
                     SendCommand(CameraCommand.TakePicture);
                     return;
                 }
+            
             SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
             Logger.WriteTraceMessage("TakePhoto Completely");
             SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
@@ -851,9 +852,6 @@ namespace EOSDigital.API
         }
 
 
-
-
-        
         /// <summary>
         /// Sends a Status Command to the camera
         /// </summary>
@@ -1016,7 +1014,7 @@ namespace EOSDigital.API
                             if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("GetPropertySize DEVICE BUSY " + _error.ToString());
-                                Thread.Sleep(200);
+                                Thread.Sleep(500);
                                 retry = true;
                                 retrynum++;
                             }
@@ -1060,7 +1058,7 @@ namespace EOSDigital.API
                             if (_error == ErrorCode.DEVICE_BUSY)
                             {
                                 Logger.WriteTraceMessage("SetPropertyData DEVICE BUSY " + _error.ToString());
-                                Thread.Sleep(200);
+                                Thread.Sleep(500);
                                 retry = true;
                                 retrynum++;
                             }

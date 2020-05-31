@@ -303,7 +303,7 @@ namespace ASCOM.DSLR.Classes
                 _canceledFlag.IsCanceled = false;
 
 
-                if (Duration >= 1)
+                if (Duration >= 1 )
                 {
                         
                         MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
