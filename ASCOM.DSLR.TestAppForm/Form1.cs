@@ -77,7 +77,7 @@ namespace ASCOM.DSLR
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            cmdExposure.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
         private void cmdExposure_SelectedIndexChanged(object sender, EventArgs e)
