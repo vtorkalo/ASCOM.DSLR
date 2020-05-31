@@ -589,11 +589,13 @@ namespace EOSDigital.API
         {
             try
             {
+                Logger.WriteTraceMessage("Try BulbStart");
                 SendCommand(CameraCommand.BulbStart);
                 
             }
             catch (ExecutionException)
             {
+                Logger.WriteTraceMessage("Try Press");
                 SendCommand(CameraCommand.PressShutterButton, (int)65539);
             }
 
@@ -613,11 +615,13 @@ namespace EOSDigital.API
 
             try
             {
+                Logger.WriteTraceMessage("Try BulbEnd");
                 SendCommand(CameraCommand.BulbEnd);
 
             }
             catch (ExecutionException)
             {
+                Logger.WriteTraceMessage("Try Press");
                 SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                 SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF); // Test for new cameras
 
