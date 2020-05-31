@@ -305,6 +305,7 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
+                    Logger.WriteTraceMessage("< 1");
                     CameraValue tvCameraValue = GetSelectedTv(Duration);
                     if (MainCamera.IsOldCanon() || MainCamera.IsManualMode())
                     {

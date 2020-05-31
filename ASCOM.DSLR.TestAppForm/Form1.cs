@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace ASCOM.DSLR
 {
@@ -62,13 +63,19 @@ namespace ASCOM.DSLR
 
         private void button1_Click(object sender, EventArgs e)
         {
+            int exposuretime = 2;
             if (IsConnected)
             {
-                driver.StartExposure(2, true);
+                    driver.StartExposure(exposuretime, true);                               
             }
         }
 
         private void labelDriverId_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }

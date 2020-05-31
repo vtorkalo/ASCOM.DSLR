@@ -482,11 +482,11 @@ namespace EOSDigital.API
                     SendCommand(CameraCommand.TakePicture);
                     return;
                 }
-                
-            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
             Logger.WriteTraceMessage("TakePhoto Completely");
-            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
             Logger.WriteTraceMessage("Sending OFF");
+            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+           
 
         }
 
