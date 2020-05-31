@@ -1,6 +1,8 @@
 # ASCOM.DSLR
 ASCOM Driver for DSLR Cameras
 
+Discord Developers Channel: https://discord.gg/zPCa9qw
+
 Development environment preparation
 1. Install Visual studio 2017
 2. Download and install Inno Setup 5.5.8 http://files.jrsoftware.org/is/5/isetup-5.5.8-unicode.exe
@@ -14,3 +16,4 @@ Run build.bat https://github.com/FearL0rd/ASCOM.DSLR/blob/master/build.bat
 This script will compile C# project and build installer. Installer will be placed in same folder (filename DSLR.Camera Setup.exe) Note: script is created to work on x64 systems. If you are using x86 - please modify script to correct patch to "Program Filex (x86)"
 
 Install path 
+
