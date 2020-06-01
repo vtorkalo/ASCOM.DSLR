@@ -390,7 +390,7 @@ namespace ASCOM.DSLR
 
         public bool CanSetCCDTemperature { get { return false; } }
 
-        public bool CanStopExposure { get { return false; } }
+        public bool CanStopExposure { get { return true; } }
 
         public bool CoolerOn { get { return false; } set { } }
 
@@ -452,6 +452,7 @@ namespace ASCOM.DSLR
                 }
                 else
                 {
+                    //return ApiContainer.DslrCamera.MaxIso;
                     throw new PropertyNotImplementedException("The Gains property is not implemented");
                 }
             }
@@ -467,8 +468,9 @@ namespace ASCOM.DSLR
                     }
                     else
                     {
+                    //return ApiContainer.DslrCamera.MaxIso;
                     throw new PropertyNotImplementedException("The Gains property is not implemented");
-                    }
+                }
             }
         }
         //public short GainMin { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
@@ -621,7 +623,11 @@ namespace ASCOM.DSLR
             }
         }
 
-        public void PulseGuide(GuideDirections Direction, int Duration) { }
+        //public void PulseGuide(GuideDirections Direction, int Duration) { }
+
+        public void PulseGuide(GuideDirections Direction, int Duration) {
+            throw new ASCOM.MethodNotImplementedException("The PulseGuide property is not implemented");
+        }
 
         public short ReadoutMode { get; set; }
 
@@ -629,7 +635,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return new ArrayList();
+                return new ArrayList(new[] {ImageFormat.RAW.ToString(), ImageFormat.JPEG.ToString() });
             }
         }
 

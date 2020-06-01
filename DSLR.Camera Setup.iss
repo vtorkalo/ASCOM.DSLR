@@ -90,7 +90,7 @@ Source: "pktriggercord\COPYING"; DestDir: "{app}/pktriggercord"
 Source: "pktriggercord\Changelog"; DestDir: "{app}/pktriggercord"
 Source: "pktriggercord\pentax_settings.json"; DestDir: "{app}/pktriggercord"
 
-Source: "ASCOM.DSLR.TestAppForm\bin\Debug\ASCOM.DSLR.Test.exe"; DestDir: "{app}"
+Source: "bin\ASCOM.DSLR.Test.exe"; DestDir: "{app}"
 
 ; Only if driver is .NET
 [Run]
