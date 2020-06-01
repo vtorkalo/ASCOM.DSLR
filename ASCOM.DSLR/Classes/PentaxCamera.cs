@@ -85,7 +85,7 @@ namespace ASCOM.DSLR.Classes
             MarkWaitingForExposure(Duration, fileName);
             watch();
 
-            ExecuteCommand(string.Format("--file_format dng -o {0} --iso {1} --shutter_speed {2}", fileName, Iso, Duration));
+            ExecuteCommand(string.Format("--file_format dng -o {0} --iso {1} --shutter_speed {2}", fileName + ".dng", Iso, Duration));
         }
 
         private string _fileNameWaiting;

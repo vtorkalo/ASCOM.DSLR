@@ -140,6 +140,7 @@ namespace CameraControl.Devices
 
         private void PopulateDeviceClass()
         {
+
             DeviceClass = new Dictionary<string, Type>
             {
                 {"D200", typeof(NikonD40)},

@@ -5,6 +5,7 @@ using CameraControl.Devices;
 using CameraControl.Devices.Classes;
 using CameraControl.Devices.Wifi;
 using CameraControl.Plugins.ExternalDevices;
+using Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,7 @@ namespace ASCOM.DSLR.Classes
                 string model = string.Empty;
                 if (_cameraModel != null)
                 {
+                    Logger.WriteTraceMessage("Model");
                     model = _cameraModel.Name;
                 }
 
@@ -47,11 +49,12 @@ namespace ASCOM.DSLR.Classes
 
         public DigiCamControlCamera(TraceLogger tl, List<CameraModel> cameraModelHistory)  : base(cameraModelHistory)
         {
+            Logger.WriteTraceMessage("DigiCamControlCamera");
             _tl = tl;
             DeviceManager = new CameraDeviceManager();
-            DeviceManager.PhotoCaptured += DeviceManager_PhotoCaptured;
             DeviceManager.CameraSelected += DeviceManager_CameraSelected;
             DeviceManager.CameraConnected += DeviceManager_CameraConnected;
+            DeviceManager.PhotoCaptured += DeviceManager_PhotoCaptured;
             DeviceManager.CameraDisconnected += DeviceManager_CameraDisconnected;
 
             // For experimental Canon driver support- to use canon driver the canon sdk files should be copied in application folder
@@ -81,6 +84,7 @@ namespace ASCOM.DSLR.Classes
 
         public void ConnectCamera()
         {
+            Logger.WriteTraceMessage("ConnectCamera");
             DeviceManager.ConnectToCamera();
             var camera = DeviceManager.SelectedCameraDevice;
             LogCameraInfo(camera);
@@ -123,6 +127,7 @@ namespace ASCOM.DSLR.Classes
 
         public override CameraModel ScanCameras()
         {
+            Logger.WriteTraceMessage("ScanCamera");
             var cameraDevice= DeviceManager.SelectedCameraDevice;
             var cameraModel = GetCameraModel(cameraDevice.DeviceName);
 
@@ -147,9 +152,10 @@ namespace ASCOM.DSLR.Classes
 
             return value;
         }
-
+        
         private string GetNearesetValue(PropertyValue<long> propertyValue, double value)
         {
+            Logger.WriteTraceMessage("GetNearesetValue");
             string nearest = propertyValue.Values.Select(v =>
             { 
 
@@ -172,6 +178,7 @@ namespace ASCOM.DSLR.Classes
 
         public void StartExposure(double Duration, bool Light)
         {
+            Logger.WriteTraceMessage("StartExposure");
             _canceled.IsCanceled = false;
             
             _startTime = DateTime.Now;

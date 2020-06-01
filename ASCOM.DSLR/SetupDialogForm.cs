@@ -368,5 +368,15 @@ namespace ASCOM.DSLR
         {
 
         }
+
+        private void cbTraceLevel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkTrace_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
