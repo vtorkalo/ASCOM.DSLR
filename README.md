@@ -13,7 +13,9 @@ Development environment preparation
 
 Installer building:
 Run build.bat https://github.com/FearL0rd/ASCOM.DSLR/blob/master/build.bat
-This script will compile C# project and build installer. Installer will be placed in same folder (filename DSLR.Camera Setup.exe) Note: script is created to work on x64 systems. If you are using x86 - please modify script to correct patch to "Program Filex (x86)"
+This script will compile C# project and build installer. Installer will be placed in same folder (filename DSLR.Camera Setup.exe) Note: script is created to work on x64 systems. If you are using x86 - please modify script to correct patch to "Program Filex (x86)" Install path 
 
-Install path 
-
+Release Notes
+5/15/2020 - Added more log fo troubleshooting  
+5/29/2020 - Fixed Camera detection to work wil multiple cameras
+6/01/2020 - New update. I have added Dropdown list for isos to supported applications like SharpCap
