@@ -277,13 +277,14 @@ namespace ASCOM.DSLR
 
         private void SetCameraSettings(IDslrCamera camera, CameraSettings settings)
         {
-            camera.Iso = Gain > 0 ? Gain : settings.Iso;
+            //camera.Iso = Gain > 0 ? Gain : settings.Iso;
+            camera.Iso = Gain > 50 ? Gain : settings.Iso;
             camera.StorePath = settings.StorePath;
             camera.SaveFile = settings.SaveFile;
 
             switch (CameraSettings.CameraMode)
             {
-
+               
                 case CameraMode.RGGB:
                 case CameraMode.Color16:
                     camera.ImageFormat = ImageFormat.RAW;
@@ -407,7 +408,7 @@ namespace ASCOM.DSLR
 
         public double FullWellCapacity { get { return short.MaxValue; } }
 
-        public short Gain
+        /*public short Gain
         {
             get
             {
@@ -422,12 +423,54 @@ namespace ASCOM.DSLR
                 ApiContainer.DslrCamera.Iso = value;
                 CameraSettings.Iso = value;
             }
+        }*/
+
+        public short Gain
+        {
+            get
+            {
+                return Convert.ToInt16(Gains.IndexOf(CameraSettings.Iso));
+
+            }
+            set
+            {
+                ApiContainer.DslrCamera.Iso = value < 50 ? value : Convert.ToInt16(Gains.IndexOf(value));
+                //CameraSettings.Iso = value;
+                
+
+                CameraSettings.Iso = value > 50 ? value : Convert.ToInt16(Gains[value]);
+            }
         }
 
-        public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
+        public short GainMax
+        {
+            get
+            {
+                if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
+                {
+                    return ApiContainer.DslrCamera.MaxIso;
+                }
+                else
+                {
+                    throw new PropertyNotImplementedException("The Gains property is not implemented");
+                }
+            }
+        }
         //public short GainMax { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
-        public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
+        public short GainMin {
+                get
+                {
+                    if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
+                    {
+                    return ApiContainer.DslrCamera.MinIso;
+                    }
+                    else
+                    {
+                    throw new PropertyNotImplementedException("The Gains property is not implemented");
+                    }
+            }
+        }
         //public short GainMin { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
         public ArrayList Gains
@@ -437,8 +480,10 @@ namespace ASCOM.DSLR
                 // ASCOM Camera drivers should implement either Gains or GainMin/GainMax, not both
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
-                throw new PropertyNotImplementedException("The Gains property is not implemented");
-                //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
+                //throw new PropertyNotImplementedException("The Gains property is not implemented");
+                //Logger.WriteTraceMessage(cameraSettingsProfileName);
+                return new ArrayList(ApiContainer.DslrCamera.IsoValues);
+
 
             }
  
