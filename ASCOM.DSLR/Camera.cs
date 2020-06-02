@@ -278,10 +278,6 @@ namespace ASCOM.DSLR
         private void SetCameraSettings(IDslrCamera camera, CameraSettings settings)
         {
             camera.Iso = Gain > 0 ? Gain : settings.Iso;
-<<<<<<< HEAD
-            //camera.Iso = Gain > 50 ? Gain : settings.Iso;
-=======
->>>>>>> parent of 8eee404... Iso DropDown list for SharpCap and others that support the function
             camera.StorePath = settings.StorePath;
             camera.SaveFile = settings.SaveFile;
 
@@ -427,67 +423,8 @@ namespace ASCOM.DSLR
                 CameraSettings.Iso = value;
             }
         }
-<<<<<<< HEAD
-
-        /*public short Gain
-        {
-            get
-            {
-                return Convert.ToInt16(Gains.IndexOf(CameraSettings.Iso));
-
-            }
-            set
-            {
-                ApiContainer.DslrCamera.Iso = value < 50 ? value : Convert.ToInt16(Gains.IndexOf(value));
-                //CameraSettings.Iso = value;
-                
-
-                CameraSettings.Iso = value > 50 ? value : Convert.ToInt16(Gains[value]);
-            }
-        }*/
-
-        /*public short GainMax
-        {
-            get
-            {
-                if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
-                {
-                    return ApiContainer.DslrCamera.MaxIso;
-                }
-                else
-                {
-                    //return ApiContainer.DslrCamera.MaxIso;
-                    throw new PropertyNotImplementedException("The Gains property is not implemented");
-                }
-            }
-        }*/
-        public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
-        //public short GainMax { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
-
-
-        /*public short GainMin {
-                get
-                {
-              
-                if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
-                    {
-                    return ApiContainer.DslrCamera.MinIso;
-                    }
-                    else
-                    {
-                    //return ApiContainer.DslrCamera.MaxIso;
-                    throw new PropertyNotImplementedException("The Gains property is not implemented");
-                }
-            }
-        }*/
-=======
 
         public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
-        //public short GainMax { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
-
-        public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
->>>>>>> parent of 8eee404... Iso DropDown list for SharpCap and others that support the function
-        //public short GainMin { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
         public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
 
@@ -499,14 +436,6 @@ namespace ASCOM.DSLR
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
                 throw new PropertyNotImplementedException("The Gains property is not implemented");
-<<<<<<< HEAD
-                //Logger.WriteTraceMessage(cameraSettingsProfileName);
-                //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
-
-=======
-                //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
->>>>>>> parent of 8eee404... Iso DropDown list for SharpCap and others that support the function
-
             }
  
         }
@@ -646,8 +575,6 @@ namespace ASCOM.DSLR
                 return ApiContainer.DslrCamera.PixelSizeY * BinY;
             }
         }
-
-        //public void PulseGuide(GuideDirections Direction, int Duration) { }
 
         public void PulseGuide(GuideDirections Direction, int Duration) {
             throw new ASCOM.MethodNotImplementedException("The PulseGuide property is not implemented");
