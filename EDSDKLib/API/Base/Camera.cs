@@ -212,7 +212,7 @@ namespace EOSDigital.API
         {
             string[] models =
             {
-                " 1000D", " 40D", " 450D", " 50D", " 400D", " 500D", "Rebel XSi", "Rebel XTi",
+                " 1000D", " 40D", " 450D", " 50D", " 400D", " 500D", " 550D", "Rebel XSi", "Rebel XTi",
                 "Rebel XS", "Rebel T1i", "1Ds Mark III"
             };
 

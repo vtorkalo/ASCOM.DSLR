@@ -298,9 +298,9 @@ namespace ASCOM.DSLR.Classes
                 if (MainCamera.IsManualMode())
                 {
 
-                    if (Duration > 30)
+                    if (Duration >= 30)
                     {
-                        Logger.WriteTraceMessage("ManualMode and > 30.0");
+                        Logger.WriteTraceMessage("ManualMode and >= 30.0");
                         MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
                         MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
                     }
