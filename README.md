@@ -1,7 +1,7 @@
 # ASCOM.DSLR
 ASCOM Driver for DSLR Cameras
 
-Discord Developers Channel: https://discord.gg/zPCa9qw
+Discord Channel: https://discord.gg/zPCa9qw
 
 Development environment preparation
 1. Install Visual studio 2017
