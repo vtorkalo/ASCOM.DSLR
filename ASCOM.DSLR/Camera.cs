@@ -278,13 +278,16 @@ namespace ASCOM.DSLR
         private void SetCameraSettings(IDslrCamera camera, CameraSettings settings)
         {
             camera.Iso = Gain > 0 ? Gain : settings.Iso;
+<<<<<<< HEAD
             //camera.Iso = Gain > 50 ? Gain : settings.Iso;
+=======
+>>>>>>> parent of 8eee404... Iso DropDown list for SharpCap and others that support the function
             camera.StorePath = settings.StorePath;
             camera.SaveFile = settings.SaveFile;
 
             switch (CameraSettings.CameraMode)
             {
-               
+
                 case CameraMode.RGGB:
                 case CameraMode.Color16:
                     camera.ImageFormat = ImageFormat.RAW;
@@ -424,6 +427,7 @@ namespace ASCOM.DSLR
                 CameraSettings.Iso = value;
             }
         }
+<<<<<<< HEAD
 
         /*public short Gain
         {
@@ -476,6 +480,13 @@ namespace ASCOM.DSLR
                 }
             }
         }*/
+=======
+
+        public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
+        //public short GainMax { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
+
+        public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
+>>>>>>> parent of 8eee404... Iso DropDown list for SharpCap and others that support the function
         //public short GainMin { get { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
         public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
@@ -488,9 +499,13 @@ namespace ASCOM.DSLR
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
                 throw new PropertyNotImplementedException("The Gains property is not implemented");
+<<<<<<< HEAD
                 //Logger.WriteTraceMessage(cameraSettingsProfileName);
                 //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
 
+=======
+                //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
+>>>>>>> parent of 8eee404... Iso DropDown list for SharpCap and others that support the function
 
             }
  
