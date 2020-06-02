@@ -310,20 +310,26 @@ namespace ASCOM.DSLR.Classes
                     }
 
                 }
+                else {
 
-                if (MainCamera.IsBulbMode()) {
-
-                    if (Duration >= 1)
+                    if (MainCamera.IsBulbMode())
                     {
-                        Logger.WriteTraceMessage("BulbMode and > 1.0");
-                        MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
-                    }
-                    else
-                    {
-                        Logger.WriteTraceMessage("BulbMode and < 1.0");
-                        MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
-                    }
 
+                        if (Duration >= 1)
+                        {
+                            Logger.WriteTraceMessage("BulbMode and > 1.0");
+                            MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                        }
+                        else
+                        {
+                            Logger.WriteTraceMessage("BulbMode and < 1.0");
+                            MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                        }
+
+                    }
+                    else {
+                        Logger.WriteTraceMessage("For old cameras the wheel needs to be (M) position and for newer cameras the wheel needs to be (B) position");
+                    }
                 }
 
                 /* Old Code when I was trobleshooting 
