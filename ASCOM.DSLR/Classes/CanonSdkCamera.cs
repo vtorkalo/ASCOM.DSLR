@@ -329,6 +329,7 @@ namespace ASCOM.DSLR.Classes
                     }
                     else {
                         Logger.WriteTraceMessage("For old cameras the wheel needs to be (M) position and for newer cameras the wheel needs to be (B) position");
+                        throw new InvalidOperationException("For old cameras the wheel needs to be (M) position and for newer cameras the wheel needs to be (B) position");
                     }
                 }
 
