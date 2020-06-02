@@ -105,6 +105,7 @@
     <Compile Include="Classes\DigicamControlCameraEOS.cs" />
     <Compile Include="Classes\ErrorMessages.cs" />
     <Compile Include="Classes\ExifToolWrapper.cs" />
+    <Compile Include="Classes\NikonSdkCamera.cs" />
     <Compile Include="Classes\PentaxCamera.cs" />
     <Compile Include="Classes\SerialPortShutterRelease.cs" />
     <Compile Include="Driver.cs" />
@@ -211,6 +212,10 @@
     <ProjectReference Include="..\ErrorLogging\Logging.csproj">
       <Project>{7eb5d33d-e000-4766-9119-eda40d04af74}</Project>
       <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nikoncswrapper\nikoncswrapper.csproj">
+      <Project>{aade1df5-4c46-4760-b72b-474d90336f5b}</Project>
+      <Name>nikoncswrapper</Name>
     </ProjectReference>
     <ProjectReference Include="..\OTelescope.API\OTelescope.API.csproj">
       <Project>{b7e42253-59ab-4ce0-b1e7-43fc61f4cd07}</Project>

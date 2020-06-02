@@ -293,7 +293,9 @@ namespace ASCOM.DSLR.Classes
                 _startTime = DateTime.Now;
                 _canceledFlag.IsCanceled = false;
 
-                if (MainCamera.IsManualMode() && MainCamera.IsOldCanon())
+                MainCamera.IsOldCanon();
+
+                if (MainCamera.IsManualMode())
                 {
 
                     if (Duration > 30)

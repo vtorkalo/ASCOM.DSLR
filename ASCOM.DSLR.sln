@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCOM.DSLR", "ASCOM.DSLR\ASCOM.DSLR.csproj", "{64308775-BD4A-469C-BCAB-3ED830B811AF}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -37,6 +37,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DigiCamControl", "DigiCamControl", "{4FC379CE-DD0C-4628-9639-E232474A1F70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "ErrorLogging\Logging.csproj", "{7EB5D33D-E000-4766-9119-EDA40D04AF74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nikoncswrapper", "nikoncswrapper\nikoncswrapper.csproj", "{AADE1DF5-4C46-4760-B72B-474D90336F5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -213,6 +215,24 @@ Global
 		{7EB5D33D-E000-4766-9119-EDA40D04AF74}.Release|x64.Build.0 = Release|Any CPU
 		{7EB5D33D-E000-4766-9119-EDA40D04AF74}.Release|x86.ActiveCfg = Release|Any CPU
 		{7EB5D33D-E000-4766-9119-EDA40D04AF74}.Release|x86.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|Any CPU.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|Any CPU.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|x64.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|x64.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|x86.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Capture.Workflow|x86.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|x64.Build.0 = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Debug|x86.Build.0 = Debug|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|x64.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|x64.Build.0 = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|x86.ActiveCfg = Release|Any CPU
+		{AADE1DF5-4C46-4760-B72B-474D90336F5B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

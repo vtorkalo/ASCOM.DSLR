@@ -216,6 +216,7 @@ namespace EOSDigital.API
                 "Rebel XS", "Rebel T1i", "1Ds Mark III"
             };
 
+            Logger.WriteTraceMessage(Info.DeviceDescription.ToLower());
             return models.Any(model => Info.DeviceDescription.ToLower().Contains(model.ToLower()));
         }
 
