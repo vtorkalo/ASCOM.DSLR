@@ -277,8 +277,8 @@ namespace ASCOM.DSLR
 
         private void SetCameraSettings(IDslrCamera camera, CameraSettings settings)
         {
-            //camera.Iso = Gain > 0 ? Gain : settings.Iso;
-            camera.Iso = Gain > 50 ? Gain : settings.Iso;
+            camera.Iso = Gain > 0 ? Gain : settings.Iso;
+            //camera.Iso = Gain > 50 ? Gain : settings.Iso;
             camera.StorePath = settings.StorePath;
             camera.SaveFile = settings.SaveFile;
 
@@ -404,7 +404,7 @@ namespace ASCOM.DSLR
 
         public double ExposureResolution { get { return 0.01; } }
 
-        public bool FastReadout { get { return false; } set { } }
+        public bool FastReadout { get { throw new PropertyNotImplementedException("The FastReadout property is not implemented"); } set { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
         public double FullWellCapacity { get { return short.MaxValue; } }
 
@@ -512,6 +512,10 @@ namespace ASCOM.DSLR
         {
             get
             {
+                if (!cameraImageReady)
+                {
+                    throw new InvalidOperationException("Call to ImageArrayVariant before the first image has been taken!");
+                }
                 return cameraImageArray;
             }
         }
@@ -542,7 +546,7 @@ namespace ASCOM.DSLR
             {
                 if (!cameraImageReady)
                 {
-                    throw new ASCOM.InvalidOperationException("Call to LastExposureDuration before the first image has been taken!");
+                    throw new InvalidOperationException("Call to LastExposureDuration before the first image has been taken!");
                 }
                 return cameraLastExposureDuration;
             }
@@ -554,7 +558,7 @@ namespace ASCOM.DSLR
             {
                 if (!cameraImageReady)
                 {
-                    throw new ASCOM.InvalidOperationException("Call to LastExposureStartTime before the first image has been taken!");
+                    throw new InvalidOperationException("Call to LastExposureStartTime before the first image has been taken!");
                 }
 
                 string exposureStartString = exposureStart.ToString("yyyy-MM-ddTHH:mm:ss");
@@ -692,7 +696,7 @@ namespace ASCOM.DSLR
             }
             set
             {
-                
+                throw new PropertyNotImplementedException("The FastReadout property is not implemented");
             }
         }
 
