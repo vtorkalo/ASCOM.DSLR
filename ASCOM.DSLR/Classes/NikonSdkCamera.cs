@@ -34,8 +34,18 @@ namespace ASCOM.DSLR.Classes
             }
         }
 
+        public bool SupportsViewView => throw new System.NotImplementedException();
+
+        public NikonSdkCamera(TraceLogger tl, List<CameraModel> cameraModelHistory) : base(cameraModelHistory)
+        {
+        }
+
         private List<NikonManager> _nikonManagers;
         private NikonManager _activeNikonManager;
+
+        public event EventHandler<ImageReadyEventArgs> ImageReady;
+        public event EventHandler<LiveViewImageReadyEventArgs> LiveViewImageReady;
+        public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
 
         public void LoadManagers() {
 
@@ -48,62 +58,47 @@ namespace ASCOM.DSLR.Classes
             foreach (string file in Directory.GetFiles(md3Folder, "*.md3", SearchOption.AllDirectories))
             {
                 NikonManager mgr = new NikonManager(file);
-                mgr.DeviceAdded += Mgr_DeviceAdded;
+                //mgr.DeviceAdded += Mgr_DeviceAdded;
                 _nikonManagers.Add(mgr);
             }
 
 
         }
 
-
-        private void Mgr_DeviceAdded(NikonManager sender, NikonDevice device)
-        {
-            var connected = false;
-            try
-            {
-                _activeNikonManager = sender;
-                _activeNikonManager.DeviceRemoved += Mgr_DeviceRemoved;
-
-                Init(device);
-
-                connected = true;
-                Name = _camera.Name;
-            }
-            catch (Exception ex)
-            {
-                Notification.ShowError(ex.Message);
-                Logger.Error(ex);
-            }
-            finally
-            {
-                Connected = connected;
-                RaiseAllPropertiesChanged();
-                _cameraConnected.TrySetResult(connected);
-            }
-        }
-
         public override CameraModel ScanCameras()
         {
-            ScanForCameras();
-            _mainCamera = CamList.First();
-
-            // TODO: handle exceptions here, this can fail!
-
-            var cameraModel = GetCameraModel(_mainCamera.DeviceName);
-            return cameraModel;
+            throw new System.NotImplementedException();
         }
 
-        private void ScanForCameras()
+        public void StartExposure(double Duration, bool Light)
         {
-            CamList = APIHandler.GetCameraList();
-            if (!CamList.Any())
-            {
-                throw new NotConnectedException(ErrorMessages.NotConnected);
-            }
+            throw new System.NotImplementedException();
         }
 
+        public void AbortExposure()
+        {
+            throw new System.NotImplementedException();
+        }
 
+        public void StopExposure()
+        {
+            throw new System.NotImplementedException();
+        }
 
+        public void ConnectCamera()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DisconnectCamera()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 
