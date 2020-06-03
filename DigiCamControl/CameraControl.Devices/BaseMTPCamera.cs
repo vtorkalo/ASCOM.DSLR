@@ -285,9 +285,9 @@ namespace CameraControl.Devices
                             break;
                         //}
                     }
-                    catch (COMException ex)
+                    catch (COMException)
                     {
-                        Log.Error("Transfer error", ex);
+                        Log.Error("Transfer error code retrying " + result.ErrorCode.ToString("X"));
                         Thread.Sleep(200);
                         retryes--;
                     }

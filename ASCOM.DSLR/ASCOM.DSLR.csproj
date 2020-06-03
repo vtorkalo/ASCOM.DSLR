@@ -105,7 +105,6 @@
     <Compile Include="Classes\DigicamControlCameraEOS.cs" />
     <Compile Include="Classes\ErrorMessages.cs" />
     <Compile Include="Classes\ExifToolWrapper.cs" />
-    <Compile Include="Classes\NikonSdkCamera.cs" />
     <Compile Include="Classes\PentaxCamera.cs" />
     <Compile Include="Classes\SerialPortShutterRelease.cs" />
     <Compile Include="Driver.cs" />
@@ -152,78 +151,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SDK\X86\Nikon\Type0001\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0002\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0003\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0004\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0005\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0006\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0007\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0008\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0009\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0010\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0011\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0012\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0013\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0014\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0015\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0016\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0017\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0018\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0019\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0020\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0021\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0022\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0023\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X86\Nikon\Type0024\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -236,78 +163,6 @@
     </None>
     <Content Include="ASCOM.ico" />
     <Content Include="SDK\X64\EDSDK.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0001\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0002\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0003\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0004\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0005\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0006\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0007\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0008\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0009\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0010\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0011\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0012\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0013\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0014\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0015\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0016\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0017\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0018\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0019\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0020\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0021\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0022\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0023\NkdPTP.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SDK\X64\Nikon\Type0024\NkdPTP.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SDK\X86\EDSDK.dll">
@@ -326,150 +181,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\ASCOM.bmp" />
-    <None Include="SDK\X64\Nikon\Type0001\Type0001.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0002\Type0002.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0003\Type0003.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0004\Type0004.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0005\Type0005.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0006\Type0006.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0007\Type0007.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0008\Type0008.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0009\Type0009.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0010\Type0010.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0011\Type0011.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0012\Type0012.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0013\Type0013.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0014\Type0014.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0015\Type0015.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0016\Type0016.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0017\Type0017.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0018\Type0018.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0019\Type0019.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0020\Type0020.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0021\Type0021.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0022\Type0022.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0023\Type0023.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X64\Nikon\Type0024\Type0024.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0001\Type0001.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0002\Type0002.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0003\Type0003.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0004\Type0004.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0005\Type0005.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0006\Type0006.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0007\Type0007.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0008\Type0008.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0009\Type0009.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0010\Type0010.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0011\Type0011.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0012\Type0012.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0013\Type0013.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0014\Type0014.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0015\Type0015.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0016\Type0016.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0017\Type0017.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0018\Type0018.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0019\Type0019.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0020\Type0020.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0021\Type0021.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0022\Type0022.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0023\Type0023.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="SDK\X86\Nikon\Type0024\Type0024.md3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -500,10 +211,6 @@
     <ProjectReference Include="..\ErrorLogging\Logging.csproj">
       <Project>{7eb5d33d-e000-4766-9119-eda40d04af74}</Project>
       <Name>Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\nikoncswrapper\nikoncswrapper.csproj">
-      <Project>{aade1df5-4c46-4760-b72b-474d90336f5b}</Project>
-      <Name>nikoncswrapper</Name>
     </ProjectReference>
     <ProjectReference Include="..\OTelescope.API\OTelescope.API.csproj">
       <Project>{b7e42253-59ab-4ce0-b1e7-43fc61f4cd07}</Project>

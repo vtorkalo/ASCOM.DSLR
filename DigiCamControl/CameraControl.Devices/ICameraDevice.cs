@@ -56,6 +56,8 @@ namespace CameraControl.Devices
         /// </value>
         bool CaptureInSdRam { get; set; }
 
+        bool HostMode { get; set; }
+
         PropertyValue<long> FNumber { get; set; }
         PropertyValue<long> IsoNumber { get; set; }
         PropertyValue<long> ShutterSpeed { get; set; }
@@ -106,12 +108,6 @@ namespace CameraControl.Devices
         /// <returns><c>true</c> if capability supported</returns>
         bool GetCapability(CapabilityEnum capabilityEnum);
 
-        /// <summary>
-        /// The current file transfer progress (0-100 %)
-        /// </summary>
-        /// <value>
-        /// The transfer progress.
-        /// </value>
         uint TransferProgress { get; set; }
 
         int Battery { get; set; }
@@ -126,18 +122,10 @@ namespace CameraControl.Devices
         void AutoFocus();
         int Focus(int step);
         void Focus(int x, int y);
-        void Focus(FocusDirection direction, FocusAmount amount);
         void CapturePhotoNoAf();
         void CapturePhoto();
         void StartRecordMovie();
         void StopRecordMovie();
-        /// <summary>
-        /// Gets the prohibition condition for the specified operation.
-        /// If a operation can be executed empty string will returned,
-        /// Else the error code or error description 
-        /// </summary>
-        /// <param name="operationEnum">The operation enum.</param>
-        /// <returns></returns>
         string GetProhibitionCondition(OperationEnum operationEnum);
         bool GetStatus(OperationEnum operationEnum);
         /// <summary>
@@ -153,14 +141,7 @@ namespace CameraControl.Devices
         void LockCamera();
         void UnLockCamera();
         void Close();
-
-        void StartZoom(ZoomDirection direction);
-        void StopZoom(ZoomDirection direction);
-
-        /// <summary>
-        /// Should be called after file tranferred 
-        /// </summary>
-        /// <param name="o">The o.</param>
+        void ResetDevice();
         void ReleaseResurce(object o);
 
         void TransferFileThumb(object o, string filename);
@@ -206,5 +187,6 @@ namespace CameraControl.Devices
 
         void SetCameraField(CameraFieldType cameraFieldType, string comment);
 
+        void WaitForReady();
     }
 }

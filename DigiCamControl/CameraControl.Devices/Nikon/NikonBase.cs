@@ -74,7 +74,6 @@ namespace CameraControl.Devices.Nikon
         public const uint CONST_PROP_Fnumber = 0x5007;
         public const uint CONST_PROP_MovieFnumber = 0xD1A9;
         public const uint CONST_PROP_ExposureIndex = 0x500F;
-        public const uint CONST_PROP_ExposureIndexEx = 0xD0B4;
         public const uint CONST_PROP_MovieExposureIndex = 0xD1AA;
         public const uint CONST_PROP_ExposureTime = 0x500D;
         public const uint CONST_PROP_ShutterSpeed = 0xD100;
@@ -139,7 +138,7 @@ namespace CameraControl.Devices.Nikon
                                                                {0x6400, "Hi 2"},
                                                            };
 
-        protected Dictionary<byte, string> _autoIsoTable = new Dictionary<byte, string>()
+        public  Dictionary<byte, string> _autoIsoTable = new Dictionary<byte, string>()
                                                            {
                                                                {0, "200"},
                                                                {1, "400"},
@@ -216,7 +215,7 @@ namespace CameraControl.Devices.Nikon
                                                                    {0xFFFFFFFF, "Bulb"},
                                                                };
 
-        private Dictionary<int, string> _exposureModeTable = new Dictionary<int, string>()
+        protected Dictionary<int, string> _exposureModeTable = new Dictionary<int, string>()
                                                                    {
                                                                        {1, "M"},
                                                                        {2, "P"},
@@ -233,21 +232,20 @@ namespace CameraControl.Devices.Nikon
                                                                        {0x8019, "[EffectMode] EFFECTS"},
                                                                    };
 
-        private Dictionary<uint, string> _wbTable = new Dictionary<uint, string>()
-                                                            {
-                                                                {2, "Auto"},
-                                                                {4, "Daylight"},
-                                                                {5, "Fluorescent"},
-                                                                {6, "Incandescent"},
-                                                                {7, "Flash"},
-                                                                {0x8010, "Cloudy"},
-                                                                {0x8011, "Shade"},
-                                                                {0x8012, "Kelvin"},
-                                                                {0x8013, "Custom"},
-                                                                {0x8016, "Natural Light Auto"}
-                                                            };
+        protected Dictionary<uint, string> _wbTable = new Dictionary<uint, string>()
+                                                          {
+                                                              {2, "Auto"},
+                                                              {4, "Daylight"},
+                                                              {5, "Fluorescent"},
+                                                              {6, "Incandescent"},
+                                                              {7, "Flash"},
+                                                              {32784, "Cloudy"},
+                                                              {32785, "Shade"},
+                                                              {32786, "Kelvin"},
+                                                              {32787, "Custom"}
+                                                          };
 
-        protected Dictionary<int, string> _csTable = new Dictionary<int, string>()
+        protected  Dictionary<int, string> _csTable = new Dictionary<int, string>()
                                                          {
                                                              {0, "JPEG (BASIC)"},
                                                              {1, "JPEG (NORMAL)"},
@@ -263,8 +261,7 @@ namespace CameraControl.Devices.Nikon
                                                         {
                                                             {2, "Center-weighted metering"},
                                                             {3, "Multi-pattern metering"},
-                                                            {4, "Spot metering"},
-                                                            {0x8010, "Highlight-weighted"}
+                                                            {4, "Spot metering"}
                                                         };
 
         private Dictionary<uint, string> _fmTable = new Dictionary<uint, string>()
@@ -413,22 +410,21 @@ namespace CameraControl.Devices.Nikon
         {
         }
 
-        protected virtual PropertyValue<long> InitHostMode()
+        public override bool HostMode
         {
-            var res = new PropertyValue<long>() { Name = "Lock", IsEnabled = true };
-            res.AddValues("OFF", 0);
-            res.AddValues("ON", 1);
-            res.ReloadValues();
-            res.Value = "OFF";
-            res.ValueChanged += delegate (object sender, string key, long val)
+            get { return _hostMode; }
+            set
             {
-                ExecuteWithNoData(CONST_CMD_ChangeCameraMode, (uint) (key == "OFF" ? 0 : 1));
-                Mode.IsEnabled = key == "ON";
+                _hostMode = value;
+                ExecuteWithNoData(CONST_CMD_ChangeCameraMode, (uint) (HostMode ? 1 : 0));
+                if (Mode != null)
+                    Mode.IsEnabled = HostMode;
                 GetEvent(null);
                 ReadDeviceProperties(CONST_PROP_ExposureProgramMode);
-            };
-            return res;
+                NotifyPropertyChanged("HostMode");
+            }
         }
+
 
         public override bool Init(DeviceDescriptor deviceDescriptor)
         {
@@ -490,6 +486,7 @@ namespace CameraControl.Devices.Nikon
                 ReadDeviceProperties(CONST_PROP_ExposureIndicateStatus);
                 AddAditionalProps();
                 ReInitShutterSpeed();
+                HostMode = false;
                 ReadDeviceProperties(CONST_PROP_LiveViewStatus);
                 _timer.Start();
                 OnCameraInitDone();
@@ -531,7 +528,7 @@ namespace CameraControl.Devices.Nikon
             AdvancedProperties.Add(HDRSmoothing());
             AdvancedProperties.Add(ActiveSlot());
             AdvancedProperties.Add(LensSort());
-            AdvancedProperties.Add(InitHostMode());
+
             try
             {
                 var deviceinfo = LoadDeviceData(ExecuteReadDataEx(0x1001));
@@ -1104,6 +1101,16 @@ namespace CameraControl.Devices.Nikon
                     CONST_PROP_RecordingMedia);
                 ReadDeviceProperties(CONST_PROP_RecordingMedia);
             }
+            //if (e.PropertyName == "HostMode")
+            //{
+            //    Thread thread = new Thread(() =>
+            //    {
+            //        ExecuteWithNoData(CONST_CMD_ChangeCameraMode, (uint) (HostMode ? 1 : 0));
+            //        if (Mode != null)
+            //            Mode.IsEnabled = HostMode;
+            //    });
+            //    thread.Start();
+            //}
         }
 
         private void _stillImageDevice_DeviceEvent(object sender, PortableDeviceEventArgs e)
@@ -1148,7 +1155,7 @@ namespace CameraControl.Devices.Nikon
             }
         }
 
-        protected virtual void InitIso()
+        private void InitIso()
         {
             lock (Locker)
             {
@@ -1220,7 +1227,7 @@ namespace CameraControl.Devices.Nikon
             }
         }
 
-        protected virtual void InitShutterSpeed()
+        private void InitShutterSpeed()
         {
             NormalShutterSpeed = new PropertyValue<long>();
             NormalShutterSpeed.Name = "ShutterSpeed";
@@ -1253,7 +1260,7 @@ namespace CameraControl.Devices.Nikon
                         CONST_PROP_MovieShutterSpeed);
         }
 
-        protected virtual void ReInitShutterSpeed()
+        private void ReInitShutterSpeed()
         {
             lock (Locker)
             {
@@ -1407,7 +1414,7 @@ namespace CameraControl.Devices.Nikon
         }
 
 
-        protected void ReInitFNumber(bool trigervaluchange)
+        private void ReInitFNumber(bool trigervaluchange)
         {
             try
             {
@@ -1808,48 +1815,6 @@ namespace CameraControl.Devices.Nikon
             return step;
         }
 
-
-        public override void Focus(FocusDirection direction, FocusAmount amount)
-        {
-            switch (direction)
-            {
-                case FocusDirection.Far:
-                    switch (amount)
-                    {
-                        case FocusAmount.Small:
-                            Focus(10);
-                            break;
-                        case FocusAmount.Medium:
-                            Focus(100);
-                            break;
-                        case FocusAmount.Large:
-                            Focus(500);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(amount), amount, null);
-                    }
-                    break;
-                case FocusDirection.Near:
-                    switch (amount)
-                    {
-                        case FocusAmount.Small:
-                            Focus(-10);
-                            break;
-                        case FocusAmount.Medium:
-                            Focus(-100);
-                            break;
-                        case FocusAmount.Large:
-                            Focus(-500);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(amount), amount, null);
-                    }
-                    break;
-
-            }
-        }
-    
-
         public override void AutoFocus()
         {
             lock (Locker)
@@ -2022,11 +1987,7 @@ namespace CameraControl.Devices.Nikon
                             NormalIsoNumber.SetValue(StillImageDevice.ExecuteReadData(CONST_CMD_GetDevicePropValue,
                                                                                 CONST_PROP_ExposureIndex), false);
                             break;
-                    case CONST_PROP_ExposureIndexEx:
-                        NormalIsoNumber.SetValue(StillImageDevice.ExecuteReadData(CONST_CMD_GetDevicePropValue,
-                                                                            CONST_PROP_ExposureIndexEx), false);
-                        break;
-                    case CONST_PROP_MovieExposureIndex:
+                        case CONST_PROP_MovieExposureIndex:
                             MovieFNumber.SetValue(StillImageDevice.ExecuteReadData(CONST_CMD_GetDevicePropValue,
                                                                                 CONST_PROP_MovieExposureIndex), false);
                             break;
@@ -2594,6 +2555,7 @@ namespace CameraControl.Devices.Nikon
         public override string ToStringCameraData()
         {
             StringBuilder c = new StringBuilder(base.ToString() + "\n\tType..................Nikon(" + ")");
+            c.AppendFormat("\n\tHost mode.............{0}", HostMode ? "Yes" : "No");
             c.AppendFormat("\n\tLiveView:");
             c.AppendFormat("\n\t  On..................{0}", LiveViewOn ? "Yes" : "No");
             c.AppendFormat("\n\t  Focus Mode..........{0}", LiveViewFocusMode);

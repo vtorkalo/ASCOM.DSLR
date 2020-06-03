@@ -55,8 +55,8 @@ namespace ASCOM.DSLR
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
             {
-                //_dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
-                _dslrCamera = new NikonSdkCamera(_cameraSettings.CameraModelsHistory);
+                _dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
+                //_dslrCamera = new NikonSdkCamera(_cameraSettings.CameraModelsHistory);
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.Pentax)
             {
