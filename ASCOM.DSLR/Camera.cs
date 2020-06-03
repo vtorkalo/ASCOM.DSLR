@@ -444,6 +444,7 @@ namespace ASCOM.DSLR
         {
             get
             {
+
                 if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
                 {
                     return ApiContainer.DslrCamera.MaxIso;
@@ -460,6 +461,7 @@ namespace ASCOM.DSLR
         {
             get
             {
+
                 if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
                 {
                     return ApiContainer.DslrCamera.MinIso;
