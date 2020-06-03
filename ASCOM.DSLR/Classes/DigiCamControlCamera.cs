@@ -1,4 +1,4 @@
-﻿using ASCOM.DSLR.Enums;
+using ASCOM.DSLR.Enums;
 using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using CameraControl.Devices;

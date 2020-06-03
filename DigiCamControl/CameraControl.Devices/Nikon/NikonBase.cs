@@ -457,8 +457,9 @@ namespace CameraControl.Devices.Nikon
                     }
                 }
                 // load advanced properties in a separated thread to speed up camera connection
-                var thread = new Thread(LoadProperties) {Priority = ThreadPriority.Lowest};
-                thread.Start();
+                //var thread = new Thread(LoadProperties) {Priority = ThreadPriority.Lowest};
+                //thread.Start();
+                LoadProperties();
             }
             catch (Exception exception)
             {
@@ -2391,9 +2392,14 @@ namespace CameraControl.Devices.Nikon
                     else
                     {
                        Console.WriteLine("Device ready code #0" + cod.ToString("X"));
+                        return;
                     }
                 }
-                return;
+                else
+                {
+                    return;
+                }
+
             }
         }
 
