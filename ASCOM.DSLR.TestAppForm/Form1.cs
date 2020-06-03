@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace ASCOM.DSLR
 {
@@ -71,6 +72,8 @@ namespace ASCOM.DSLR
             }
         }
 
+
+
         private void labelDriverId_Click(object sender, EventArgs e)
         {
 
@@ -79,6 +82,8 @@ namespace ASCOM.DSLR
         private void Form1_Load(object sender, EventArgs e)
         {
             cmdExposure.DropDownStyle = ComboBoxStyle.DropDownList;
+
+
         }
 
         private void cmdExposure_SelectedIndexChanged(object sender, EventArgs e)

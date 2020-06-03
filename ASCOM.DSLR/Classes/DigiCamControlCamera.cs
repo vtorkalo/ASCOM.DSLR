@@ -94,12 +94,14 @@ namespace ASCOM.DSLR.Classes
         private void LogCameraInfo(ICameraDevice camera)
         {
             _tl.LogMessage("DeviceName", camera.DeviceName);
-            LogProperties(camera.IsoNumber);
-            LogProperties(camera.ShutterSpeed);
-            LogProperties(camera.FNumber);
-            LogProperties(camera.Mode);
-            LogProperties(camera.FocusMode);
-            LogProperties(camera.CompressionSetting);
+            if (camera.IsoNumber != null) LogProperties(camera.IsoNumber);
+            if (camera.ShutterSpeed != null) LogProperties(camera.ShutterSpeed);
+            if (camera.FNumber != null) LogProperties(camera.FNumber);
+            if (camera.Mode != null) LogProperties(camera.Mode);
+            if (camera.FocusMode != null) LogProperties(camera.FocusMode);
+            if (camera.CompressionSetting != null) LogProperties(camera.CompressionSetting);
+
+
 
             foreach (var p in camera.Properties)
             {

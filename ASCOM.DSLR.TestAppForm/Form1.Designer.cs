@@ -34,6 +34,8 @@
             this.btnTakeImage = new System.Windows.Forms.Button();
             this.cmdExposure = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.pictTestfrm = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictTestfrm)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonChoose
@@ -108,11 +110,20 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Exposure Test:";
             // 
+            // pictTestfrm
+            // 
+            this.pictTestfrm.Location = new System.Drawing.Point(24, 209);
+            this.pictTestfrm.Name = "pictTestfrm";
+            this.pictTestfrm.Size = new System.Drawing.Size(756, 498);
+            this.pictTestfrm.TabIndex = 6;
+            this.pictTestfrm.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(789, 202);
+            this.ClientSize = new System.Drawing.Size(801, 734);
+            this.Controls.Add(this.pictTestfrm);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cmdExposure);
             this.Controls.Add(this.btnTakeImage);
@@ -124,6 +135,7 @@
             this.Text = "ASCOM DLSR TestAPP";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictTestfrm)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -137,6 +149,7 @@
         private System.Windows.Forms.Button btnTakeImage;
         private System.Windows.Forms.ComboBox cmdExposure;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox pictTestfrm;
     }
 }
 
