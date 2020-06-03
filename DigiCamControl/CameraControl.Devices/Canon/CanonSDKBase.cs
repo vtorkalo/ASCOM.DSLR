@@ -342,15 +342,32 @@ namespace CameraControl.Devices.Canon
 
         }
 
-        private DateTime _dateTime;
-
         public override DateTime DateTime
         {
-            get { return _dateTime; }
+            get
+            {
+                try
+                {
+                    return Camera.GetDate();
+                }
+                catch (Exception e)
+                {
+                    Log.Error("   Unable to get time", e);
+                }
+                return DateTime.MinValue;
+            }
             set
             {
-                _dateTime = value;
-                NotifyPropertyChanged("DateTime");
+                try
+                {
+                    Camera.SetDate(value);
+                    NotifyPropertyChanged("DateTime");
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Unable to set time",e);
+                }
             }
         }
 
@@ -456,14 +473,7 @@ namespace CameraControl.Devices.Canon
             AdvancedProperties.Add(InitAEBracket());
             foreach (PropertyValue<long> value in AdvancedProperties)
             {
-                try
-                {
-                    value.SetValue((long)Camera.GetProperty(value.Code), false);
-                }
-                catch (Exception e)
-                {
-                    Log.Debug("Error get property" + value.Code.ToString(), e);
-                }
+                value.SetValue((long)Camera.GetProperty(value.Code), false);
             }
         }
 
@@ -760,7 +770,7 @@ namespace CameraControl.Devices.Canon
                                                       //  }),
                                                       CameraDevice = this,
                                                       FileName = "IMG0000.jpg",
-                                                      Handle =e.Pointer.ToInt32() != 0?(object) e.Pointer: e
+                                                      Handle =e.Pointer.ToInt64() != 0?(object) e.Pointer: e
                                                   };
 
                 EosFileImageEventArgs file = e as EosFileImageEventArgs;
@@ -1496,6 +1506,47 @@ namespace CameraControl.Devices.Canon
 
             //Camera.SendCommand(Edsdk.CameraCommand_DoEvfAf, 0);
             return focus;
+        }
+
+        public override void Focus(FocusDirection direction, FocusAmount amount)
+        {
+            ResetShutterButton();
+            switch (direction)
+            {
+                case FocusDirection.Far:
+                    switch (amount)
+                    {
+                        case FocusAmount.Small:
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int) Edsdk.EvfDriveLens_Far1);
+                            break;
+                        case FocusAmount.Medium:
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int) Edsdk.EvfDriveLens_Far2);
+                            break;
+                        case FocusAmount.Large:
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int) Edsdk.EvfDriveLens_Far3);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(amount), amount, null);
+                    }
+                    break;
+                case FocusDirection.Near:
+                    switch (amount)
+                    {
+                        case FocusAmount.Small:
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int)Edsdk.EvfDriveLens_Near1);
+                            break;
+                        case FocusAmount.Medium:
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int)Edsdk.EvfDriveLens_Near2);
+                            break;
+                        case FocusAmount.Large:
+                            Camera.SendCommand(Edsdk.CameraCommand_DriveLensEvf, (int)Edsdk.EvfDriveLens_Near3);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(amount), amount, null);
+                    }
+                    break;
+
+            }
         }
 
         public override bool DeleteObject(DeviceObject deviceObject)

@@ -420,6 +420,35 @@ namespace Canon.Eos.Framework
                 return (long) this.GetPropertyIntegerData(propertyId);
             }
         }
+
+        public DateTime GetDate()
+        {
+            lock (_locker)
+            {
+                //return (long)this.GetPropertyIntegerData(propertyId);
+                var v = this.GetPropertyStruct<Edsdk.EdsTime>(Edsdk.PropID_DateTime, Edsdk.EdsDataType.Time);
+                return new DateTime(v.Year, v.Month, v.Day, v.Hour, v.Minute, v.Second);
+            }
+        }
+
+        public void SetDate(DateTime time)
+        {
+
+            lock (_locker)
+            {
+                //return (long)this.GetPropertyIntegerData(propertyId);
+//                var v = this.GetPropertyStruct<Edsdk.EdsTime>(Edsdk.PropID_DateTime, Edsdk.EdsDataType.Time);
+                Edsdk.EdsTime edsTime = new Edsdk.EdsTime()
+                {
+                    Day = time.Day, Hour = time.Hour, Year = time.Year, Minute = time.Minute, Month = time.Month,
+                    Second = time.Second
+                };
+                this.SetPropertyStruct<Edsdk.EdsTime>(Edsdk.PropID_DateTime, edsTime);
+            }
+        }
+
+
+
         /// <summary>
         /// Saves the pictures to camera.
         /// </summary>
@@ -650,7 +679,7 @@ namespace Canon.Eos.Framework
         {
             //this.Lock();
             //Thread.Sleep(120);
-            Util.Assert(this.SendCommand(Edsdk.CameraCommand_PressShutterButton, 0x00000003),
+            Util.Assert(this.SendCommand(Edsdk.CameraCommand_PressShutterButton, 65539),
                 "Failed to start bulb mode");
         }
 

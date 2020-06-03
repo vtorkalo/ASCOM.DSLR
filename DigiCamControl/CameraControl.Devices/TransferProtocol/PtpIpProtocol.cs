@@ -82,6 +82,8 @@ namespace CameraControl.Devices.TransferProtocol
             int strlen2 = res.Data[index] * 2;
             index += 1;
             Model = Encoding.Unicode.GetString(res.Data, index, strlen2 - 2);
+            if (Model.Contains("\0"))
+                Model = Model.Substring(0, Model.IndexOf('\0'));
             index += strlen2;
             int strlen3 = res.Data[index] * 2;
             index += 1;
@@ -108,7 +110,7 @@ namespace CameraControl.Devices.TransferProtocol
                 }
 
                 var response1 = res1 as StartDataPacket;
-                var res2 = _client.Read(callback);
+                var res2 = _client.Read(callback, stream);
                 var res3 = (EndDataPacket)res2;
 
                 var res4 = _client.Read();

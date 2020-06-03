@@ -61,6 +61,10 @@ Source: "bin\Newtonsoft.Json.dll"; DestDir: "{app}"
 Source: "bin\PortableDeviceLib.dll"; DestDir: "{app}"
 Source: "bin\Rssdp.dll"; DestDir: "{app}"
 Source: "bin\websocket-sharp.dll"; DestDir: "{app}"
+Source: "bin\Accord.dll"; DestDir: "{app}"
+Source: "bin\Accord.Video.DirectShow.dll"; DestDir: "{app}"
+Source: "bin\Accord.Video.dll"; DestDir: "{app}"
+
 
 
 Source: "pktriggercord\zlib1.dll"; DestDir: "{app}/pktriggercord"
