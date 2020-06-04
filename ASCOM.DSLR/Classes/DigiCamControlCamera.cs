@@ -94,6 +94,7 @@ namespace ASCOM.DSLR.Classes
         private void LogCameraInfo(ICameraDevice camera)
         {
             _tl.LogMessage("DeviceName", camera.DeviceName);
+
             if (camera.IsoNumber != null) LogProperties(camera.IsoNumber);
             if (camera.ShutterSpeed != null) LogProperties(camera.ShutterSpeed);
             if (camera.FNumber != null) LogProperties(camera.FNumber);
