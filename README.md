@@ -22,3 +22,10 @@ Release Notes
 5/29/2020 - Fixed Camera detection to work wil multiple cameras
 
 6/01/2020 - New update. I have added Dropdown list for isos to supported applications like SharpCap
+
+6/3/2020 - Some Nikon camera are working as reported by user
+
+6/3/2020 - New Libraw implemented now it can read Canon CR3 and newer formats
+
+6/3/2020 - Picture Preview in the TestApp (Still buggy but you have a preview)
+
