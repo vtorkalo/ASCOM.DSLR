@@ -73,9 +73,9 @@ namespace ASCOM.DSLR
                 while (!driver.ImageReady)
                 { System.Threading.Thread.Sleep(1000); }
 
-                Int32[,] _imagearry = (Int32[,])driver.ImageArray;
+                Int32[,] _imagearray = (Int32[,])driver.ImageArray;
 
-                Bitmap RawIMG = createImage(_imagearry);
+                Bitmap RawIMG = createImage(_imagearray);
 
                 //RawIMG.Save("C:\\temp\\test.png");
 
@@ -88,7 +88,7 @@ namespace ASCOM.DSLR
 
         Bitmap createImage(Int32[,] Iarray)
         {
-            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format16bppRgb565);
+            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format32bppRgb);
 
             for (int y = 0; y < Iarray.GetLength(1); y++)
             {
