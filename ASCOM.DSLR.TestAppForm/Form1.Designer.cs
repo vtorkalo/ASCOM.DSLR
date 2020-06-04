@@ -115,6 +115,7 @@
             this.pictTestfrm.Location = new System.Drawing.Point(24, 209);
             this.pictTestfrm.Name = "pictTestfrm";
             this.pictTestfrm.Size = new System.Drawing.Size(756, 498);
+            this.pictTestfrm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictTestfrm.TabIndex = 6;
             this.pictTestfrm.TabStop = false;
             // 
