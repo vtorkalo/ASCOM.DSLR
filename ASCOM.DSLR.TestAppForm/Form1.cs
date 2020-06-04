@@ -125,6 +125,15 @@ namespace ASCOM.DSLR
                 {
                     bmp.SetPixel(x, y, Color.FromArgb(Iarray[x,y]));
                 }
+
+                // wait for the image to be ready
+
+                while(driver.ImageReady == false)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                }
+
+                MessageBox.Show("Image ready", "");
             }
             return bmp;
         }
