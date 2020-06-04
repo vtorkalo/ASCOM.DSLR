@@ -69,6 +69,15 @@ namespace ASCOM.DSLR
             if (IsConnected)
             {
                 driver.StartExposure(exposuretime, true);
+
+                // wait for the image to be ready
+
+                while(driver.ImageReady == false)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                }
+
+                MessageBox.Show("Image ready", "");
             }
         }
 

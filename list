@@ -1,0 +1,13 @@
+./ASCOM.DSLR/libraw.dll
+./ASCOM.DSLR/SDK/X64/libraw.dll
+./ASCOM.DSLR/SDK/X64/libraw.dll.x64.new
+./ASCOM.DSLR/SDK/X64/libraw.dll.x64.orig
+./ASCOM.DSLR/SDK/X86/libraw.dll
+./ASCOM.DSLR/SDK/X86/libraw.dll.x86.new
+./ASCOM.DSLR/SDK/X86/libraw.dll.x86.orig
+./ASCOM.DSLR.TestAppForm/bin/Debug/SDK/X64/libraw.dll
+./ASCOM.DSLR.TestAppForm/bin/Debug/SDK/X64/libraw.dll.orig
+./ASCOM.DSLR.TestAppForm/bin/Debug/SDK/X86/libraw.dll
+./ASCOM.DSLR.TestAppForm/bin/Debug/SDK/X86/libraw.dll.orig
+./bin/SDK/X64/libraw.dll
+./bin/SDK/X86/libraw.dll
