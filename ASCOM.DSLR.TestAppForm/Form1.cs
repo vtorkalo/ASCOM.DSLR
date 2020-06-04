@@ -69,77 +69,39 @@ namespace ASCOM.DSLR
             if (IsConnected)
             {
                 driver.StartExposure(exposuretime, true);
-
+                
                 while (!driver.ImageReady)
-                { }
+                { System.Threading.Thread.Sleep(1000); }
 
-                var aaa = driver.ImageArray;
+                Int32[,] _imagearry = (Int32[,])driver.ImageArray;
 
-                Int32[,] bbb = (Int32[,])aaa;
+                Bitmap RawIMG = createImage(_imagearry);
 
-                Bitmap RawIMG = createImage(driver.CameraXSize, bbb);
+                //RawIMG.Save("C:\\temp\\test.png");
 
-                SDK_LiveViewUpdated(RawIMG);
-
-                RawIMG.Save("C:\\temp\\test.png");
-
-                //pictTestfrm.Image = RawIMG;
+                pictTestfrm.Image = RawIMG;
                 
 
             }
         }
 
 
-        private void SDK_LiveViewUpdated(Bitmap img)
+        Bitmap createImage(Int32[,] Iarray)
         {
-            float w;
-            float h;
-                 using (Graphics g = pictTestfrm.CreateGraphics())
-                {
-                    float LVBratio = pictTestfrm.Width / (float)pictTestfrm.Height;
-                    float LVration = img.Width / (float)img.Height;
-                    if (LVBratio < LVration)
-                    {
-                        w = pictTestfrm.Width;
-                        h = (int)(pictTestfrm.Width / LVration);
-                    }
-                    else
-                    {
-                        w = (int)(pictTestfrm.Height * LVration);
-                        h = pictTestfrm.Height;
-                    }
-                    g.DrawImage(img, 0, 0, w, h);
-                }
-                img.Dispose();
-         }
-  
+            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format16bppRgb565);
 
-
-        Bitmap createImage(int width, Int32[,] Iarray)
-        {
-            Bitmap bmp = new Bitmap(Iarray.GetLength(1), Iarray.GetLength(0), System.Drawing.Imaging.PixelFormat.Format16bppRgb555);
-
-            for (int y = 0; y < Iarray.GetLength(0); y++)
+            for (int y = 0; y < Iarray.GetLength(1); y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < Iarray.GetLength(0); x++)
                 {
                     bmp.SetPixel(x, y, Color.FromArgb(Iarray[x,y]));
                 }
-
-                // wait for the image to be ready
-
-                while(driver.ImageReady == false)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                }
-
-                MessageBox.Show("Image ready", "");
             }
             return bmp;
         }
 
 
-        Bitmap createImage(int width, Int32[,,] Iarray)
+        Bitmap createImage(Int32[,,] Iarray)
         {
            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format16bppRgb565);
 
