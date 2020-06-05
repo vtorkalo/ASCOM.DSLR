@@ -245,7 +245,9 @@ namespace ASCOM.DSLR.Classes
  
         private void Log_LogError(LogEventArgs e)
         {
-            _tl.LogMessage(e.Message.ToString(), e.Exception?.Message);
+            //Investigate why error
+            //_tl.LogMessage(e.Message.ToString(), e.Exception?.Message);
+            //Logger.WriteTraceMessage(e.Message.ToString());
         }
 
 
