@@ -2425,7 +2425,7 @@ namespace CameraControl.Devices.Nikon
                     if (cod == ErrorCodes.MTP_Device_Busy || cod == 0x800700AA)
                     {
                        Console.WriteLine("Device not ready");
-                        Thread.Sleep(500);
+                        Thread.Sleep(5);
                         retrynum++;
                     }
                     else
