@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
-using System.IO;
 
 namespace ASCOM.DSLR
 {
