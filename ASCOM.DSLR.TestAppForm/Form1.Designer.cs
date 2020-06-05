@@ -35,6 +35,8 @@
             this.cmdExposure = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pictTestfrm = new System.Windows.Forms.PictureBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.chkPreview = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictTestfrm)).BeginInit();
             this.SuspendLayout();
             // 
@@ -119,11 +121,34 @@
             this.pictTestfrm.TabIndex = 6;
             this.pictTestfrm.TabStop = false;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(24, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(232, 50);
+            this.button1.TabIndex = 7;
+            this.button1.Text = "Test Local File picture";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            // 
+            // chkPreview
+            // 
+            this.chkPreview.AutoSize = true;
+            this.chkPreview.Location = new System.Drawing.Point(35, 713);
+            this.chkPreview.Name = "chkPreview";
+            this.chkPreview.Size = new System.Drawing.Size(186, 29);
+            this.chkPreview.TabIndex = 8;
+            this.chkPreview.Text = "Preview (Slow)";
+            this.chkPreview.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(801, 734);
+            this.ClientSize = new System.Drawing.Size(801, 751);
+            this.Controls.Add(this.chkPreview);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.pictTestfrm);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cmdExposure);
@@ -151,6 +176,8 @@
         private System.Windows.Forms.ComboBox cmdExposure;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictTestfrm;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox chkPreview;
     }
 }
 

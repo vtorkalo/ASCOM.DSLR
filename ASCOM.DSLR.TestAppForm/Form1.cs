@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
+using ASCOM.DSLR.Classes;
 
 namespace ASCOM.DSLR
 {
@@ -66,7 +67,7 @@ namespace ASCOM.DSLR
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+           
             double exposuretime =  Convert.ToDouble(cmdExposure.SelectedItem.ToString());
             if (IsConnected)
             {
@@ -76,43 +77,28 @@ namespace ASCOM.DSLR
                 btnTakeImage.Enabled = false;
                 while (!driver.ImageReady)
                 { System.Threading.Thread.Sleep(1000); }
-  
-
-                Bitmap RawIMG;
 
 
-                try
+                if (chkPreview.Checked)
                 {
-                    Int32[,] _imagearray = (Int32[,])driver.ImageArray;
-                    RawIMG = createImage(_imagearray);
+                    Bitmap RawIMG;
+
+                    try
+                    {
+                        Int32[,] _imagearray = (Int32[,])driver.ImageArray;
+                        RawIMG = createImage(_imagearray); //createImage(_imagearray);
+
+                    }
+                    catch
+                    {
+                        Int32[,,] _imagearray = (Int32[,,])driver.ImageArray;
+                        RawIMG = createImage(_imagearray);
+
+                    }
+
+                    pictTestfrm.Image = RawIMG;
                 }
-                catch {
-                    Int32[,,] _imagearray = (Int32[,,])driver.ImageArray;
-                    RawIMG = createImage(_imagearray);
-                }
-
-                //var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
-                //Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
-
-                //var flatarray = FlipAndConvert2d(_imagearray);
-
-
-                //CreateBitmap(_imagearray.GetLength(0), _imagearray.GetLength(1), flatarray).Save("C:\\temp\\test11.png");
-
-                //byte[] flatarraybyte = new byte[flatarray.Length * 2];
-                // Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
-
-
-
-                //Bitmap RawIMG = createImage(_imagearray);
-
-                //RawIMG.Save("C:\\temp\\test.png");
-
-                pictTestfrm.Image = RawIMG;
-
-                //Bitmap _bit = ByteToImage(_imagearray.GetLength(0), _imagearray.GetLength(1),flatarraybyte);
-
-                //     pictTestfrm.Image = RawIMG;
+       
                 btnTakeImage.Enabled = true;
                 Cursor.Current = Cursors.Default;
 
@@ -213,11 +199,13 @@ namespace ASCOM.DSLR
 
      Bitmap createImage(Int32[,] Iarray)
         {
-            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             int r = 0;
             int g = 0;
             int g1 = 0;
             int b = 0;
+
+            ImageDataProcessor imgp = new ImageDataProcessor();
 
             for (int y = 0; y < Iarray.GetLength(1); y++)
             {
@@ -226,7 +214,30 @@ namespace ASCOM.DSLR
                 for (int x = 0; x < Iarray.GetLength(0); x++)
                 {
 
-                    Color Color = Color.FromArgb(Iarray[x, y]);
+                    unsafe {
+                        fixed (int* p = &Iarray[x, y])
+                        {
+                            int* p2 = p;
+                            b = *p2/255;
+                            b = (b < 0) ? 0 : b;
+                            b = (b > 255) ? 254 : b;
+                            p2 += 1;
+                            g = *p2 / 255;
+                            g= (g < 0) ? 0 : g;
+                            g = (g > 255) ? 254 : g;
+                            p2 += 1;
+                            g1= (g1 < 0)?0:g1;
+                            g1 = (g1 < 0) ? 0 : g1;
+                            g1 = (g1 > 255) ? 254 : g1;
+                            p2 += 1;
+                            r = *p2/255;
+                            r =(r < 0)?0:r;
+                            r = (r < 0) ? 0 : r;
+                            r = (r > 255) ? 254 : r;
+                        } 
+                    }
+
+                    Color Color = Color.FromArgb(r, (g+g1)/2, b);
                     bmp.SetPixel(x, y, Color);
 
                 }
@@ -234,10 +245,30 @@ namespace ASCOM.DSLR
    
             }
 
+
             return bmp;
 
         }
 
+        public static Bitmap Array2DToBitmap(Int32[,] integers)
+        {
+            int width = integers.GetLength(0);
+            int height = integers.GetLength(1);
+
+            int stride = width * 4;//int == 4-bytes
+
+            Bitmap bitmap = null;
+
+            unsafe
+            {
+                fixed (Int32* intPtr = &integers[0, 0])
+                {
+                    bitmap = new Bitmap(width, height, stride, PixelFormat.Format32bppRgb, new IntPtr(intPtr));
+                }
+            }
+
+            return bitmap;
+        }
 
         Bitmap createImage(Int32[,,] Iarray)
         {
@@ -251,11 +282,11 @@ namespace ASCOM.DSLR
                 for (int x = 0; x < Iarray.GetLength(0); x++)
                 {
                     b = (Iarray[x, y, 0] > 255) ? Iarray[x, y, 0] / 255 : Iarray[x, y, 0];
-                    b = (b > 255)?255 : b;
+                    b = (b > 255)?254 : b;
                     g = (Iarray[x, y, 1] > 255) ? Iarray[x, y, 1] / 255 : Iarray[x, y, 1];
-                    g = (g > 255) ? 255 : g;
+                    g = (g > 255) ? 254 : g;
                     r = (Iarray[x, y, 2] > 255) ? Iarray[x, y, 2] / 255 : Iarray[x, y, 2];
-                    r = (r > 255) ? 255 : r;
+                    r = (r > 255) ? 254 : r;
                     Color Color = Color.FromArgb(r,g, b);
                     bmp.SetPixel(x, y, Color);
                 }
@@ -278,6 +309,34 @@ namespace ASCOM.DSLR
 
         private void cmdExposure_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            Bitmap RawIMG;
+
+            ImageDataProcessor imgp = new ImageDataProcessor();
+
+
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\canon2.CR2");
+
+            var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
+            Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
+
+            var flatarray = FlipAndConvert2d(_imagearray);
+
+    
+            byte[] flatarraybyte = new byte[flatarray.Length * 2];
+            Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
+
+
+            RawIMG = createImage(_imagearray); 
+
+            RawIMG.Save("C:\\temp\\test.png");
+
+            pictTestfrm.Image = RawIMG;
+
 
         }
     }
