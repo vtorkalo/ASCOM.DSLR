@@ -158,7 +158,7 @@ namespace ASCOM.DSLR.Classes
         
         private string GetNearesetValue(PropertyValue<long> propertyValue, double value)
         {
-            Logger.WriteTraceMessage("GetNearesetValue");
+            Logger.WriteTraceMessage("GetNearesetValue" + value.ToString());
             string nearest = propertyValue.Values.Select(v =>
             { 
 
@@ -187,9 +187,13 @@ namespace ASCOM.DSLR.Classes
             _startTime = DateTime.Now;
             _duration = Duration;
             var camera = DeviceManager.SelectedCameraDevice;
+            Logger.WriteTraceMessage("Device Selected "+ camera.DeviceName);
             camera.IsoNumber.Value = GetNearesetValue(camera.IsoNumber, Iso);
+            Logger.WriteTraceMessage("GetNearesetValue ISO " + Iso.ToString());
             camera.CompressionSetting.Value = camera.CompressionSetting.Values.SingleOrDefault(v => v.ToUpper() == "RAW");
+            Logger.WriteTraceMessage("SetRaw");
             bool canBulb = camera.GetCapability(CapabilityEnum.Bulb);
+            Logger.WriteTraceMessage("CanBulb " + canBulb.ToString());
             if (Duration>30)
             {
                 int durationMsec = (int) (Duration * 1000);
@@ -203,15 +207,18 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
-                    ThreadPool.QueueUserWorkItem(state =>
-                    {
-                        BulbExposure(durationMsec, _canceled, camera.StartBulbMode, camera.EndBulbMode);
-                    });
+                    if (canBulb) { 
+                        ThreadPool.QueueUserWorkItem(state =>
+                        {
+                            BulbExposure(durationMsec, _canceled, camera.StartBulbMode, camera.EndBulbMode);
+                        });
+                    }
                 }
             }
             else
             {
                 camera.ShutterSpeed.Value = GetNearesetValue(camera.ShutterSpeed, Duration);
+                Logger.WriteTraceMessage("GetNearesetValue Shutter" + camera.ShutterSpeed.ToString() + " " + Duration.ToString());
                 DeviceManager.SelectedCameraDevice.CapturePhoto();
             }
         }
