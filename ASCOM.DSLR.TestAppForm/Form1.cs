@@ -84,15 +84,16 @@ namespace ASCOM.DSLR
                 //var flatarray = FlipAndConvert2d(_imagearray);
 
 
-               // CreateBitmap(_imagearray.GetLength(0), _imagearray.GetLength(1), flatarray).Save("C:\\temp\\test11.png");
+                //CreateBitmap(_imagearray.GetLength(0), _imagearray.GetLength(1), flatarray).Save("C:\\temp\\test11.png");
 
                 //byte[] flatarraybyte = new byte[flatarray.Length * 2];
-               // Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
+                // Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
 
+    
 
                 Bitmap RawIMG = createImage(_imagearray);
 
-                RawIMG.Save("C:\\temp\\test.png");
+                //RawIMG.Save("C:\\temp\\test.png");
 
                 pictTestfrm.Image = RawIMG;
 
