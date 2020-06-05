@@ -71,12 +71,25 @@ namespace ASCOM.DSLR
             if (IsConnected)
             {
                 driver.StartExposure(exposuretime, true);
-                
+
+                Cursor.Current = Cursors.WaitCursor;
+                btnTakeImage.Enabled = false;
                 while (!driver.ImageReady)
                 { System.Threading.Thread.Sleep(1000); }
+  
 
-                Int32[,] _imagearray = (Int32[,])driver.ImageArray;
+                Bitmap RawIMG;
 
+
+                try
+                {
+                    Int32[,] _imagearray = (Int32[,])driver.ImageArray;
+                    RawIMG = createImage(_imagearray);
+                }
+                catch {
+                    Int32[,,] _imagearray = (Int32[,,])driver.ImageArray;
+                    RawIMG = createImage(_imagearray);
+                }
 
                 //var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
                 //Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
@@ -89,9 +102,9 @@ namespace ASCOM.DSLR
                 //byte[] flatarraybyte = new byte[flatarray.Length * 2];
                 // Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
 
-    
 
-                Bitmap RawIMG = createImage(_imagearray);
+
+                //Bitmap RawIMG = createImage(_imagearray);
 
                 //RawIMG.Save("C:\\temp\\test.png");
 
@@ -100,7 +113,8 @@ namespace ASCOM.DSLR
                 //Bitmap _bit = ByteToImage(_imagearray.GetLength(0), _imagearray.GetLength(1),flatarraybyte);
 
                 //     pictTestfrm.Image = RawIMG;
-
+                btnTakeImage.Enabled = true;
+                Cursor.Current = Cursors.Default;
 
             }
         }
@@ -236,11 +250,11 @@ namespace ASCOM.DSLR
             {
                 for (int x = 0; x < Iarray.GetLength(0); x++)
                 {
-                    b = Iarray[x, y, 0]/255;
+                    b = (Iarray[x, y, 0] > 255) ? Iarray[x, y, 0] / 255 : Iarray[x, y, 0];
                     b = (b > 255)?255 : b;
-                    g = Iarray[x, y, 1]/255;
+                    g = (Iarray[x, y, 1] > 255) ? Iarray[x, y, 1] / 255 : Iarray[x, y, 1];
                     g = (g > 255) ? 255 : g;
-                    r = Iarray[x, y, 2]/255;
+                    r = (Iarray[x, y, 2] > 255) ? Iarray[x, y, 2] / 255 : Iarray[x, y, 2];
                     r = (r > 255) ? 255 : r;
                     Color Color = Color.FromArgb(r,g, b);
                     bmp.SetPixel(x, y, Color);
