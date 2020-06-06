@@ -92,7 +92,7 @@ namespace ASCOM.DSLR
                     catch
                     {
                         Int32[,,] _imagearray = (Int32[,,])driver.ImageArray;
-                        RawIMG = createImage(_imagearray);
+                        RawIMG = Contrast(ColorBalance(createImage(_imagearray), 50, 50, 50), 15);
 
                     }
 
@@ -199,11 +199,14 @@ namespace ASCOM.DSLR
 
      Bitmap createImage(Int32[,] Iarray)
         {
-            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format64bppArgb);
             int r = 0;
             int g = 0;
             int g1 = 0;
             int b = 0;
+            int R = 0;
+            int G = 0;
+            int B = 0;
 
             ImageDataProcessor imgp = new ImageDataProcessor();
 
@@ -218,26 +221,40 @@ namespace ASCOM.DSLR
                         fixed (int* p = &Iarray[x, y])
                         {
                             int* p2 = p;
+
+                            g = *p2 / 255;
+                            g = (g < 0) ? 0 : g;
+                            g = (g > 255) ? 254 : g;
+                            p2 += 1;
+
+
                             b = *p2/255;
                             b = (b < 0) ? 0 : b;
                             b = (b > 255) ? 254 : b;
                             p2 += 1;
-                            g = *p2 / 255;
-                            g= (g < 0) ? 0 : g;
-                            g = (g > 255) ? 254 : g;
-                            p2 += 1;
-                            g1= (g1 < 0)?0:g1;
-                            g1 = (g1 < 0) ? 0 : g1;
-                            g1 = (g1 > 255) ? 254 : g1;
-                            p2 += 1;
-                            r = *p2/255;
-                            r =(r < 0)?0:r;
+
+
+                            r = *p2 / 255;
                             r = (r < 0) ? 0 : r;
                             r = (r > 255) ? 254 : r;
-                        } 
+                            p2 += 1;
+
+                            g1 = *p2 / 255;
+                            g1 = (g1 < 0) ? 0 : g1;
+                            g1 = (g1 > 255) ? 254 : g1;
+                            
+
+
+                            //p2 += 1;
+
+                        }
+
+                        R = r;
+                        G = (g + g1)/2;
+                        B = b;
                     }
 
-                    Color Color = Color.FromArgb(r, (g+g1)/2, b);
+                    Color Color = Color.FromArgb(R, G, B);
                     bmp.SetPixel(x, y, Color);
 
                 }
@@ -295,6 +312,73 @@ namespace ASCOM.DSLR
         }
 
 
+
+
+
+        Bitmap ColorBalance(Bitmap sourceBitmap, byte blueLevel, byte greenLevel, byte redLevel)
+        {
+            BitmapData sourceData = sourceBitmap.LockBits(new Rectangle(0, 0,
+                                        sourceBitmap.Width, sourceBitmap.Height),
+                                        ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+
+            byte[] pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
+
+
+            System.Runtime.InteropServices.Marshal.Copy(sourceData.Scan0, pixelBuffer, 0, pixelBuffer.Length);
+
+
+            sourceBitmap.UnlockBits(sourceData);
+
+
+            float blue = 0;
+            float green = 0;
+            float red = 0;
+
+
+            float blueLevelFloat = blueLevel;
+            float greenLevelFloat = greenLevel;
+            float redLevelFloat = redLevel;
+
+
+            for (int k = 0; k + 4 < pixelBuffer.Length; k += 4)
+            {
+                blue = 255.0f / blueLevelFloat * (float)pixelBuffer[k];
+                green = 255.0f / greenLevelFloat * (float)pixelBuffer[k + 1];
+                red = 255.0f / redLevelFloat * (float)pixelBuffer[k + 2];
+
+                if (blue > 255) { blue = 255; }
+                else if (blue < 0) { blue = 0; }
+
+                if (green > 255) { green = 255; }
+                else if (green < 0) { green = 0; }
+
+                if (red > 255) { red = 255; }
+                else if (red < 0) { red = 0; }
+
+                pixelBuffer[k] = (byte)blue;
+                pixelBuffer[k + 1] = (byte)green;
+                pixelBuffer[k + 2] = (byte)red;
+            }
+
+
+            Bitmap resultBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
+
+
+            BitmapData resultData = resultBitmap.LockBits(new Rectangle(0, 0,
+                                        resultBitmap.Width, resultBitmap.Height),
+                                       ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+
+            System.Runtime.InteropServices.Marshal.Copy(pixelBuffer, 0, resultData.Scan0, pixelBuffer.Length);
+            resultBitmap.UnlockBits(resultData);
+
+
+            return resultBitmap;
+        }
+
+
+
         private void labelDriverId_Click(object sender, EventArgs e)
         {
 
@@ -319,7 +403,7 @@ namespace ASCOM.DSLR
             ImageDataProcessor imgp = new ImageDataProcessor();
 
 
-            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\canon2.CR2");
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\E1DXINBI000050.CR2");
 
             var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
             Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
@@ -331,7 +415,8 @@ namespace ASCOM.DSLR
             Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
 
 
-            RawIMG = createImage(_imagearray); 
+            RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
+
 
             RawIMG.Save("C:\\temp\\test.png");
 
@@ -339,5 +424,85 @@ namespace ASCOM.DSLR
 
 
         }
+
+
+          Bitmap Contrast(Bitmap sourceBitmap, int threshold)
+        {
+            BitmapData sourceData = sourceBitmap.LockBits(new Rectangle(0, 0,
+                                        sourceBitmap.Width, sourceBitmap.Height),
+                                        ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+
+            byte[] pixelBuffer = new byte[sourceData.Stride * sourceData.Height];
+
+
+            System.Runtime.InteropServices.Marshal.Copy(sourceData.Scan0, pixelBuffer, 0, pixelBuffer.Length);
+
+
+            sourceBitmap.UnlockBits(sourceData);
+
+
+            double contrastLevel = Math.Pow((100.0 + threshold) / 100.0, 2);
+
+
+            double blue = 0;
+            double green = 0;
+            double red = 0;
+
+
+            for (int k = 0; k + 4 < pixelBuffer.Length; k += 4)
+            {
+                blue = ((((pixelBuffer[k] / 255.0) - 0.5) *
+                            contrastLevel) + 0.5) * 255.0;
+
+
+                green = ((((pixelBuffer[k + 1] / 255.0) - 0.5) *
+                            contrastLevel) + 0.5) * 255.0;
+
+
+                red = ((((pixelBuffer[k + 2] / 255.0) - 0.5) *
+                            contrastLevel) + 0.5) * 255.0;
+
+
+                if (blue > 255)
+                { blue = 255; }
+                else if (blue < 0)
+                { blue = 0; }
+
+
+                if (green > 255)
+                { green = 255; }
+                else if (green < 0)
+                { green = 0; }
+
+
+                if (red > 255)
+                { red = 255; }
+                else if (red < 0)
+                { red = 0; }
+
+
+                pixelBuffer[k] = (byte)blue;
+                pixelBuffer[k + 1] = (byte)green;
+                pixelBuffer[k + 2] = (byte)red;
+            }
+
+
+            Bitmap resultBitmap = new Bitmap(sourceBitmap.Width, sourceBitmap.Height);
+
+
+            BitmapData resultData = resultBitmap.LockBits(new Rectangle(0, 0,
+                                        resultBitmap.Width, resultBitmap.Height),
+                                        ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+
+            System.Runtime.InteropServices.Marshal.Copy(pixelBuffer, 0, resultData.Scan0, pixelBuffer.Length);
+            resultBitmap.UnlockBits(resultData);
+
+
+            return resultBitmap;
+        }
+
+
     }
 }

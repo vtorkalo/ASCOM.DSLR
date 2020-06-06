@@ -102,7 +102,6 @@
     <Compile Include="Classes\CameraSettingsProvider.cs" />
     <Compile Include="Classes\CanonSdkCamera.cs" />
     <Compile Include="Classes\DigiCamControlCamera.cs" />
-    <Compile Include="Classes\DigicamControlCameraEOS.cs" />
     <Compile Include="Classes\ErrorMessages.cs" />
     <Compile Include="Classes\ExifToolWrapper.cs" />
     <Compile Include="Classes\PentaxCamera.cs" />

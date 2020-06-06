@@ -342,32 +342,34 @@ namespace CameraControl.Devices.Canon
 
         }
 
+        private DateTime _dateTime;
+
         public override DateTime DateTime
         {
-            get
-            {
-                try
-                {
-                    return Camera.GetDate();
-                }
-                catch (Exception e)
-                {
-                    Log.Error("   Unable to get time", e);
-                }
-                return DateTime.MinValue;
-            }
+            get { return _dateTime; }
+			 
+				   
+				 
+											
+				 
+								   
+				 
+														  
+				 
+										 
+			 
             set
             {
-                try
-                {
-                    Camera.SetDate(value);
-                    NotifyPropertyChanged("DateTime");
+                _dateTime = value;
+				 
+										  
+                NotifyPropertyChanged("DateTime");
 
-                }
-                catch (Exception e)
-                {
-                    Log.Error("Unable to set time",e);
-                }
+				 
+								   
+				 
+													  
+				 
             }
         }
 
@@ -468,9 +470,9 @@ namespace CameraControl.Devices.Canon
         public virtual void AddAditionalProps()
         {
             AdvancedProperties.Add(InitDriveMode());
-            AdvancedProperties.Add(InitFlahEc());
+            //AdvancedProperties.Add(InitFlahEc());
             AdvancedProperties.Add(InitBracket());
-            AdvancedProperties.Add(InitAEBracket());
+            //AdvancedProperties.Add(InitAEBracket());
             foreach (PropertyValue<long> value in AdvancedProperties)
             {
                 value.SetValue((long)Camera.GetProperty(value.Code), false);
@@ -992,6 +994,7 @@ namespace CameraControl.Devices.Canon
         private void InitIso()
         {
             IsoNumber = new PropertyValue<long>();
+            IsoNumber.Name = "ISOSpeed";
             IsoNumber.ValueChanged += IsoNumber_ValueChanged;
             ReInitIso();
         }
@@ -1379,7 +1382,7 @@ namespace CameraControl.Devices.Canon
             }
         }
 
-        public override void Focus(int x, int y)
+        /*public override void Focus(int x, int y)
         {
             lock (Locker)
             {
@@ -1398,7 +1401,7 @@ namespace CameraControl.Devices.Canon
                         Camera.SetPropertyIntegerArrayData(Edsdk.PropID_Evf_ZoomPosition,
                             new uint[] {(uint) x, (uint) y}));
             }
-        }
+        }*/
 
         public override LiveViewData GetLiveViewImage()
         {

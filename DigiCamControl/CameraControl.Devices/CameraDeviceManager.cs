@@ -87,7 +87,8 @@ namespace CameraControl.Devices
         /// The device class.
         /// </value>
         public static Dictionary<string, Type> DeviceClass { get; set; }
-        public Dictionary<string, Type> CustomDeviceClass { get; set; }
+        //Test
+        //public Dictionary<string, Type> CustomDeviceClass { get; set; }
 
         public List<IWifiDeviceProvider> WifiDeviceProviders { get; set; }
 
@@ -216,19 +217,21 @@ namespace CameraControl.Devices
             WifiDeviceProviders.Add(new SonyProvider());
             WifiDeviceProviders.Add(new PanonoProvider());
             WifiDeviceProviders.Add(new OscProvider());
-            foreach (var type in CustomDeviceClass)
+            //Test
+            /*foreach (var type in CustomDeviceClass)
             {
                 DeviceClass.Add(type.Key, type.Value);
-            }
+            }*/
         }
 
         public CameraDeviceManager(string datafolder=null)
         {
-            UseExperimentalDrivers = true;
+            UseExperimentalDrivers = false;
             LoadWiaDevices = true;
             StartInNewThread = false;
             DetectWebcams = false;
-            CustomDeviceClass = new Dictionary<string, Type>();
+            //Test
+            //CustomDeviceClass = new Dictionary<string, Type>();
             SelectedCameraDevice = new NotConnectedCameraDevice();
             ConnectedDevices = new AsyncObservableCollection<ICameraDevice>();
             _deviceEnumerator = new DeviceDescriptorEnumerator();

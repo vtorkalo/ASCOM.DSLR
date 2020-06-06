@@ -464,6 +464,11 @@ namespace CameraControl.Devices.Nikon
                 //var thread = new Thread(LoadProperties) {Priority = ThreadPriority.Lowest};
                 //thread.Start();
                 LoadProperties();
+                Thread thread = new Thread(() =>
+                {
+                    Thread.Sleep(200);
+                    OnCameraInitDone();
+                });
             }
             catch (Exception exception)
             {
@@ -1154,7 +1159,7 @@ namespace CameraControl.Devices.Nikon
             lock (Locker)
             {
                 NormalIsoNumber = new PropertyValue<long>();
-                NormalIsoNumber.Name = "IsoNumber";
+                //NormalIsoNumber.Name = "IsoNumber";
                 NormalIsoNumber.SubType = typeof (int);
                 NormalIsoNumber.ValueChanged += IsoNumber_ValueChanged;
                 NormalIsoNumber.Clear();

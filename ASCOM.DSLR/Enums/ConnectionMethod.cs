@@ -12,5 +12,6 @@ namespace ASCOM.DSLR.Enums
         Nikon = 2,
         Pentax = 3,
         Sony = 4
+
     }
 }
