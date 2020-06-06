@@ -1159,7 +1159,7 @@ namespace CameraControl.Devices.Nikon
             lock (Locker)
             {
                 NormalIsoNumber = new PropertyValue<long>();
-                //NormalIsoNumber.Name = "IsoNumber";
+                NormalIsoNumber.Name = "IsoNumber";
                 NormalIsoNumber.SubType = typeof (int);
                 NormalIsoNumber.ValueChanged += IsoNumber_ValueChanged;
                 NormalIsoNumber.Clear();

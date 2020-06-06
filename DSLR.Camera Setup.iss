@@ -108,6 +108,10 @@ Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.C
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "-u ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
 Filename: "{dotnet4064}\regasm.exe"; Parameters: "-u ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
 
+[UninstallDelete]
+Type: files; Name: "{app}\SDK\X86\EDSDK.dll"
+Type: files; Name: "{app}\SDK\X86\Nlog.dll"
+
 [CODE]
 //
 // Before the installer UI appears, verify that the (prerequisite)

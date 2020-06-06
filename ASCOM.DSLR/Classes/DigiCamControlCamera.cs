@@ -3,7 +3,6 @@ using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using CameraControl.Devices;
 using CameraControl.Devices.Classes;
-using CameraControl.Devices.Wifi;
 using CameraControl.Plugins.ExternalDevices;
 using Logging;
 using System;
@@ -319,10 +318,13 @@ namespace ASCOM.DSLR.Classes
 
         void DeviceManager_CameraConnected(ICameraDevice cameraDevice)
         {
+
+
         }
 
         void DeviceManager_CameraSelected(ICameraDevice oldcameraDevice, ICameraDevice newcameraDevice)
         {
+
         }
     }
 

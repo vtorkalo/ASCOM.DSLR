@@ -206,5 +206,6 @@ namespace CameraControl.Devices
 
         void SetCameraField(CameraFieldType cameraFieldType, string comment);
 
+        void WaitForReady();
     }
 }
