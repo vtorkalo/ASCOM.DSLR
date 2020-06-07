@@ -158,7 +158,7 @@
             this.Controls.Add(this.buttonChoose);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
-            this.Text = "ASCOM DLSR TestAPP";
+            this.Text = "ASCOM DSLR TestAPP";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictTestfrm)).EndInit();
