@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Logging;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -15,12 +16,17 @@ namespace ASCOM.DSLR.Classes
 
         private IntPtr LoadRaw(string fileName)
         {
+            Logger.WriteTraceMessage("libraw_init");
             IntPtr data = NativeMethods.libraw_init(LibRaw_constructor_flags.LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
+            Logger.WriteTraceMessage("libraw_open_file");
             CheckError(NativeMethods.libraw_open_file(data, fileName), "open file");
+            Logger.WriteTraceMessage("unpack");
             CheckError(NativeMethods.libraw_unpack(data), "unpack");
+            Logger.WriteTraceMessage("raw2image");
             CheckError(NativeMethods.libraw_raw2image(data), "raw2image");
+            Logger.WriteTraceMessage("return");
             // Don't subtract black level as that pushes the histogram right down to the left hand side for dark areas - ie data being lost
-//            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
+            //            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
 
             return data;
         }
@@ -34,6 +40,7 @@ namespace ASCOM.DSLR.Classes
         public int[,,] ReadAndDebayerRaw(string fileName)
         {
             IntPtr data = LoadRaw(fileName);
+            Logger.WriteTraceMessage("libraw_dcraw_process");
             NativeMethods.libraw_dcraw_process(data);
 
             var dataStructure = GetStructure<libraw_data_t>(data);

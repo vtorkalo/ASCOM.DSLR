@@ -208,6 +208,10 @@ namespace ASCOM.DSLR
             int G = 0;
             int B = 0;
 
+            int G1 = 0, G2 = 0, G3 = 0, G4 = 0;
+            int B1 = 0, B2 = 0, B3 = 0, B4 = 0;
+            int R1 = 0, R2 = 0, R3 = 0, R4 = 0;
+
             ImageDataProcessor imgp = new ImageDataProcessor();
 
             for (int y = 0; y < Iarray.GetLength(1); y++)
@@ -222,30 +226,28 @@ namespace ASCOM.DSLR
                         {
                             int* p2 = p;
 
+                            
+                            r = *p2 / 255;
+                            r = (r < 0) ? 0 : r;
+                            r = (r > 255) ? 254 : r;
+                            p2 += 1;
+
                             g = *p2 / 255;
                             g = (g < 0) ? 0 : g;
                             g = (g > 255) ? 254 : g;
+                            p2 += 1;
+
+                            g1 = *p2 / 255;
+                            g1 = (g1 < 0) ? 0 : g1;
+                            g1 = (g1 > 255) ? 254 : g1;
                             p2 += 1;
 
 
                             b = *p2/255;
                             b = (b < 0) ? 0 : b;
                             b = (b > 255) ? 254 : b;
-                            p2 += 1;
-
-
-                            r = *p2 / 255;
-                            r = (r < 0) ? 0 : r;
-                            r = (r > 255) ? 254 : r;
-                            p2 += 1;
-
-                            g1 = *p2 / 255;
-                            g1 = (g1 < 0) ? 0 : g1;
-                            g1 = (g1 > 255) ? 254 : g1;
                             
 
-
-                            //p2 += 1;
 
                         }
 
@@ -254,12 +256,25 @@ namespace ASCOM.DSLR
                         B = b;
                     }
 
+
+                    R = (R < 0) ? 0 : R;
+                    R = (R > 255) ? 254 : R;
+
+                    G = (G < 0) ? 0 : G;
+                    G = (G > 255) ? 254 : G;
+
+                    B = (B < 0) ? 0 : B;
+                    B = (B > 255) ? 254 : B;
+
                     Color Color = Color.FromArgb(R, G, B);
                     bmp.SetPixel(x, y, Color);
+                    R = 0;
+                    G = 0;
+                    B = 0;
 
                 }
 
-   
+
             }
 
 
