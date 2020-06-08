@@ -63,9 +63,12 @@ namespace ASCOM.DSLR.Classes
             throw new System.NotImplementedException();
         }
 
+        private CancellationTokenSource _cancelConnectCameraSource;
         public void ConnectCamera()
         {
-            throw new System.NotImplementedException();
+            _cancelConnectCameraSource?.Dispose();
+            _cancelConnectCameraSource = new CancellationTokenSource();
+            var connected = Connect(_cancelConnectCameraSource.Token);
         }
 
         public void DisconnectCamera()
