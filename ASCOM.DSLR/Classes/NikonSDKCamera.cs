@@ -73,12 +73,14 @@ namespace ASCOM.DSLR.Classes
 
         public void DisconnectCamera()
         {
-            throw new System.NotImplementedException();
+            _activeNikonManager?.Shutdown();
+            _nikonManagers?.Clear();
         }
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            _activeNikonManager?.Shutdown();
+            _nikonManagers?.Clear();
         }
 
         public override CameraModel ScanCameras()
