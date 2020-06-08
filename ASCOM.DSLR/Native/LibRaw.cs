@@ -22,9 +22,9 @@ namespace ASCOM.DSLR.Native
     internal static class NativeMethods
     {
 
-        public const string DllPath32 = "SDK/X86/libraw";
+        public const string DllPath32 = @"C:\Program Files (x86)\Common Files\ASCOM\Camera\ASCOM.DSLR.Camera\SDK\X86\libraw.dll";
 
-        public const string DllPath64 = "SDK/X64/libraw";
+        public const string DllPath64 = @"C:\Program Files (x86)\Common Files\ASCOM\Camera\ASCOM.DSLR.Camera\SDK\X64\libraw.dll";
 
         //public const string DllPath = "SDK/X64/libraw";
         //public const string DllPath = "libraw";

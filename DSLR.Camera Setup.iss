@@ -64,7 +64,7 @@ Source: "bin\websocket-sharp.dll"; DestDir: "{app}"
 Source: "bin\Accord.dll"; DestDir: "{app}"
 Source: "bin\Accord.Video.DirectShow.dll"; DestDir: "{app}"
 Source: "bin\Accord.Video.dll"; DestDir: "{app}"
-
+Source: "bin\nikoncswrapper.dll"; DestDir: "{app}"
 
 
 Source: "pktriggercord\zlib1.dll"; DestDir: "{app}/pktriggercord"
