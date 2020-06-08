@@ -18,57 +18,158 @@ namespace ASCOM.DSLR.Classes
 {
 
 
-    class ObjectModel
+    class ObjectModel 
 
     {
+        
+        NikonBase _object;
+        NkMAIDCapInfo[] caps;
 
 
         public ObjectModel(NikonBase obj)
         {
 
-            _caps = new ObservableCollection<CapModel>();
             _object = obj;
-            _doThumbnail = false;
-            _doPreview = false;
-            _doLowResPreview = false;
-            _videoFile = null;
 
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(33.0);
-            _timer.Tick += new EventHandler(_timer_Tick);
 
             NikonDevice device = _object as NikonDevice;
+
+            caps = device.GetCapabilityInfo();
+
 
             if (device != null)
             {
                 device.CapabilityChanged += new CapabilityChangedDelegate(device_CapabilityChanged);
-
                 device.CaptureComplete += new CaptureCompleteDelegate(device_CaptureComplete);
                 device.ImageReady += new ImageReadyDelegate(device_ImageReady);
-
-                // Note: Disable thumbnails and previews by default
-
-                //device.PreviewReady += device_PreviewReady;
-                //device.LowResolutionPreviewReady += device_LowResolutionPreviewReady;
-                //device.ThumbnailReady += device_ThumbnailReady;
-                //_doPreview = true;
-                //_doLowResPreview = true;
-                //_doThumbnail = true;
-
-                device.VideoFragmentReady += new VideoFragmentReadyDelegate(device_VideoFragmentReady);
-                device.VideoRecordingInterrupted += new VideoRecordingInterruptedDelegate(device_VideoRecordingInterrupted);
             }
 
-            //RefreshCaps();
+            RefreshCaps();
         }
 
 
+        void device_ImageReady(NikonDevice sender, NikonImage image)
+        {
+            Save(image.Buffer, "image" + ((image.Type == NikonImageType.Jpeg) ? ".jpg" : ".nef"));
+        }
+
+        public string ObjectName
+        {
+            get { return _object.Name; }
+        }
+
+        public bool SupportsCapture
+        {
+            get { return _object.SupportsCapability(eNkMAIDCapability.kNkMAIDCapability_Capture); }
+        }
+
+        public bool SupportsLiveView
+        {
+            get { return _object.SupportsCapability(eNkMAIDCapability.kNkMAIDCapability_LiveViewStatus); }
+        }
+
+        void Save(byte[] buffer, string file)
+        {
+
+
+            string path = Path.Combine(
+                System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                file);
+
+            Logger.WriteTraceMessage("Saving: " + path);
+
+            try
+            {
+                using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                {
+                    stream.Write(buffer, 0, buffer.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteTraceMessage("Failed to save file: " + path + ", " + ex.Message);
+            }
+        }
+
+
+
+        public NikonBase Object
+        {
+            get { return _object; }
+        }
+
+
+        void device_CapabilityChanged(NikonDevice sender, eNkMAIDCapability capability)
+        {
+            RefreshCaps();
+        }
+
+
+        void device_CaptureComplete(NikonDevice sender, int data)
+        {
+        }
+
+
+        void RefreshCaps()
+        {
+           
+
+            NkMAIDCapInfo[] caps = _object.GetCapabilityInfo();
+
+            foreach (NkMAIDCapInfo cap in caps)
+            {
+
+                // Print ID, description and type
+                Console.WriteLine(string.Format("{0, -14}: {1}", "Id", cap.ulID.ToString()));
+                Console.WriteLine(string.Format("{0, -14}: {1}", "Description", cap.GetDescription()));
+                Console.WriteLine(string.Format("{0, -14}: {1}", "Type", cap.ulType.ToString()));
+
+                // Try to get the capability value
+                string value = null;
+
+                // First, check if the capability is readable
+                if (cap.CanGet())
+                {
+                    // Choose which 'Get' function to use, depending on the type
+                    switch (cap.ulType)
+                    {
+                        case eNkMAIDCapType.kNkMAIDCapType_Unsigned:
+                            value = _object.GetUnsigned(cap.ulID).ToString();
+                            break;
+
+                        case eNkMAIDCapType.kNkMAIDCapType_Integer:
+                            value = _object.GetInteger(cap.ulID).ToString();
+                            break;
+
+                        case eNkMAIDCapType.kNkMAIDCapType_String:
+                            value = _object.GetString(cap.ulID);
+                            break;
+
+                        case eNkMAIDCapType.kNkMAIDCapType_Boolean:
+                            value = _object.GetBoolean(cap.ulID).ToString();
+                            break;
+
+                            // Note: There are more types - adding the rest is left
+                            //       as an exercise for the reader.
+                    }
+
+
+                }
+            }
+        }
+
     }
+
+
+
+
+
+
+
     public class NikonSDKCamera : BaseCamera, IDslrCamera
     {
         List<NikonManager> _managers;
         ObservableCollection<ObjectModel> _objects;
-        NikonBase _object;
 
 
         public NikonSDKCamera(List<CameraModel> cameraModelsHistory) : base(cameraModelsHistory)
@@ -103,7 +204,8 @@ namespace ASCOM.DSLR.Classes
 
                 _objects.Add(new ObjectModel(manager));
                 _managers.Add(manager);
-            }
+
+              }
 
         }
 
@@ -119,10 +221,10 @@ namespace ASCOM.DSLR.Classes
 
             foreach (ObjectModel deviceModel in _objects)
             {
-                /*if (deviceModel.Object == device)
+                if (deviceModel.Object == device)
                 {
                     deviceModelToRemove = deviceModel;
-                }*/
+                }
             }
         }
 
@@ -172,12 +274,9 @@ namespace ASCOM.DSLR.Classes
             throw new System.NotImplementedException();
         }
 
-        public NikonBase Object
-        {
-            get { return _object; }
-        }
-
     }
+
+
 
 
 
