@@ -67,6 +67,7 @@ Source: "bin\Accord.Video.dll"; DestDir: "{app}"
 Source: "bin\nikoncswrapper.dll"; DestDir: "{app}"
 
 
+
 Source: "pktriggercord\zlib1.dll"; DestDir: "{app}/pktriggercord"
 Source: "pktriggercord\pktriggercord_commandline.html"; DestDir: "{app}/pktriggercord"
 Source: "pktriggercord\pktriggercord-cli.exe"; DestDir: "{app}/pktriggercord"
@@ -96,11 +97,22 @@ Source: "pktriggercord\pentax_settings.json"; DestDir: "{app}/pktriggercord"
 
 Source: "bin\ASCOM.DSLR.Test.exe"; DestDir: "{app}"
 
+;VC Runtime 2019
+Source: "Redist\VC_redist.x86.exe"; DestDir: {tmp}
+Source: "Redist\VC_redist.x64.exe"; DestDir: {tmp}
+
 ; Only if driver is .NET
 [Run]
 ; Only for .NET assembly/in-proc drivers
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
 Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/q /norestart"; \
+    Check: Is64BitInstallMode and VC2019RedistNeedsInstall('x86'); \
+    Flags: waituntilterminated; StatusMsg: "Installing VC++ 2019 redistributables..."
+Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/q /norestart"; \
+    Check: (not Is64BitInstallMode) and VC2019RedistNeedsInstall('x64'); \
+    Flags: waituntilterminated; StatusMsg: "Installing VC++ 2019 redistributables..."
+
 
 ; Only if driver is .NET
 [UninstallRun]
@@ -164,4 +176,16 @@ begin
         end
   end;
 end;
-
+//Runtime Function
+function VC2019RedistNeedsInstall(Arch: string): Boolean;
+var 
+  Version: String;
+begin
+  if RegQueryStringValue(
+       HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\' + Arch,
+       'Version', Version) then
+  begin
+    Log('VC Redist Version check : found ' + Version);
+    Result := (CompareStr(Version, 'v14.26.28720.03')<0);
+  end;
+end;
