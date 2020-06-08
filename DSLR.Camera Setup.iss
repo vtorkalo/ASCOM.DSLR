@@ -106,13 +106,14 @@ Source: "Redist\VC_redist.x64.exe"; DestDir: {tmp}
 ; Only for .NET assembly/in-proc drivers
 Filename: "{dotnet4032}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 32bit
 Filename: "{dotnet4064}\regasm.exe"; Parameters: "/codebase ""{app}\ASCOM.DSLR.Camera.dll"""; Flags: runhidden 64bit; Check: IsWin64
-Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/q /norestart"; \
-    Check: Is64BitInstallMode and VC2019RedistNeedsInstall('x86'); \
-    Flags: waituntilterminated; StatusMsg: "Installing VC++ 2019 redistributables..."
-Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/q /norestart"; \
-    Check: (not Is64BitInstallMode) and VC2019RedistNeedsInstall('x64'); \
-    Flags: waituntilterminated; StatusMsg: "Installing VC++ 2019 redistributables..."
 
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/q /norestart"; \
+    Check: VC2019RedistNeedsInstall('x86'); \
+    Flags: waituntilterminated; StatusMsg: "Installing VC++ 2019 redistributables..."
+	
+Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/q /norestart"; \
+    Check: IsWin64 and VC2019RedistNeedsInstall('x64'); \
+    Flags: waituntilterminated; StatusMsg: "Installing VC++ 2019 redistributables..."
 
 ; Only if driver is .NET
 [UninstallRun]
