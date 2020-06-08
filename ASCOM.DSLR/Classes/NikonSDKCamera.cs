@@ -13,214 +13,31 @@ using Nikon;
 using ASCOM.Utilities;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace ASCOM.DSLR.Classes
 {
 
 
-    class ObjectModel 
-
-    {
-        
-        NikonBase _object;
-        NkMAIDCapInfo[] caps;
-
-
-        public ObjectModel(NikonBase obj)
-        {
-
-            _object = obj;
-
-
-            NikonDevice device = _object as NikonDevice;
-
-            caps = device.GetCapabilityInfo();
-
-
-            if (device != null)
-            {
-                device.CapabilityChanged += new CapabilityChangedDelegate(device_CapabilityChanged);
-                device.CaptureComplete += new CaptureCompleteDelegate(device_CaptureComplete);
-                device.ImageReady += new ImageReadyDelegate(device_ImageReady);
-            }
-
-            RefreshCaps();
-        }
-
-
-        void device_ImageReady(NikonDevice sender, NikonImage image)
-        {
-            Save(image.Buffer, "image" + ((image.Type == NikonImageType.Jpeg) ? ".jpg" : ".nef"));
-        }
-
-        public string ObjectName
-        {
-            get { return _object.Name; }
-        }
-
-        public bool SupportsCapture
-        {
-            get { return _object.SupportsCapability(eNkMAIDCapability.kNkMAIDCapability_Capture); }
-        }
-
-        public bool SupportsLiveView
-        {
-            get { return _object.SupportsCapability(eNkMAIDCapability.kNkMAIDCapability_LiveViewStatus); }
-        }
-
-        void Save(byte[] buffer, string file)
-        {
-
-
-            string path = Path.Combine(
-                System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                file);
-
-            Logger.WriteTraceMessage("Saving: " + path);
-
-            try
-            {
-                using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
-                {
-                    stream.Write(buffer, 0, buffer.Length);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteTraceMessage("Failed to save file: " + path + ", " + ex.Message);
-            }
-        }
-
-
-
-        public NikonBase Object
-        {
-            get { return _object; }
-        }
-
-
-        void device_CapabilityChanged(NikonDevice sender, eNkMAIDCapability capability)
-        {
-            RefreshCaps();
-        }
-
-
-        void device_CaptureComplete(NikonDevice sender, int data)
-        {
-        }
-
-
-        void RefreshCaps()
-        {
-           
-
-            NkMAIDCapInfo[] caps = _object.GetCapabilityInfo();
-
-            foreach (NkMAIDCapInfo cap in caps)
-            {
-
-                // Print ID, description and type
-                Console.WriteLine(string.Format("{0, -14}: {1}", "Id", cap.ulID.ToString()));
-                Console.WriteLine(string.Format("{0, -14}: {1}", "Description", cap.GetDescription()));
-                Console.WriteLine(string.Format("{0, -14}: {1}", "Type", cap.ulType.ToString()));
-
-                // Try to get the capability value
-                string value = null;
-
-                // First, check if the capability is readable
-                if (cap.CanGet())
-                {
-                    // Choose which 'Get' function to use, depending on the type
-                    switch (cap.ulType)
-                    {
-                        case eNkMAIDCapType.kNkMAIDCapType_Unsigned:
-                            value = _object.GetUnsigned(cap.ulID).ToString();
-                            break;
-
-                        case eNkMAIDCapType.kNkMAIDCapType_Integer:
-                            value = _object.GetInteger(cap.ulID).ToString();
-                            break;
-
-                        case eNkMAIDCapType.kNkMAIDCapType_String:
-                            value = _object.GetString(cap.ulID);
-                            break;
-
-                        case eNkMAIDCapType.kNkMAIDCapType_Boolean:
-                            value = _object.GetBoolean(cap.ulID).ToString();
-                            break;
-
-                            // Note: There are more types - adding the rest is left
-                            //       as an exercise for the reader.
-                    }
-
-
-                }
-            }
-        }
-
-    }
-
-
     public class NikonSDKCamera : BaseCamera, IDslrCamera
     {
-        List<NikonManager> _managers;
-        ObservableCollection<ObjectModel> _objects;
+        List<NikonManager> _nikonManagers;
+        private NikonManager _activeNikonManager;
+
+        private TaskCompletionSource<object> _downloadExposure;
+        private TaskCompletionSource<bool> _cameraConnected;
+
+        private NikonDevice _camera;
+
+        private Dictionary<int, double> _shutterSpeeds = new Dictionary<int, double>();
+        private int _bulbShutterSpeedIndex;
 
 
         public NikonSDKCamera(List<CameraModel> cameraModelsHistory) : base(cameraModelsHistory)
         {
-            _objects = new ObservableCollection<ObjectModel>();
-            _managers = new List<NikonManager>();
 
-            string[] md3s = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.md3", SearchOption.AllDirectories);
+            _nikonManagers = new List<NikonManager>();
 
-            if (md3s.Length == 0)
-            {
-                Logger.WriteTraceMessage("Couldn't find any MD3 files in " + Directory.GetCurrentDirectory());
-                Logger.WriteTraceMessage("Download MD3 files from Nikons SDK website: https://sdk.nikonimaging.com/apply/");
-            }
-
-            foreach (string md3 in md3s)
-            {
-                const string requiredDllFile = "NkdPTP.dll";
-
-                string requiredDllPath = Path.Combine(Path.GetDirectoryName(md3), requiredDllFile);
-
-                if (!File.Exists(requiredDllPath))
-                {
-                    Logger.WriteTraceMessage("Warning: Couldn't find " + requiredDllFile + " in " + Path.GetDirectoryName(md3) + ". The library will not work properly without it!");
-                }
-
-                Logger.WriteTraceMessage("Opening " + md3);
-
-                NikonManager manager = new NikonManager(md3);
-                manager.DeviceAdded += new DeviceAddedDelegate(_manager_DeviceAdded);
-                manager.DeviceRemoved += new DeviceRemovedDelegate(_manager_DeviceRemoved);
-
-                _objects.Add(new ObjectModel(manager));
-                _managers.Add(manager);
-
-              }
-
-        }
-
-        void _manager_DeviceAdded(NikonManager sender, NikonDevice device)
-        {
-            _objects.Add(new ObjectModel(device));
-            Logger.WriteTraceMessage("NewestIndex");
-        }
-
-        void _manager_DeviceRemoved(NikonManager sender, NikonDevice device)
-        {
-            ObjectModel deviceModelToRemove = null;
-
-            foreach (ObjectModel deviceModel in _objects)
-            {
-                if (deviceModel.Object == device)
-                {
-                    deviceModelToRemove = deviceModel;
-                }
-            }
         }
 
 
@@ -228,7 +45,14 @@ namespace ASCOM.DSLR.Classes
 
         public bool SupportsViewView { get { return false; } }
 
-        string IDslrCamera.Model => throw new System.NotImplementedException();
+        public string Model
+        {
+            get
+            {
+                return Name;
+            }
+        }
+
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<LiveViewImageReadyEventArgs> LiveViewImageReady;
@@ -268,6 +92,280 @@ namespace ASCOM.DSLR.Classes
         {
             throw new System.NotImplementedException();
         }
+
+        public async Task<bool> Connect(CancellationToken token)
+        {
+            return await Task.Run(() => {
+                var connected = false;
+                try
+                {
+                     _nikonManagers.Clear();
+
+                    string architecture = (IntPtr.Size == 4) ? "x86" : "x64";
+
+                    var md3Folder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "SDK", architecture, "Nikon");
+
+                    foreach (string file in Directory.GetFiles(md3Folder, "*.md3", SearchOption.AllDirectories))
+                    {
+                        NikonManager mgr = new NikonManager(file);
+                        mgr.DeviceAdded += Mgr_DeviceAdded;
+                        _nikonManagers.Add(mgr);
+                    }
+
+                    _cameraConnected = new TaskCompletionSource<bool>();
+                    var d = DateTime.Now;
+
+                    do
+                    {
+                        token.ThrowIfCancellationRequested();
+                        Thread.Sleep(500);
+                    } while (!_cameraConnected.Task.IsCompleted);
+
+                    connected = _cameraConnected.Task.Result;
+                }
+                catch (OperationCanceledException)
+                {
+                    _activeNikonManager = null;
+                }
+                finally
+                {
+                    CleanupUnusedManagers(_activeNikonManager);
+                }
+
+                return connected;
+            });
+        }
+
+        private void CleanupUnusedManagers(NikonManager activeManager)
+        {
+            foreach (NikonManager mgr in _nikonManagers)
+            {
+                if (mgr != activeManager)
+                {
+                    mgr.Shutdown();
+                }
+            }
+            _nikonManagers.Clear();
+        }
+
+        private void Mgr_DeviceAdded(NikonManager sender, NikonDevice device)
+        {
+            var connected = false;
+            try
+            {
+                _activeNikonManager = sender;
+                _activeNikonManager.DeviceRemoved += Mgr_DeviceRemoved;
+
+                Init(device);
+
+                connected = true;
+                Name = _camera.Name;
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteTraceMessage(ex.ToString());
+            }
+            finally
+            {
+                //Connected = connected;
+
+                _cameraConnected.TrySetResult(connected);
+            }
+        }
+
+        private void Mgr_DeviceRemoved(NikonManager sender, NikonDevice device)
+        {
+            Disconnect();
+        }
+
+        public void Disconnect()
+        {
+            _activeNikonManager?.Shutdown();
+            _nikonManagers?.Clear();
+        }
+
+        public void Init(NikonDevice cam)
+        {
+            Logger.WriteTraceMessage("Initializing Nikon camera");
+            _camera = cam;
+            _camera.ImageReady += Camera_ImageReady;
+            _camera.CaptureComplete += _camera_CaptureComplete;
+
+            //Set to shoot in RAW
+            Logger.WriteTraceMessage("Setting compression to RAW");
+            var compression = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_CompressionLevel);
+            for (int i = 0; i < compression.Length; i++)
+            {
+                var val = compression.GetEnumValueByIndex(i);
+                if (val.ToString() == "RAW")
+                {
+                    compression.Index = i;
+                    _camera.SetEnum(eNkMAIDCapability.kNkMAIDCapability_CompressionLevel, compression);
+                    break;
+                }
+            }
+
+            GetShutterSpeeds();
+            GetCapabilities();
+
+            /* Setting SaveMedia when supported, to save images via SDRAM and not to the internal memory card */
+            if (Capabilities.ContainsKey(eNkMAIDCapability.kNkMAIDCapability_SaveMedia) && Capabilities[eNkMAIDCapability.kNkMAIDCapability_SaveMedia].CanSet())
+            {
+                _camera.SetUnsigned(eNkMAIDCapability.kNkMAIDCapability_SaveMedia, (uint)eNkMAIDSaveMedia.kNkMAIDSaveMedia_SDRAM);
+            }
+            else
+            {
+                Logger.WriteTraceMessage("Setting SaveMedia Capability not available. This has to be set manually or is not supported by this model.");
+            }
+        }
+
+
+        private void _camera_CaptureComplete(NikonDevice sender, int data)
+        {
+            Logger.WriteTraceMessage("Capture complete");
+        }
+
+        private void Camera_ImageReady(NikonDevice sender, NikonImage image)
+        {
+            Logger.WriteTraceMessage("Image ready");
+            Save(image.Buffer, "image" + ((image.Type == NikonImageType.Jpeg) ? ".jpg" : ".nef"));
+            Logger.WriteTraceMessage("Setting Download Exposure Taks to complete");
+            _downloadExposure.TrySetResult(null);
+        }
+
+        private DateTime _startTime;
+        private double _duration;
+
+        void Save(byte[] buffer, string file)
+        {
+            Logger.WriteTraceMessage("Saving: " + StorePath);
+
+            if (!Directory.Exists(StorePath))
+            {
+                Directory.CreateDirectory(StorePath);
+            }
+            try
+            {
+                using (FileStream stream = new FileStream(StorePath, FileMode.Create, FileAccess.Write))
+                {
+                    stream.Write(buffer, 0, buffer.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteTraceMessage("Failed to save file: " + StorePath + ", " + ex.Message);
+            }
+
+
+            string downloadedFilePath = Path.Combine(StorePath, file);
+            SensorTemperature = GetSensorTemperature(downloadedFilePath);
+
+            string newFilePath = RenameFile(downloadedFilePath, _duration, _startTime);
+
+            if ((File.Exists(newFilePath)) && (SaveFile == false))
+            {
+                File.Delete(newFilePath);
+            }
+        }
+
+        private Dictionary<eNkMAIDCapability, NkMAIDCapInfo> Capabilities = new Dictionary<eNkMAIDCapability, NkMAIDCapInfo>();
+
+        private void GetShutterSpeeds()
+        {
+            Logger.WriteTraceMessage("Getting Nikon shutter speeds");
+            _shutterSpeeds.Clear();
+            var shutterSpeeds = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed);
+            Logger.WriteTraceMessage("Available Shutterspeeds: " + shutterSpeeds.Length);
+            bool bulbFound = false;
+            for (int i = 0; i < shutterSpeeds.Length; i++)
+            {
+                try
+                {
+                    var val = shutterSpeeds.GetEnumValueByIndex(i).ToString();
+                    Logger.WriteTraceMessage("Found Shutter speed: " + val);
+                    if (val.Contains("/"))
+                    {
+                        var split = val.Split('/');
+                        var convertedSpeed = double.Parse(split[0], CultureInfo.InvariantCulture) / double.Parse(split[1], CultureInfo.InvariantCulture);
+
+                        _shutterSpeeds.Add(i, convertedSpeed);
+                    }
+                    else if (val.ToLower() == "bulb")
+                    {
+                        Logger.WriteTraceMessage("Bulb index: " + i);
+                        _bulbShutterSpeedIndex = i;
+                        bulbFound = true;
+                    }
+                    else if (val.ToLower() == "time")
+                    {
+                        //currently unused
+                    }
+                    else
+                    {
+                        _shutterSpeeds.Add(i, double.Parse(val));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteTraceMessage("Unexpected Shutter Speed: " + ex.ToString());
+                }
+            }
+            if (!bulbFound)
+            {
+                Logger.WriteTraceMessage("No Bulb speed found!");
+                throw new NikonException("Failed to find the 'Bulb' exposure mode");
+            }
+        }
+
+
+        private void GetCapabilities()
+        {
+            Logger.WriteTraceMessage("Getting Nikon capabilities");
+            Capabilities.Clear();
+            foreach (NkMAIDCapInfo info in _camera.GetCapabilityInfo())
+            {
+                Capabilities.Add(info.ulID, info);
+
+                var description = info.GetDescription();
+                var canGet = info.CanGet();
+                var canGetArray = info.CanGetArray();
+                var canSet = info.CanSet();
+                var canStart = info.CanStart();
+
+                Logger.WriteTraceMessage(description);
+                Logger.WriteTraceMessage("\t Id: " + info.ulID.ToString());
+                Logger.WriteTraceMessage("\t CanGet: " + canGet.ToString());
+                Logger.WriteTraceMessage("\t CanGetArray: " + canGetArray.ToString());
+                Logger.WriteTraceMessage("\t CanSet: " + canSet.ToString());
+                Logger.WriteTraceMessage("\t CanStart: " + canStart.ToString());
+
+                if (info.ulID == eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed && !canSet)
+                {
+                    throw new NikonException("Cannot set shutterspeeds. Please make sure the camera dial is set to a position where bublb mode is possible and the mirror lock is turned off");
+                }
+            }
+        }
+
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            private set
+            {
+                _name = value;
+                //RaisePropertyChanged();
+            }
+        }
+
+
+
+
+
+
+
 
     }
 
