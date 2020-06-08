@@ -61,6 +61,10 @@ namespace ASCOM.DSLR
             {
                 _dslrCamera = new PentaxCamera(_cameraSettings.CameraModelsHistory);
             }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.NikonBeta)
+            {
+                _dslrCamera = new NikonSDKCamera(_cameraSettings.CameraModelsHistory);
+            }
         }
 
         private static CameraSettings _cameraSettings { get; set; }

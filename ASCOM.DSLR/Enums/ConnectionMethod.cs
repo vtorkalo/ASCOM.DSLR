@@ -11,7 +11,8 @@ namespace ASCOM.DSLR.Enums
         BackyardEOS = 1,
         Nikon = 2,
         Pentax = 3,
-        Sony = 4
+        Sony = 4,
+        NikonBeta = 5
 
     }
 }

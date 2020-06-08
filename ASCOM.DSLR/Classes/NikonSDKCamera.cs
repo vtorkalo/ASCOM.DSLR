@@ -41,7 +41,7 @@ namespace ASCOM.DSLR.Classes
         }
 
 
-        public ConnectionMethod IntegrationApi => ConnectionMethod.Nikon;
+        public ConnectionMethod IntegrationApi => ConnectionMethod.NikonBeta;
 
         public bool SupportsViewView { get { return false; } }
 
@@ -80,13 +80,128 @@ namespace ASCOM.DSLR.Classes
 
         public override CameraModel ScanCameras()
         {
-            throw new System.NotImplementedException();
+            var cameraModel = GetCameraModel(Model);
+
+            return cameraModel;
         }
 
         public void StartExposure(double Duration, bool Light)
         {
-            throw new System.NotImplementedException();
+            _startTime = DateTime.Now;
+            _duration = Duration;
+
+            if (Connected)
+            {
+                Logger.WriteTraceMessage("Prepare start of exposure: ");
+                _downloadExposure = new TaskCompletionSource<object>();
+
+                if (Duration <= 30.0)
+                {
+                    Logger.WriteTraceMessage("Exposuretime <= 30. Setting automatic shutter speed.");
+                    var speed = _shutterSpeeds.Aggregate((x, y) => Math.Abs(x.Value - Duration) < Math.Abs(y.Value - Duration) ? x : y);
+                    SetCameraShutterSpeed(speed.Key);
+
+                    Logger.WriteTraceMessage("Start capture");
+                    _camera.Capture();
+                }
+                else
+                {
+                        Logger.WriteTraceMessage("Use Bulb capture");
+                        BulbCapture(Duration, StartBulbCapture, StopBulbCapture);
+                    }
+                }
+            }
+
+        private void BulbCapture(double exposureTime, Action capture, Action stopCapture)
+        {
+            SetCameraToManual();
+
+            SetCameraShutterSpeed(_bulbShutterSpeedIndex);
+
+            try
+            {
+                Logger.WriteTraceMessage("Starting bulb capture");
+                capture();
+            }
+            catch (NikonException ex)
+            {
+                if (ex.ErrorCode != eNkMAIDResult.kNkMAIDResult_BulbReleaseBusy)
+                {
+                    throw;
+                }
+            }
+
+            /*Stop Exposure after exposure time */
+            Task.Run(async () => {
+                await Wait(TimeSpan.FromSeconds(exposureTime));
+
+                stopCapture();
+
+                Logger.WriteTraceMessage("Restore previous shutter speed");
+                // Restore original shutter speed
+                SetCameraShutterSpeed(_prevShutterSpeed);
+            });
         }
+
+        private void StartBulbCapture()
+        {
+            _camera.StartBulbCapture();
+        }
+
+        private void StopBulbCapture()
+        {
+            _camera.StopBulbCapture();
+        }
+
+
+
+        private void SetCameraToManual()
+        {
+            Logger.WriteTraceMessage("Set camera to manual exposure");
+            if (Capabilities.ContainsKey(eNkMAIDCapability.kNkMAIDCapability_ExposureMode) && Capabilities[eNkMAIDCapability.kNkMAIDCapability_ExposureMode].CanSet())
+            {
+                var exposureMode = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ExposureMode);
+                var foundManual = false;
+                for (int i = 0; i < exposureMode.Length; i++)
+                {
+                    if ((uint)exposureMode[i] == (uint)eNkMAIDExposureMode.kNkMAIDExposureMode_Manual)
+                    {
+                        exposureMode.Index = i;
+                        foundManual = true;
+                        _camera.SetEnum(eNkMAIDCapability.kNkMAIDCapability_ExposureMode, exposureMode);
+                        break;
+                    }
+                }
+
+                if (!foundManual)
+                {
+                    throw new NikonException("Failed to find the 'Manual' exposure mode");
+                }
+            }
+            else
+            {
+                Logger.WriteTraceMessage("Cannot set to manual mode. Skipping...");
+            }
+        }
+
+
+        private int _prevShutterSpeed;
+        private void SetCameraShutterSpeed(int index)
+        {
+            if (Capabilities.ContainsKey(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed) && Capabilities[eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed].CanSet())
+            {
+                Logger.WriteTraceMessage("Setting shutter speed to index: " + index);
+                var shutterspeed = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed);
+                _prevShutterSpeed = shutterspeed.Index;
+                shutterspeed.Index = index;
+                _camera.SetEnum(eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed, shutterspeed);
+            }
+            else
+            {
+                Logger.WriteTraceMessage("Cannot set camera shutter speed. Skipping...");
+            }
+        }
+
 
         public void StopExposure()
         {
@@ -167,8 +282,7 @@ namespace ASCOM.DSLR.Classes
             }
             finally
             {
-                //Connected = connected;
-
+                Connected = connected;
                 _cameraConnected.TrySetResult(connected);
             }
         }
@@ -261,6 +375,8 @@ namespace ASCOM.DSLR.Classes
             SensorTemperature = GetSensorTemperature(downloadedFilePath);
 
             string newFilePath = RenameFile(downloadedFilePath, _duration, _startTime);
+
+            ImageReady?.Invoke(this, new ImageReadyEventArgs(newFilePath));
 
             if ((File.Exists(newFilePath)) && (SaveFile == false))
             {
@@ -356,8 +472,39 @@ namespace ASCOM.DSLR.Classes
             private set
             {
                 _name = value;
-                //RaisePropertyChanged();
             }
+        }
+
+        private bool _connected;
+
+        public bool Connected
+        {
+            get
+            {
+                return _connected;
+            }
+            set
+            {
+                _connected = value;
+            }
+        }
+
+
+        public static async Task<TimeSpan> Wait(TimeSpan t, CancellationToken token = new CancellationToken())
+        {
+            TimeSpan elapsed = new TimeSpan(0);
+            do
+            {
+                var delta = await Delay(100, token);
+                elapsed += delta;
+            } while (elapsed < t);
+            return elapsed;
+        }
+
+        public static async Task<TimeSpan> Delay(int milliseconds, CancellationToken token)
+        {
+            var t = new TimeSpan(0, 0, 0, 0, milliseconds);
+            return await Delay(Convert.ToInt32(t), token);
         }
 
 
@@ -367,10 +514,8 @@ namespace ASCOM.DSLR.Classes
 
 
 
+
     }
-
-
-
 
 
 }
