@@ -28,9 +28,9 @@ namespace EOSDigital.SDK
 
         //public const string DllPath = "EDSDK";
 
-        public const string DllPath32 = @"C:\Program Files (x86)\Common Files\ASCOM\Camera\ASCOM.DSLR.Camera\SDK\X86\EDSDK.dll";
+        public const string DllPath32 = "SDK/X86/EDSDK";
 
-        public const string DllPath64 = @"C:\Program Files (x86)\Common Files\ASCOM\Camera\ASCOM.DSLR.Camera\SDK\X64\EDSDK.dll";
+        public const string DllPath64 = "SDK/X64/EDSDK";
 
 
 

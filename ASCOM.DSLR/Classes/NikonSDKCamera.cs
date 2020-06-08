@@ -161,11 +161,6 @@ namespace ASCOM.DSLR.Classes
     }
 
 
-
-
-
-
-
     public class NikonSDKCamera : BaseCamera, IDslrCamera
     {
         List<NikonManager> _managers;
