@@ -126,6 +126,7 @@ namespace ASCOM.DSLR
             cbIntegrationApi.Items.Add(ConnectionMethod.BackyardEOS);
             cbIntegrationApi.Items.Add(ConnectionMethod.Nikon);
             cbIntegrationApi.Items.Add(ConnectionMethod.Pentax);
+            cbIntegrationApi.Items.Add(ConnectionMethod.NikonBeta);
             SetSelectedItem(cbIntegrationApi, Settings.IntegrationApi);
             
 
@@ -254,6 +255,7 @@ namespace ASCOM.DSLR
             bool isBEOS = IsBeos();
             tbBackyardEosPort.Visible = isBEOS;
             lblBackyardEosPort.Visible = isBEOS;
+            bool isNikonSDK = IsNikonSDK();
             bool isDigiCamControl = IsDigiCamControl();
             chkUseExternalShutter.Visible = isDigiCamControl;
             cbShutterPort.Visible = isDigiCamControl;
@@ -292,6 +294,11 @@ namespace ASCOM.DSLR
         private bool IsBeos()
         {
             return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.BackyardEOS;
+        }
+
+        private bool IsNikonSDK()
+        {
+            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.NikonBeta;
         }
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)
