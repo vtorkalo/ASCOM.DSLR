@@ -408,6 +408,7 @@ namespace ASCOM.DSLR
             // 
             this.picASCOM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.picASCOM.Cursor = System.Windows.Forms.Cursors.Hand;
+	    // tjh: this is a source of the problem... not sure why...
             this.picASCOM.Image = global::ASCOM.DSLR.Properties.Resources.ASCOM;
             this.picASCOM.Location = new System.Drawing.Point(14, 381);
             this.picASCOM.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
