@@ -464,6 +464,7 @@ namespace CameraControl.Devices.Nikon
                 //var thread = new Thread(LoadProperties) {Priority = ThreadPriority.Lowest};
                 //thread.Start();
                 LoadProperties();
+                //FearL0rd test
                 Thread thread = new Thread(() =>
                 {
                     Thread.Sleep(200);

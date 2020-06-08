@@ -418,7 +418,7 @@ namespace ASCOM.DSLR
             ImageDataProcessor imgp = new ImageDataProcessor();
 
 
-            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\E1DXINBI000050.CR2");
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\LMSAMPLE.cr2");
 
             var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
             Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
