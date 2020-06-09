@@ -227,6 +227,7 @@ namespace ASCOM.DSLR.Classes
 
                     foreach (string file in Directory.GetFiles(md3Folder, "*.md3", SearchOption.AllDirectories))
                     {
+                        Logger.WriteTraceMessage("Processing md3: " + file);
                         NikonManager mgr = new NikonManager(file);
                         mgr.DeviceAdded += Mgr_DeviceAdded;
                         _nikonManagers.Add(mgr);
@@ -276,6 +277,7 @@ namespace ASCOM.DSLR.Classes
                 _activeNikonManager = sender;
                 _activeNikonManager.DeviceRemoved += Mgr_DeviceRemoved;
 
+                Logger.WriteTraceMessage("NikonManager starting device init: " + _activeNikonManager.Name);
                 Init(device);
 
                 connected = true;
@@ -305,7 +307,7 @@ namespace ASCOM.DSLR.Classes
 
         public void Init(NikonDevice cam)
         {
-            Logger.WriteTraceMessage("Initializing Nikon camera");
+            Logger.WriteTraceMessage("Initializing Nikon camera '" + cam.Name + "'");
             _camera = cam;
             _camera.ImageReady += Camera_ImageReady;
             _camera.CaptureComplete += _camera_CaptureComplete;
@@ -323,6 +325,18 @@ namespace ASCOM.DSLR.Classes
                     break;
                 }
             }
+
+            //Ensure camera is in Manual mode
+            /*var exposureMode = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_ExposureMode);
+            if (exposureMode.Index != (int)eNkMAIDExposureMode.kNkMAIDExposureMode_Manual)
+            {
+                Logger.WriteTraceMessage("Camera not set to Manual mode. Switching now.");
+                exposureMode.Index = (int)eNkMAIDExposureMode.kNkMAIDExposureMode_Manual;
+                _camera.SetEnum(eNkMAIDCapability.kNkMAIDCapability_ExposureMode, exposureMode);
+            }*/
+            //Changed to function
+            SetCameraToManual();
+
 
             GetShutterSpeeds();
             GetCapabilities();
