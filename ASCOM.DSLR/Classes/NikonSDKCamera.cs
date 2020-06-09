@@ -68,9 +68,12 @@ namespace ASCOM.DSLR.Classes
         private CancellationTokenSource _cancelConnectCameraSource;
         public void ConnectCamera()
         {
-            _cancelConnectCameraSource?.Dispose();
-            _cancelConnectCameraSource = new CancellationTokenSource();
-            var connected = Connect(_cancelConnectCameraSource.Token);
+            if (_activeNikonManager == null)
+            {
+                _cancelConnectCameraSource?.Dispose();
+                _cancelConnectCameraSource = new CancellationTokenSource();
+                var connected = Connect(_cancelConnectCameraSource.Token);
+            }
         }
 
         public void DisconnectCamera()
