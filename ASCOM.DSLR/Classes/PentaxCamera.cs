@@ -87,8 +87,9 @@ namespace ASCOM.DSLR.Classes
 
             //ExecuteCommand(string.Format("--file_format dng -o {0} --iso {1} --shutter_speed {2}", fileName + ".dng", Iso, Duration));
             //pktriggercord-cli --file_format dng -o c:\temp\test.dng -i 400 -t 1
+            Logger.WriteTraceMessage("--file_format dng -o " + fileName + ".dng -i " + Iso + " -t " + Duration);
             ExecuteCommand(string.Format("--file_format dng -o {0} -i {1} -t {2}", fileName + ".dng", Iso, Duration));
-            Logger.WriteTraceMessage("--file_format dng -o {0} -i {1} -t {2}");
+
         }
 
         private string _fileNameWaiting;
