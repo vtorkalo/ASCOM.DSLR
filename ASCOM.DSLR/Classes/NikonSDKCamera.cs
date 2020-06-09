@@ -274,17 +274,25 @@ namespace ASCOM.DSLR.Classes
 
         private void Mgr_DeviceAdded(NikonManager sender, NikonDevice device)
         {
+            NikonManager tmpManagerr = _activeNikonManager;
+
             var connected = false;
             try
             {
+  
                 _activeNikonManager = sender;
                 _activeNikonManager.DeviceRemoved += Mgr_DeviceRemoved;
 
                 Logger.WriteTraceMessage("NikonManager starting device init: " + _activeNikonManager.Name);
                 Init(device);
+                Name = _camera.Name;
+                if (Name == "")
+                {
+                    _activeNikonManager = tmpManagerr;
+                }
 
                 connected = true;
-                Name = _camera.Name;
+                
             }
             catch (Exception ex)
             {
