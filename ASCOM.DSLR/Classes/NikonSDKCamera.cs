@@ -30,7 +30,9 @@ namespace ASCOM.DSLR.Classes
         private NikonDevice _camera;
 
         private Dictionary<int, double> _shutterSpeeds = new Dictionary<int, double>();
+        private double _flashSyncSpeed;
         private int _bulbShutterSpeedIndex;
+        private int _flashSyncSpeedIndex;
 
 
         public NikonSDKCamera(List<CameraModel> cameraModelsHistory) : base(cameraModelsHistory)
@@ -404,7 +406,17 @@ namespace ASCOM.DSLR.Classes
                 {
                     var val = shutterSpeeds.GetEnumValueByIndex(i).ToString();
                     Logger.WriteTraceMessage("Found Shutter speed: " + val);
-                    if (val.Contains("/"))
+                    if (val.StartsWith("x"))
+                    {
+                        //Flash sync shutter speed detected.
+                        //This is a dynamic shutter speed (Its value can change at runtime) that depends on the
+                        //"Flash sync speed" capability setting found under option "e1" in the Nikon in-camera menu.
+                        _flashSyncSpeedIndex = i;
+                        var split = val.Substring(2).Split('/');
+                        _flashSyncSpeed = double.Parse(split[0], CultureInfo.InvariantCulture) / double.Parse(split[1], CultureInfo.InvariantCulture);
+                        Logger.WriteTraceMessage("Flash sync speed index: " + _flashSyncSpeedIndex.ToString() + " (Current value: " + _flashSyncSpeed +")");
+                    }
+                    else if (val.Contains("/"))
                     {
                         var split = val.Split('/');
                         var convertedSpeed = double.Parse(split[0], CultureInfo.InvariantCulture) / double.Parse(split[1], CultureInfo.InvariantCulture);
