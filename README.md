@@ -4,7 +4,7 @@ ASCOM Driver for DSLR Cameras
 Discord Channel: https://discord.gg/zPCa9qw
 
 Development environment preparation
-1. Install Visual studio 2017
+1. Install Visual studio 2017/2019
 2. Download and install Inno Setup 5.5.8 http://files.jrsoftware.org/is/5/isetup-5.5.8-unicode.exe
 3. Install ASCOM platform 6.4 https://ascom-standards.org/Downloads/Index.htm
 4. Install ASCOM development components https://ascom-standards.org/Downloads/PlatDevComponents.htm
