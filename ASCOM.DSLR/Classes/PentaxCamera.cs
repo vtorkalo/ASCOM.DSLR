@@ -23,6 +23,7 @@ namespace ASCOM.DSLR.Classes
 
         public PentaxCamera(List<CameraModel> cameraModelsHistory) : base(cameraModelsHistory)
         {
+            
         }
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
@@ -79,6 +80,7 @@ namespace ASCOM.DSLR.Classes
 
         public void StartExposure(double Duration, bool Light)
         {
+
             Logger.WriteTraceMessage("PentaxCamera.StartExposure(Duration, Light), duration ='" + Duration.ToString() + "', Light = '" + Light.ToString() + "'");
 
             string fileName = GetFileName(Duration, DateTime.Now);
@@ -87,8 +89,8 @@ namespace ASCOM.DSLR.Classes
 
             //ExecuteCommand(string.Format("--file_format dng -o {0} --iso {1} --shutter_speed {2}", fileName + ".dng", Iso, Duration));
             //pktriggercord-cli --file_format dng -o c:\temp\test.dng -i 400 -t 1
-            Logger.WriteTraceMessage("--file_format dng -o " + fileName + ".dng -i " + Iso + " -t " + Duration);
-            ExecuteCommand(string.Format("--file_format dng -o {0} -i {1} -t {2}", fileName + ".dng", Iso, Duration));
+            Logger.WriteTraceMessage("--file_format dng -o " + StorePath + "\\" + fileName + ".dng -i " + Iso + " -t " + Duration);
+            ExecuteCommand(string.Format("--file_format dng -o {0} -i {1} -t {2}", StorePath + "\\" + fileName + ".dng", Iso, Duration));
 
         }
 
@@ -119,13 +121,20 @@ namespace ASCOM.DSLR.Classes
             watcher.Filter = "*.dng";
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.EnableRaisingEvents = true;
+
+            Logger.WriteTraceMessage("watch " + StorePath);
         }
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
             var fileName = e.FullPath;
 
+            Logger.WriteTraceMessage("onchanged " + fileName);
+
             var destinationFilePath = Path.ChangeExtension(Path.Combine(StorePath, Path.Combine(StorePath, _fileNameWaiting)), ".dng");
+
+            Logger.WriteTraceMessage("onchanged dest " + destinationFilePath);
+
             File.Copy(fileName, destinationFilePath);
             File.Delete(fileName);
             if (ImageReady != null)
