@@ -29,3 +29,7 @@ Release Notes
 
 6/3/2020 - Picture Preview in the TestApp (Still buggy but you have a preview)
 
+6/10/2020 -PENTAX Cameras are working with this version. (Tested with K-30)
+
+6/10/2020 - New Nikon API started to be implemented (NikonBeta) in the dropdown list.
+
