@@ -83,14 +83,14 @@ namespace ASCOM.DSLR.Classes
 
             Logger.WriteTraceMessage("PentaxCamera.StartExposure(Duration, Light), duration ='" + Duration.ToString() + "', Light = '" + Light.ToString() + "'");
 
-            string fileName = GetFileName(Duration, DateTime.Now);
+            string fileName = StorePath + "\\" + GetFileName(Duration, DateTime.Now);
             MarkWaitingForExposure(Duration, fileName);
             watch();
 
             //ExecuteCommand(string.Format("--file_format dng -o {0} --iso {1} --shutter_speed {2}", fileName + ".dng", Iso, Duration));
             //pktriggercord-cli --file_format dng -o c:\temp\test.dng -i 400 -t 1
-            Logger.WriteTraceMessage("--file_format dng -o " + StorePath + "\\" + fileName + ".dng -i " + Iso + " -t " + Duration);
-            ExecuteCommand(string.Format("--file_format dng -o {0} -i {1} -t {2}", StorePath + "\\" + fileName + ".dng", Iso, Duration));
+            Logger.WriteTraceMessage("--file_format dng -o " + fileName + ".dng -i " + Iso + " -t " + Duration);
+            ExecuteCommand(string.Format("--file_format dng -o {0} -i {1} -t {2}", fileName + ".dng", Iso, Duration));
 
         }
 
