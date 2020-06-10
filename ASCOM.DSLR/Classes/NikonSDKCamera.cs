@@ -51,7 +51,9 @@ namespace ASCOM.DSLR.Classes
         {
             get
             {
+                Logger.WriteTraceMessage("Retuning MODEL NAME" + Name);
                 return Name;
+
             }
         }
 
@@ -68,11 +70,14 @@ namespace ASCOM.DSLR.Classes
         private CancellationTokenSource _cancelConnectCameraSource;
         public void ConnectCamera()
         {
-            if (_activeNikonManager == null)
+            if (!Connected)
             {
                 _cancelConnectCameraSource?.Dispose();
                 _cancelConnectCameraSource = new CancellationTokenSource();
                 var connected = Connect(_cancelConnectCameraSource.Token);
+                _cancelConnectCameraSource.Token.ThrowIfCancellationRequested();
+                connected.Wait();
+                Connected = connected.Result;
             }
         }
 
@@ -274,7 +279,7 @@ namespace ASCOM.DSLR.Classes
 
         private void Mgr_DeviceAdded(NikonManager sender, NikonDevice device)
         {
-            NikonManager tmpManagerr = _activeNikonManager;
+            NikonManager tmpManager = _activeNikonManager;
 
             var connected = false;
             try
@@ -288,7 +293,7 @@ namespace ASCOM.DSLR.Classes
                 Name = _camera.Name;
                 if (Name == "")
                 {
-                    _activeNikonManager = tmpManagerr;
+                    _activeNikonManager = tmpManager;
                 }
 
                 connected = true;
