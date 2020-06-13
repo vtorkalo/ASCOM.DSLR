@@ -33,3 +33,7 @@ Release Notes
 
 6/10/2020 - New Nikon API started to be implemented (NikonBeta) in the dropdown list.
 
+6/13/2020 - Official Nikon API implemented
+
+6/13/2020 - Old NikonDriver renamed to NikonLegacy in the selection list.
+
