@@ -89,8 +89,10 @@ namespace ASCOM.DSLR.Classes
             DeviceManager.ConnectToCamera();
             var camera = DeviceManager.SelectedCameraDevice;
             LogCameraInfo(camera);
-
+  
         }
+
+  
 
         private void LogCameraInfo(ICameraDevice camera)
         {

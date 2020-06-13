@@ -32,7 +32,7 @@ namespace ASCOM.DSLR.Classes
                 return _cameraModel;
             }
         }
-        
+
         public CameraValue[] TvList;
         public CameraValue[] ISOList;
 
@@ -45,6 +45,8 @@ namespace ASCOM.DSLR.Classes
             string newFilePath = Path.ChangeExtension(Path.Combine(StorePath, newFileName), fileInfo.Extension);
             File.Move(downloadedFilePath, newFilePath);
             return newFilePath;
+
+            
         }
         public LiveViewZoom LiveViewZoom { get; set; }
 

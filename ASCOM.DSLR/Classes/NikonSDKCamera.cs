@@ -75,9 +75,10 @@ namespace ASCOM.DSLR.Classes
                 _cancelConnectCameraSource?.Dispose();
                 _cancelConnectCameraSource = new CancellationTokenSource();
                 var connected = Connect(_cancelConnectCameraSource.Token);
-                _cancelConnectCameraSource.Token.ThrowIfCancellationRequested();
-                connected.Wait();
+                Task.WhenAll(connected).Wait();
                 Connected = connected.Result;
+
+
             }
         }
 
@@ -119,11 +120,11 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
-                        Logger.WriteTraceMessage("Use Bulb capture");
-                        BulbCapture(Duration, StartBulbCapture, StopBulbCapture);
-                    }
+                    Logger.WriteTraceMessage("Use Bulb capture");
+                    BulbCapture(Duration, StartBulbCapture, StopBulbCapture);
                 }
             }
+        }
 
         private void BulbCapture(double exposureTime, Action capture, Action stopCapture)
         {
@@ -223,11 +224,11 @@ namespace ASCOM.DSLR.Classes
 
         public async Task<bool> Connect(CancellationToken token)
         {
-            return await Task.Run(() => {
+            Task.Run(async () => {
                 var connected = false;
                 try
                 {
-                     _nikonManagers.Clear();
+                    _nikonManagers.Clear();
 
                     string architecture = (IntPtr.Size == 4) ? "x86" : "x64";
 
@@ -251,6 +252,7 @@ namespace ASCOM.DSLR.Classes
                     } while (!_cameraConnected.Task.IsCompleted);
 
                     connected = _cameraConnected.Task.Result;
+
                 }
                 catch (OperationCanceledException)
                 {
@@ -262,7 +264,8 @@ namespace ASCOM.DSLR.Classes
                 }
 
                 return connected;
-            });
+            }).Wait();
+            return true;
         }
 
         private void CleanupUnusedManagers(NikonManager activeManager)
@@ -284,20 +287,21 @@ namespace ASCOM.DSLR.Classes
             var connected = false;
             try
             {
-  
+
                 _activeNikonManager = sender;
                 _activeNikonManager.DeviceRemoved += Mgr_DeviceRemoved;
 
                 Logger.WriteTraceMessage("NikonManager starting device init: " + _activeNikonManager.Name);
                 Init(device);
                 Name = _camera.Name;
+
                 if (Name == "")
                 {
                     _activeNikonManager = tmpManager;
                 }
 
                 connected = true;
-                
+
             }
             catch (Exception ex)
             {
@@ -306,7 +310,7 @@ namespace ASCOM.DSLR.Classes
             finally
             {
                 Connected = connected;
-                _cameraConnected.TrySetResult(connected);
+                _cameraConnected.TrySetResult(Connected);
             }
         }
 
@@ -395,7 +399,7 @@ namespace ASCOM.DSLR.Classes
             }
             try
             {
-                using (FileStream stream = new FileStream(StorePath, FileMode.Create, FileAccess.Write))
+                using (FileStream stream = new FileStream(StorePath + "/" + file, FileMode.Create, FileAccess.Write))
                 {
                     stream.Write(buffer, 0, buffer.Length);
                 }
@@ -442,7 +446,7 @@ namespace ASCOM.DSLR.Classes
                         _flashSyncSpeedIndex = i;
                         var split = val.Substring(2).Split('/');
                         _flashSyncSpeed = double.Parse(split[0], CultureInfo.InvariantCulture) / double.Parse(split[1], CultureInfo.InvariantCulture);
-                        Logger.WriteTraceMessage("Flash sync speed index: " + _flashSyncSpeedIndex.ToString() + " (Current value: " + _flashSyncSpeed +")");
+                        Logger.WriteTraceMessage("Flash sync speed index: " + _flashSyncSpeedIndex.ToString() + " (Current value: " + _flashSyncSpeed + ")");
                     }
                     else if (val.Contains("/"))
                     {
