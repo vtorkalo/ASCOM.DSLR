@@ -16,6 +16,7 @@ namespace CameraControl.Plugins.ExternalDevices
     
         public void OpenShutter()
         {
+
             serialPort.Open();
             serialPort.RtsEnable = true;
         }

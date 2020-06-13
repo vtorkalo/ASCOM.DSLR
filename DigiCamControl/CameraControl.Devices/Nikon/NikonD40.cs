@@ -29,6 +29,7 @@
 #region
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using CameraControl.Devices.Classes;
@@ -39,6 +40,21 @@ namespace CameraControl.Devices.Nikon
 {
     public class NikonD40 : NikonBase
     {
+        public NikonD40() {
+
+
+            _csTable = new Dictionary<int, string>()
+                                                         {
+                                                             {0, "JPEG (BASIC)"},
+                                                             {1, "JPEG (NORMAL)"},
+                                                             {2, "JPEG (FINE)"},
+                                                             {3, "RAW"},
+                                                             {4, "RAW + JPEG (BASIC)"},
+                                                             {5, "RAW + JPEG (NORMAL)"},
+                                                             {6, "RAW + JPEG (FINE)"}
+                                                         };
+        }
+
         public override bool Init(DeviceDescriptor deviceDescriptor)
         {
             bool res = base.Init(deviceDescriptor);
@@ -92,5 +108,8 @@ namespace CameraControl.Devices.Nikon
             };
             return res;
         }
+
+
+
     }
 }

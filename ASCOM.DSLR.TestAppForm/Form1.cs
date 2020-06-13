@@ -411,6 +411,9 @@ namespace ASCOM.DSLR
 
         }
 
+
+
+
         private void button1_Click_1(object sender, EventArgs e)
         {
             Bitmap RawIMG;
@@ -430,7 +433,11 @@ namespace ASCOM.DSLR
             Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
 
 
+
+
             RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
+
+
 
 
             RawIMG.Save("C:\\temp\\test.png");
@@ -517,6 +524,8 @@ namespace ASCOM.DSLR
 
             return resultBitmap;
         }
+
+
 
 
     }

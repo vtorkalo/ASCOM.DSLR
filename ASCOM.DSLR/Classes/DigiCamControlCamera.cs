@@ -222,7 +222,13 @@ namespace ASCOM.DSLR.Classes
             }
             else
             {
-                camera.ShutterSpeed.Value = GetNearesetValue(camera.ShutterSpeed, Duration);
+                if (Duration >= 1)
+                {
+                    camera.ShutterSpeed.Value = Duration + "s";
+                }
+                else {
+                    camera.ShutterSpeed.Value = GetNearesetValue(camera.ShutterSpeed, Duration);
+                }
                 Logger.WriteTraceMessage("GetNearesetValue Shutter");
                 DeviceManager.SelectedCameraDevice.CapturePhoto();
                 Logger.WriteTraceMessage("CapturePhoto");
@@ -281,11 +287,10 @@ namespace ASCOM.DSLR.Classes
             string newFilePath = RenameFile(fileName, _duration, _startTime);
             ImageReady?.Invoke(this, new ImageReadyEventArgs(newFilePath));
 
-            /*
             if ((File.Exists(newFilePath)) && (SaveFile == false))
             {
                 File.Delete(newFilePath);
-            }*/
+            }
 
             eventArgs.CameraDevice.IsBusy = false;
         }
@@ -313,10 +318,13 @@ namespace ASCOM.DSLR.Classes
 
         void DeviceManager_PhotoCaptured(object sender, PhotoCapturedEventArgs eventArgs)
         {
-            PhotoCaptured(eventArgs);
+            //if (eventArgs.FileName.ToUpper().Contains(eventArgs.CameraDevice.CompressionSetting.Value))
+            //{
+              PhotoCaptured(eventArgs);
+            //}
         }
-
-        void DeviceManager_CameraConnected(ICameraDevice cameraDevice)
+    
+            void DeviceManager_CameraConnected(ICameraDevice cameraDevice)
         {
 
 
