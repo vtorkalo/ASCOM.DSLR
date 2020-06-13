@@ -43,7 +43,7 @@ namespace ASCOM.DSLR.Classes
         }
 
 
-        public ConnectionMethod IntegrationApi => ConnectionMethod.NikonBeta;
+        public ConnectionMethod IntegrationApi => ConnectionMethod.Nikon;
 
         public bool SupportsViewView { get { return false; } }
 

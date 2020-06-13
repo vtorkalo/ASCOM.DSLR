@@ -53,7 +53,7 @@ namespace ASCOM.DSLR
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort, _cameraSettings.CameraModelsHistory);
             }
-            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.NikonLegacy)
             {
                 _dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
             }
@@ -61,7 +61,7 @@ namespace ASCOM.DSLR
             {
                 _dslrCamera = new PentaxCamera(_cameraSettings.CameraModelsHistory);
             }
-            else if (_cameraSettings.IntegrationApi == ConnectionMethod.NikonBeta)
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
             {
                 _dslrCamera = new NikonSDKCamera(_cameraSettings.CameraModelsHistory);
             }

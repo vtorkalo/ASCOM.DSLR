@@ -35,7 +35,7 @@ namespace ASCOM.DSLR.Classes
 
         public CameraDeviceManager DeviceManager { get; set; }
 
-        public ConnectionMethod IntegrationApi => ConnectionMethod.Nikon;
+        public ConnectionMethod IntegrationApi => ConnectionMethod.NikonLegacy;
 
         public bool SupportsViewView { get { return false; } }
 
