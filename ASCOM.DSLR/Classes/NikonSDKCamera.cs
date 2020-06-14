@@ -232,7 +232,7 @@ namespace ASCOM.DSLR.Classes
 
                     string architecture = (IntPtr.Size == 4) ? "x86" : "x64";
 
-                    var md3Folder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "SDK", architecture, "Nikon");
+                    var md3Folder = Path.Combine("C:/Program Files (x86)/Common Files/ASCOM/Camera/ASCOM.DSLR.Camera", "SDK", architecture, "Nikon");
 
                     foreach (string file in Directory.GetFiles(md3Folder, "*.md3", SearchOption.AllDirectories))
                     {
