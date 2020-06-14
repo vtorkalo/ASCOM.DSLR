@@ -65,18 +65,28 @@ namespace ASCOM.DSLR
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+
+
+
+        private async void button1_Click(object sender, EventArgs e)
         {
            
             double exposuretime =  Convert.ToDouble(cmdExposure.SelectedItem.ToString());
             if (IsConnected)
             {
-                driver.StartExposure(exposuretime, true);
+                //driver.StartExposure(exposuretime, true);
 
                 Cursor.Current = Cursors.WaitCursor;
                 btnTakeImage.Enabled = false;
-                while (!driver.ImageReady)
-                { System.Threading.Thread.Sleep(1000); }
+
+                await Task.Run(async () =>
+                {
+                    driver.StartExposure(exposuretime, true);
+                    while (!driver.ImageReady)
+                    {
+                        await Task.Delay(20);
+                    }
+                });
 
 
                 if (chkPreview.Checked)
@@ -86,7 +96,7 @@ namespace ASCOM.DSLR
                     try
                     {
                         Int32[,] _imagearray = (Int32[,])driver.ImageArray;
-                        RawIMG = createImage(_imagearray); //createImage(_imagearray);
+                        RawIMG = Contrast(ColorBalance(createImage(_imagearray), 50, 50, 50), 15); //createImage(_imagearray);
 
                     }
                     catch
@@ -421,7 +431,7 @@ namespace ASCOM.DSLR
             ImageDataProcessor imgp = new ImageDataProcessor();
 
 
-            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\LMSAMPLE.cr2");
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\IMG_2s_100iso_0C_2020-06-14--01-01-33.NEF");
 
             var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
             Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
