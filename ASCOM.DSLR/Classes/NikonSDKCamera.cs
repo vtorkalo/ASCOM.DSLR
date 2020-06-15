@@ -191,8 +191,7 @@ namespace ASCOM.DSLR.Classes
 
         private void BulbCapture(double exposureTime, Action capture, Action stopCapture)
         {
-            _camera.SetBoolean(eNkMAIDCapability.kNkMAIDCapability_LockCamera, true);
-
+          
             SetCameraToManual();
 
             SetCameraShutterSpeed(_bulbShutterSpeedIndex);
@@ -219,10 +218,6 @@ namespace ASCOM.DSLR.Classes
                 Logger.WriteTraceMessage("Restore previous shutter speed");
                 // Restore original shutter speed
                 SetCameraShutterSpeed(_prevShutterSpeed);
-                // Unlock camera
-                _camera.SetBoolean(
-                    eNkMAIDCapability.kNkMAIDCapability_LockCamera,
-                    false);
             });
         }
 
@@ -302,7 +297,9 @@ namespace ASCOM.DSLR.Classes
 
                     string architecture = (IntPtr.Size == 4) ? "x86" : "x64";
 
-                    var md3Folder = Path.Combine("C:/Program Files (x86)/Common Files/ASCOM/Camera/ASCOM.DSLR.Camera", "SDK", architecture, "Nikon");
+                    var md3Folder = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "SDK", architecture, "Nikon");
+
+                    Logger.WriteTraceMessage("md3Folder: " + md3Folder);
 
                     foreach (string file in Directory.GetFiles(md3Folder, "*.md3", SearchOption.AllDirectories))
                     {
