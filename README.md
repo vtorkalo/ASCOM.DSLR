@@ -1,6 +1,19 @@
 # ASCOM.DSLR
 ASCOM Driver for DSLR Cameras
 
+What is the ASCOM.DSLR project?
+ASCOM.DSLR is a ASCOM compatible driver for DSLR cameras. this will make unlimited possibilities to use DSLR cameras with astrophotography.
+DSLR Supports CANON, NIKON and PENTAX Cameras
+
+What license is the code being released under?
+The code is being released under GPL v3 and GPL v3 compatible licenses. Means if out use this part of your aplication you need to release the source code of you aplication.
+
+Technologies:
+The project uses C#, DigicamControl for Old Nikon Cameras, Nikoncswrapper for newer nikon cameras, CanonSDK, pktriggercord
+
+
+If you would like to contribute documenting ASCOM.DSLR, let me know to get you started.
+
 Discord Channel: https://discord.gg/zPCa9qw
 
 Development environment preparation
