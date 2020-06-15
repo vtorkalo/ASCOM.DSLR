@@ -37,3 +37,6 @@ Release Notes
 
 6/13/2020 - Old NikonDriver renamed to NikonLegacy in the selection list.
 
+6/14/2020 - FIxed  Nikon BulbMode Issues
+
+
