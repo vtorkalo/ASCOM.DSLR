@@ -9,7 +9,7 @@ What license is the code being released under?
 The code is being released under GPL v3 and GPL v3 compatible licenses. Means if out use this part of your aplication you need to release the source code of you aplication.
 
 Technologies:
-The project uses C#, DigicamControl for Old Nikon Cameras, Nikoncswrapper for newer nikon cameras, CanonSDK, pktriggercord
+The project uses C#, DigicamControl for Old Nikon Cameras, Nikoncswrapper for newer nikon cameras, CanonSDK, pktriggercord, Libraw and Innosetup
 
 
 If you would like to contribute documenting ASCOM.DSLR, let me know to get you started.
