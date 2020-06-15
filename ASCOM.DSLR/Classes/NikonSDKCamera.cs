@@ -64,7 +64,10 @@ namespace ASCOM.DSLR.Classes
 
         public void AbortExposure()
         {
-            throw new System.NotImplementedException();
+            if (Connected)
+            {
+                _camera.StopBulbCapture();
+            }
         }
 
         private CancellationTokenSource _cancelConnectCameraSource;
@@ -121,13 +124,75 @@ namespace ASCOM.DSLR.Classes
                 else
                 {
                     Logger.WriteTraceMessage("Use Bulb capture");
-                    BulbCapture(Duration, StartBulbCapture, StopBulbCapture);
+                    Task.Run(() => BulbCapture(Duration));
                 }
             }
         }
 
+        private void BulbCapture(double exposureTime)
+        {
+            // Lock camera so we can change it to 'manual exposure'
+            eNkMAIDCapability lockCameraCap = eNkMAIDCapability.kNkMAIDCapability_LockCamera;
+            _camera.SetBoolean(lockCameraCap, true);
+
+            // Set camera to manual exposure
+            eNkMAIDCapability exposureModeCap = eNkMAIDCapability.kNkMAIDCapability_ExposureMode;
+            NikonEnum exposureMode = _camera.GetEnum(exposureModeCap);
+            exposureMode.Index = (int)eNkMAIDExposureMode.kNkMAIDExposureMode_Manual;
+            _camera.SetEnum(exposureModeCap, exposureMode);
+
+            // Set shutter speed to 'bulb'
+            eNkMAIDCapability shutterSpeedCap = eNkMAIDCapability.kNkMAIDCapability_ShutterSpeed;
+            NikonEnum shutterSpeed = _camera.GetEnum(shutterSpeedCap);
+            for (int i = 0; i < shutterSpeed.Length; i++)
+            {
+                if (shutterSpeed.GetEnumValueByIndex(i).ToString().ToLower() == "bulb")
+                {
+                    Console.WriteLine("Index " + i.ToString());
+                    shutterSpeed.Index = i;
+                    _camera.SetEnum(shutterSpeedCap, shutterSpeed);
+                    break;
+                }
+            }
+
+            // Capture - and ignore the 'BulbReleaseBusy' exception. This is expected.
+            try
+            {
+                _camera.Capture();
+            }
+            catch (NikonException ex)
+            {
+                if (ex.ErrorCode != eNkMAIDResult.kNkMAIDResult_BulbReleaseBusy)
+                {
+                    throw;
+                }
+            }
+
+            // What for 5 seconds - or however long you want to capture
+            Thread.Sleep(TimeSpan.FromSeconds(exposureTime));
+
+            // Stop bulb capture (Note: must be compiled with 'unsafe code' enabled)
+            NkMAIDTerminateCapture terminate = new NkMAIDTerminateCapture();
+            terminate.ulParameter1 = 0;
+            terminate.ulParameter2 = 0;
+            unsafe
+            {
+                IntPtr terminate_pointer = new IntPtr(&terminate);
+
+                _camera.Start(
+                    eNkMAIDCapability.kNkMAIDCapability_TerminateCapture,
+                    eNkMAIDDataType.kNkMAIDDataType_GenericPtr,
+                    terminate_pointer);
+            }
+
+            // Unlock camera
+            _camera.SetBoolean(lockCameraCap, false);
+        }
+
         private void BulbCapture(double exposureTime, Action capture, Action stopCapture)
         {
+            _camera.SetBoolean(eNkMAIDCapability.kNkMAIDCapability_LockCamera, true);
+
             SetCameraToManual();
 
             SetCameraShutterSpeed(_bulbShutterSpeedIndex);
@@ -154,11 +219,16 @@ namespace ASCOM.DSLR.Classes
                 Logger.WriteTraceMessage("Restore previous shutter speed");
                 // Restore original shutter speed
                 SetCameraShutterSpeed(_prevShutterSpeed);
+                // Unlock camera
+                _camera.SetBoolean(
+                    eNkMAIDCapability.kNkMAIDCapability_LockCamera,
+                    false);
             });
         }
 
         private void StartBulbCapture()
         {
+
             _camera.StartBulbCapture();
         }
 
@@ -321,6 +391,8 @@ namespace ASCOM.DSLR.Classes
 
         public void Disconnect()
         {
+            Connected = false;
+            _camera = null;
             _activeNikonManager?.Shutdown();
             _nikonManagers?.Clear();
         }
@@ -556,14 +628,7 @@ namespace ASCOM.DSLR.Classes
             return await Delay(Convert.ToInt32(t), token);
         }
 
-
-
-
-
-
-
-
-
+               
     }
 
 
