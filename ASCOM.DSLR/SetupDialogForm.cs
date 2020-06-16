@@ -57,6 +57,8 @@ namespace ASCOM.DSLR
             Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
             Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
 
+            Settings.LogLevel = (DebugLogLevels)cbTraceLevel.SelectedItem;
+
             if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Trace)
                 Logger.SetLogLevelTrace();
 
