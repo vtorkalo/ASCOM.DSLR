@@ -57,22 +57,24 @@ namespace ASCOM.DSLR
             Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
             Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
 
-            if (cbTraceLevel.SelectedItem.Equals("Trace"))
+            Settings.LogLevel = (DebugLogLevels)cbTraceLevel.SelectedItem;
+
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Trace)
                 Logger.SetLogLevelTrace();
 
-            if (cbTraceLevel.SelectedItem.Equals("Debug"))
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Debug)
                 Logger.SetLogLevelDebug();
 
-            if (cbTraceLevel.SelectedItem.Equals("Info"))
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Info)
                 Logger.SetLogLevelInfo();
 
-            if (cbTraceLevel.SelectedItem.Equals("Warn"))
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Warn)
                 Logger.SetLogLevelWarn();
 
-            if (cbTraceLevel.SelectedItem.Equals("Error"))
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Error)
                 Logger.SetLogLevelError();
 
-            if (cbTraceLevel.SelectedItem.Equals("Fatal"))
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Fatal)
                 Logger.SetLogLevelFatal();
         }
 
@@ -164,14 +166,13 @@ namespace ASCOM.DSLR
             chkEnableLiveView.Checked = Settings.LiveViewCaptureMode;
             SetSelectedItem(cbLiveViewZoom, Settings.LiveViewZoom);
 
-            cbTraceLevel.Items.Add("Trace");
-            cbTraceLevel.Items.Add("Debug");
-            cbTraceLevel.Items.Add("Info");
-            cbTraceLevel.Items.Add("Warn");
-            cbTraceLevel.Items.Add("Error");
-            cbTraceLevel.Items.Add("Fatal");
-
-            SetSelectedItem(cbTraceLevel, "Error");
+            cbTraceLevel.Items.Add(DebugLogLevels.Trace);
+            cbTraceLevel.Items.Add(DebugLogLevels.Debug);
+            cbTraceLevel.Items.Add(DebugLogLevels.Info);
+            cbTraceLevel.Items.Add(DebugLogLevels.Warn);
+            cbTraceLevel.Items.Add(DebugLogLevels.Error);
+            cbTraceLevel.Items.Add(DebugLogLevels.Fatal);
+            SetSelectedItem(cbTraceLevel, Settings.LogLevel);
 
             UpdateUiState();
 

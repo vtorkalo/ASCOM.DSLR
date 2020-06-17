@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Logging;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -20,6 +21,7 @@ namespace ASCOM.DSLR.Classes
             LiveViewZoom = LiveViewZoom.Fit;
             BinningMode = BinningMode.Sum;
             CameraModelsHistory = new List<CameraModel>();
+            LogLevel = DebugLogLevels.Error;
         }
 
         public bool TraceLog { get; set; }
@@ -49,6 +51,8 @@ namespace ASCOM.DSLR.Classes
         public bool UseExternalShutter { get; set; }
 
         public string ExternalShutterPortName { get; set; }
+        
+        public DebugLogLevels LogLevel { get; set; }
 
     }
 }
