@@ -207,6 +207,7 @@ namespace ASCOM.DSLR.Classes
                     {
                         var _serialPortShutter = new SerialPortShutterRelease(ExternalShutterPort);
                         BulbExposure(durationMsec, _canceled, _serialPortShutter.OpenShutter, _serialPortShutter.CloseShutter);
+        
                     });
                 }
                 else
@@ -255,7 +256,6 @@ namespace ASCOM.DSLR.Classes
                     break;
                 }
             }
-
             endBulb();
         }
 

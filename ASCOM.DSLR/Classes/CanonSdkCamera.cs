@@ -196,6 +196,7 @@ namespace ASCOM.DSLR.Classes
 
                 if (LiveViewImageReady != null && _lvCapture)
                 {
+                    //LiveViewImageReady?.Invoke(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
                     LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
                     _lvCapture = false;
                 }

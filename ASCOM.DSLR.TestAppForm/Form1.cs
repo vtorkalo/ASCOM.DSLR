@@ -207,9 +207,10 @@ namespace ASCOM.DSLR
                 return flatArray;
         }
 
-     Bitmap createImage(Int32[,] Iarray)
+
+        Bitmap createImage(Int32[,] Iarray)
         {
-            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format64bppArgb);
+            Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             int r = 0;
             int g = 0;
             int g1 = 0;
@@ -298,6 +299,8 @@ namespace ASCOM.DSLR
             int height = integers.GetLength(1);
 
             int stride = width * 4;//int == 4-bytes
+
+            //stride = 4 * ((width * 8 + 3) / 4);
 
             Bitmap bitmap = null;
 
@@ -431,25 +434,19 @@ namespace ASCOM.DSLR
             ImageDataProcessor imgp = new ImageDataProcessor();
 
 
-            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\IMG_2s_100iso_0C_2020-06-14--01-01-33.NEF");
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\IMG_0,00025s_200iso_0C_2020-06-14--18-06-36.NEF");
 
-            var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
-            Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
+            //var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
+            //Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
 
-            var flatarray = FlipAndConvert2d(_imagearray);
-
-    
-            byte[] flatarraybyte = new byte[flatarray.Length * 2];
-            Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
+            //var flatarray = FlipAndConvert2d(_imagearray);
 
 
-
+            //byte[] flatarraybyte = new byte[flatarray.Length * 2];
+            //Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
 
             RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
-
-
-
-
+            
             RawIMG.Save("C:\\temp\\test.png");
 
             pictTestfrm.Image = RawIMG;
@@ -457,8 +454,7 @@ namespace ASCOM.DSLR
 
         }
 
-
-          Bitmap Contrast(Bitmap sourceBitmap, int threshold)
+        Bitmap Contrast(Bitmap sourceBitmap, int threshold)
         {
             BitmapData sourceData = sourceBitmap.LockBits(new Rectangle(0, 0,
                                         sourceBitmap.Width, sourceBitmap.Height),
@@ -534,6 +530,8 @@ namespace ASCOM.DSLR
 
             return resultBitmap;
         }
+
+
 
 
 

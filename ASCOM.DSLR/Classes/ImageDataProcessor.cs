@@ -308,5 +308,6 @@ namespace ASCOM.DSLR.Classes
         {
             return (T)Marshal.PtrToStructure(ptr, typeof(T));
         }
+               
     }
 }

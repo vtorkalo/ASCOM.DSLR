@@ -55,6 +55,7 @@ namespace CameraControl.Devices.Nikon
                                                          };
         }
 
+
         public override bool Init(DeviceDescriptor deviceDescriptor)
         {
             bool res = base.Init(deviceDescriptor);

@@ -244,7 +244,7 @@ namespace ASCOM.DSLR
             cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
             cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
-
+      
             _cameraState = CameraStates.cameraIdle;
             cameraImageReady = true;
         }
