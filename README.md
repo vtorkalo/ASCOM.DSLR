@@ -16,6 +16,8 @@ If you would like to contribute documenting ASCOM.DSLR, let me know to get you s
 
 Discord Channel: https://discord.gg/zPCa9qw
 
+Instalation Guide: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
+
 Development environment preparation
 1. Install Visual studio 2017/2019
 2. Download and install Inno Setup 5.5.8 http://files.jrsoftware.org/is/5/isetup-5.5.8-unicode.exe
