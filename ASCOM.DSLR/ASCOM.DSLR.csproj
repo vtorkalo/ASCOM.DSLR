@@ -160,10 +160,16 @@
     <Content Include="SDK\X64\Nikon\Type0027\NkdPTP.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SDK\X86\Nikon\D200_Mod\NkdPTP.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SDK\X86\Nikon\D40_Mod\NkdPTP.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SDK\X86\Nikon\D40_Mod\NkdPTPDi.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDK\X86\Nikon\D80_Mod\NkdPTP.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SDK\X86\Nikon\Type0001\NkdPTP.dll">
@@ -502,6 +508,9 @@
     <Content Include="SDK\X64\Nikon\Type0027\Type0027.md3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SDK\X86\Nikon\D200_Mod\D200_Mod.md3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="SDK\X86\Nikon\D40_Mod\D40_Mod.md3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -512,6 +521,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SDK\X86\Nikon\Type0027\Type0027.md3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDK\X86\Nikon\D80_Mod\D80_Mod.md3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

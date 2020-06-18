@@ -181,6 +181,8 @@ Source: "bin\SDK\X86\Nikon\Type0026\NkdPTP.dll"; DestDir: "{app}\SDK\X86\Nikon\T
 Source: "bin\SDK\X86\Nikon\Type0027\NkdPTP.dll"; DestDir: "{app}\SDK\X86\Nikon\Type0027\"
 Source: "bin\SDK\X86\Nikon\D40_Mod\NkdPTP.dll"; DestDir: "{app}\SDK\X86\Nikon\D40_Mod\"
 Source: "bin\SDK\X86\Nikon\D40_Mod\NkdPTPDi.dll"; DestDir: "{app}\SDK\X86\Nikon\D40_Mod\"
+Source: "bin\SDK\X86\Nikon\D80_Mod\NkdPTP.dll"; DestDir: "{app}\SDK\X86\Nikon\D80_Mod\"
+Source: "bin\SDK\X86\Nikon\D200_Mod\NkdPTP.dll"; DestDir: "{app}\SDK\X86\Nikon\D200_Mod\"
 Source: "bin\SDK\X86\Nikon\Type0001\Type0001.md3"; DestDir: "{app}\SDK\X86\Nikon\Type0001\"
 Source: "bin\SDK\X86\Nikon\Type0002\Type0002.md3"; DestDir: "{app}\SDK\X86\Nikon\Type0002\"
 Source: "bin\SDK\X86\Nikon\Type0003\Type0003.md3"; DestDir: "{app}\SDK\X86\Nikon\Type0003\"
@@ -209,6 +211,8 @@ Source: "bin\SDK\X86\Nikon\Type0025\Type0025.md3"; DestDir: "{app}\SDK\X86\Nikon
 Source: "bin\SDK\X86\Nikon\Type0026\Type0026.md3"; DestDir: "{app}\SDK\X86\Nikon\Type0026\"
 Source: "bin\SDK\X86\Nikon\Type0027\Type0027.md3"; DestDir: "{app}\SDK\X86\Nikon\Type0027\"
 Source: "bin\SDK\X86\Nikon\D40_Mod\D40_Mod.md3"; DestDir: "{app}\SDK\X86\Nikon\D40_Mod\"
+Source: "bin\SDK\X86\Nikon\D80_Mod\D80_Mod.md3"; DestDir: "{app}\SDK\X86\Nikon\D80_Mod\"
+Source: "bin\SDK\X86\Nikon\D200_Mod\D200_Mod.md3"; DestDir: "{app}\SDK\X86\Nikon\D200_Mod\"
 
 Source: "bin\ASCOM.DSLR.Test.exe"; DestDir: "{app}"
 
