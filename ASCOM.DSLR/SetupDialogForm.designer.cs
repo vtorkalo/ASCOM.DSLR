@@ -64,9 +64,8 @@ namespace ASCOM.DSLR
             // 
             // cmdOK
             // 
-            this.cmdOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.cmdOK.Location = new System.Drawing.Point(560, 752);
+            this.cmdOK.Location = new System.Drawing.Point(560, 754);
             this.cmdOK.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(116, 50);
@@ -77,9 +76,8 @@ namespace ASCOM.DSLR
             // 
             // cmdCancel
             // 
-            this.cmdCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(704, 752);
+            this.cmdCancel.Location = new System.Drawing.Point(704, 754);
             this.cmdCancel.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(116, 52);
@@ -105,7 +103,7 @@ namespace ASCOM.DSLR
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 48.11715F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 51.88285F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 187F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 193F));
             this.tableLayoutPanel1.Controls.Add(this.cbLiveViewZoom, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.lblLiveViewZoom, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.lblIso, 0, 11);
@@ -152,10 +150,10 @@ namespace ASCOM.DSLR
             // 
             this.cbLiveViewZoom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLiveViewZoom.FormattingEnabled = true;
-            this.cbLiveViewZoom.Location = new System.Drawing.Point(264, 82);
+            this.cbLiveViewZoom.Location = new System.Drawing.Point(261, 82);
             this.cbLiveViewZoom.Margin = new System.Windows.Forms.Padding(4);
             this.cbLiveViewZoom.Name = "cbLiveViewZoom";
-            this.cbLiveViewZoom.Size = new System.Drawing.Size(272, 33);
+            this.cbLiveViewZoom.Size = new System.Drawing.Size(269, 33);
             this.cbLiveViewZoom.TabIndex = 3;
             // 
             // lblLiveViewZoom
@@ -176,7 +174,7 @@ namespace ASCOM.DSLR
             this.lblIso.Location = new System.Drawing.Point(4, 434);
             this.lblIso.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblIso.Name = "lblIso";
-            this.lblIso.Size = new System.Drawing.Size(252, 45);
+            this.lblIso.Size = new System.Drawing.Size(249, 45);
             this.lblIso.TabIndex = 44;
             this.lblIso.Text = "ISO";
             this.lblIso.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -185,10 +183,10 @@ namespace ASCOM.DSLR
             // 
             this.tbSavePath.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbSavePath.Enabled = false;
-            this.tbSavePath.Location = new System.Drawing.Point(264, 343);
+            this.tbSavePath.Location = new System.Drawing.Point(261, 343);
             this.tbSavePath.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.tbSavePath.Name = "tbSavePath";
-            this.tbSavePath.Size = new System.Drawing.Size(272, 31);
+            this.tbSavePath.Size = new System.Drawing.Size(269, 31);
             this.tbSavePath.TabIndex = 11;
             // 
             // lblSavePhotosTo
@@ -198,7 +196,7 @@ namespace ASCOM.DSLR
             this.lblSavePhotosTo.Location = new System.Drawing.Point(4, 337);
             this.lblSavePhotosTo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSavePhotosTo.Name = "lblSavePhotosTo";
-            this.lblSavePhotosTo.Size = new System.Drawing.Size(252, 97);
+            this.lblSavePhotosTo.Size = new System.Drawing.Size(249, 97);
             this.lblSavePhotosTo.TabIndex = 39;
             this.lblSavePhotosTo.Text = "Save photos to...";
             this.lblSavePhotosTo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -210,7 +208,7 @@ namespace ASCOM.DSLR
             this.chkEnableBin.Location = new System.Drawing.Point(4, 207);
             this.chkEnableBin.Margin = new System.Windows.Forms.Padding(4);
             this.chkEnableBin.Name = "chkEnableBin";
-            this.chkEnableBin.Size = new System.Drawing.Size(252, 33);
+            this.chkEnableBin.Size = new System.Drawing.Size(249, 33);
             this.chkEnableBin.TabIndex = 7;
             this.chkEnableBin.Text = "Enable binning";
             this.chkEnableBin.UseVisualStyleBackColor = true;
@@ -221,10 +219,10 @@ namespace ASCOM.DSLR
             this.cbIntegrationApi.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cbIntegrationApi.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbIntegrationApi.FormattingEnabled = true;
-            this.cbIntegrationApi.Location = new System.Drawing.Point(264, 4);
+            this.cbIntegrationApi.Location = new System.Drawing.Point(261, 4);
             this.cbIntegrationApi.Margin = new System.Windows.Forms.Padding(4);
             this.cbIntegrationApi.Name = "cbIntegrationApi";
-            this.cbIntegrationApi.Size = new System.Drawing.Size(272, 33);
+            this.cbIntegrationApi.Size = new System.Drawing.Size(269, 33);
             this.cbIntegrationApi.TabIndex = 1;
             this.cbIntegrationApi.SelectedIndexChanged += new System.EventHandler(this.cbIntegrationApi_SelectedIndexChanged);
             // 
@@ -233,10 +231,10 @@ namespace ASCOM.DSLR
             this.cbShutterPort.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cbShutterPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbShutterPort.FormattingEnabled = true;
-            this.cbShutterPort.Location = new System.Drawing.Point(264, 164);
+            this.cbShutterPort.Location = new System.Drawing.Point(261, 164);
             this.cbShutterPort.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.cbShutterPort.Name = "cbShutterPort";
-            this.cbShutterPort.Size = new System.Drawing.Size(272, 33);
+            this.cbShutterPort.Size = new System.Drawing.Size(269, 33);
             this.cbShutterPort.TabIndex = 6;
             // 
             // lbImageMode
@@ -246,7 +244,7 @@ namespace ASCOM.DSLR
             this.lbImageMode.Location = new System.Drawing.Point(4, 244);
             this.lbImageMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbImageMode.Name = "lbImageMode";
-            this.lbImageMode.Size = new System.Drawing.Size(252, 45);
+            this.lbImageMode.Size = new System.Drawing.Size(249, 45);
             this.lbImageMode.TabIndex = 8;
             this.lbImageMode.Text = "Image mode";
             this.lbImageMode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -256,10 +254,10 @@ namespace ASCOM.DSLR
             this.cbBinningMode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cbBinningMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbBinningMode.FormattingEnabled = true;
-            this.cbBinningMode.Location = new System.Drawing.Point(264, 207);
+            this.cbBinningMode.Location = new System.Drawing.Point(261, 207);
             this.cbBinningMode.Margin = new System.Windows.Forms.Padding(4);
             this.cbBinningMode.Name = "cbBinningMode";
-            this.cbBinningMode.Size = new System.Drawing.Size(272, 33);
+            this.cbBinningMode.Size = new System.Drawing.Size(269, 33);
             this.cbBinningMode.TabIndex = 8;
             // 
             // lbIntegrationApi
@@ -269,7 +267,7 @@ namespace ASCOM.DSLR
             this.lbIntegrationApi.Location = new System.Drawing.Point(4, 6);
             this.lbIntegrationApi.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.lbIntegrationApi.Name = "lbIntegrationApi";
-            this.lbIntegrationApi.Size = new System.Drawing.Size(252, 29);
+            this.lbIntegrationApi.Size = new System.Drawing.Size(249, 29);
             this.lbIntegrationApi.TabIndex = 18;
             this.lbIntegrationApi.Text = "Connection method";
             this.lbIntegrationApi.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -279,20 +277,20 @@ namespace ASCOM.DSLR
             this.cbIso.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cbIso.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbIso.FormattingEnabled = true;
-            this.cbIso.Location = new System.Drawing.Point(264, 440);
+            this.cbIso.Location = new System.Drawing.Point(261, 440);
             this.cbIso.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.cbIso.Name = "cbIso";
-            this.cbIso.Size = new System.Drawing.Size(272, 33);
+            this.cbIso.Size = new System.Drawing.Size(269, 33);
             this.cbIso.TabIndex = 13;
             this.cbIso.SelectedIndexChanged += new System.EventHandler(this.cbIso_SelectedIndexChanged);
             // 
             // tbBackyardEosPort
             // 
             this.tbBackyardEosPort.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbBackyardEosPort.Location = new System.Drawing.Point(264, 123);
+            this.tbBackyardEosPort.Location = new System.Drawing.Point(261, 123);
             this.tbBackyardEosPort.Margin = new System.Windows.Forms.Padding(4);
             this.tbBackyardEosPort.Name = "tbBackyardEosPort";
-            this.tbBackyardEosPort.Size = new System.Drawing.Size(272, 31);
+            this.tbBackyardEosPort.Size = new System.Drawing.Size(269, 31);
             this.tbBackyardEosPort.TabIndex = 4;
             this.tbBackyardEosPort.Visible = false;
             // 
@@ -303,7 +301,7 @@ namespace ASCOM.DSLR
             this.lblBackyardEosPort.Location = new System.Drawing.Point(4, 119);
             this.lblBackyardEosPort.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblBackyardEosPort.Name = "lblBackyardEosPort";
-            this.lblBackyardEosPort.Size = new System.Drawing.Size(252, 39);
+            this.lblBackyardEosPort.Size = new System.Drawing.Size(249, 39);
             this.lblBackyardEosPort.TabIndex = 32;
             this.lblBackyardEosPort.Text = "Port";
             this.lblBackyardEosPort.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -316,7 +314,7 @@ namespace ASCOM.DSLR
             this.chkUseExternalShutter.Location = new System.Drawing.Point(4, 164);
             this.chkUseExternalShutter.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.chkUseExternalShutter.Name = "chkUseExternalShutter";
-            this.chkUseExternalShutter.Size = new System.Drawing.Size(252, 33);
+            this.chkUseExternalShutter.Size = new System.Drawing.Size(249, 33);
             this.chkUseExternalShutter.TabIndex = 5;
             this.chkUseExternalShutter.Text = "Use external shutter";
             this.chkUseExternalShutter.UseVisualStyleBackColor = true;
@@ -325,10 +323,10 @@ namespace ASCOM.DSLR
             // btnBrowse
             // 
             this.btnBrowse.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnBrowse.Location = new System.Drawing.Point(544, 343);
+            this.btnBrowse.Location = new System.Drawing.Point(538, 343);
             this.btnBrowse.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(180, 85);
+            this.btnBrowse.Size = new System.Drawing.Size(186, 85);
             this.btnBrowse.TabIndex = 12;
             this.btnBrowse.Text = "Browse";
             this.btnBrowse.UseVisualStyleBackColor = true;
@@ -337,7 +335,7 @@ namespace ASCOM.DSLR
             // chkEnableLiveView
             // 
             this.chkEnableLiveView.AutoSize = true;
-            this.chkEnableLiveView.Location = new System.Drawing.Point(264, 45);
+            this.chkEnableLiveView.Location = new System.Drawing.Point(261, 45);
             this.chkEnableLiveView.Margin = new System.Windows.Forms.Padding(4);
             this.chkEnableLiveView.Name = "chkEnableLiveView";
             this.chkEnableLiveView.Size = new System.Drawing.Size(192, 29);
@@ -350,10 +348,10 @@ namespace ASCOM.DSLR
             // 
             this.chkSaveFile.Checked = true;
             this.chkSaveFile.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSaveFile.Location = new System.Drawing.Point(264, 293);
+            this.chkSaveFile.Location = new System.Drawing.Point(261, 293);
             this.chkSaveFile.Margin = new System.Windows.Forms.Padding(4);
             this.chkSaveFile.Name = "chkSaveFile";
-            this.chkSaveFile.Size = new System.Drawing.Size(272, 40);
+            this.chkSaveFile.Size = new System.Drawing.Size(269, 40);
             this.chkSaveFile.TabIndex = 10;
             this.chkSaveFile.Text = "Store in the Location";
             this.chkSaveFile.UseVisualStyleBackColor = true;
@@ -364,10 +362,10 @@ namespace ASCOM.DSLR
             this.cbImageMode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cbImageMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbImageMode.FormattingEnabled = true;
-            this.cbImageMode.Location = new System.Drawing.Point(264, 250);
+            this.cbImageMode.Location = new System.Drawing.Point(261, 250);
             this.cbImageMode.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.cbImageMode.Name = "cbImageMode";
-            this.cbImageMode.Size = new System.Drawing.Size(272, 33);
+            this.cbImageMode.Size = new System.Drawing.Size(269, 33);
             this.cbImageMode.TabIndex = 9;
             this.cbImageMode.SelectedIndexChanged += new System.EventHandler(this.cbImageMode_SelectedIndexChanged);
             // 
@@ -375,10 +373,10 @@ namespace ASCOM.DSLR
             // 
             this.cbTraceLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTraceLevel.FormattingEnabled = true;
-            this.cbTraceLevel.Location = new System.Drawing.Point(266, 485);
+            this.cbTraceLevel.Location = new System.Drawing.Point(263, 485);
             this.cbTraceLevel.Margin = new System.Windows.Forms.Padding(6);
             this.cbTraceLevel.Name = "cbTraceLevel";
-            this.cbTraceLevel.Size = new System.Drawing.Size(268, 33);
+            this.cbTraceLevel.Size = new System.Drawing.Size(265, 33);
             this.cbTraceLevel.TabIndex = 14;
             this.cbTraceLevel.SelectedIndexChanged += new System.EventHandler(this.cbTraceLevel_SelectedIndexChanged);
             // 
@@ -407,10 +405,9 @@ namespace ASCOM.DSLR
             // 
             // picASCOM
             // 
-            this.picASCOM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.picASCOM.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picASCOM.Image = global::ASCOM.DSLR.Properties.Resources.ASCOM;
-            this.picASCOM.Location = new System.Drawing.Point(28, 733);
+            this.picASCOM.Location = new System.Drawing.Point(28, 735);
             this.picASCOM.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.picASCOM.Name = "picASCOM";
             this.picASCOM.Size = new System.Drawing.Size(64, 69);
@@ -421,8 +418,7 @@ namespace ASCOM.DSLR
             // 
             // btnAbout
             // 
-            this.btnAbout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAbout.Location = new System.Drawing.Point(116, 754);
+            this.btnAbout.Location = new System.Drawing.Point(116, 756);
             this.btnAbout.Margin = new System.Windows.Forms.Padding(4);
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(132, 50);
@@ -435,14 +431,15 @@ namespace ASCOM.DSLR
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(840, 829);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(840, 831);
             this.Controls.Add(this.btnAbout);
             this.Controls.Add(this.chkTrace);
             this.Controls.Add(this.gbCameraSettings);
             this.Controls.Add(this.cmdCancel);
             this.Controls.Add(this.cmdOK);
             this.Controls.Add(this.picASCOM);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

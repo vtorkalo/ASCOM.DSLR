@@ -359,6 +359,7 @@ namespace ASCOM.DSLR
 
         private void SetupDialogForm_Load(object sender, EventArgs e)
         {
+
         }
 
         private void chkSaveFile_CheckedChanged(object sender, EventArgs e)
