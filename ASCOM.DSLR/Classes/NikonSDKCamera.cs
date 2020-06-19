@@ -395,11 +395,14 @@ namespace ASCOM.DSLR.Classes
         public void Disconnect()
         {
             Connected = false;
+            _camera = null;
             _activeNikonManager?.Shutdown();
             _nikonManagers?.Clear();
-            _camera.ImageReady -= Camera_ImageReady;
-            _camera.CaptureComplete -= _camera_CaptureComplete;
-            _camera = null;
+            _nikonManagers = null;
+            _activeNikonManager = null;
+            //_camera.ImageReady -= Camera_ImageReady;
+            //_camera.CaptureComplete -= _camera_CaptureComplete;
+
 
         }
 
