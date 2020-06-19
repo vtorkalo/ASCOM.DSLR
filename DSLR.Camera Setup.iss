@@ -38,6 +38,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "{cf}\ASCOM\Uninstall\Camera\DSLR.Camera"
 ; TODO: Add subfolders below {app} as needed (e.g. Name: "{app}\MyFolder")
 
+[Icons]
+Name: "{userdesktop}\ASCOMDSLRTest"; Filename: "{app}\ASCOM.DSLR.Test.exe"
+
 [Files]
 Source: "bin\ASCOM.DSLR.Camera.dll"; DestDir: "{app}"
 ;Source: "bin\ReadMe.htm"; DestDir: "{app}"; Flags: isreadme
