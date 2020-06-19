@@ -77,10 +77,11 @@ namespace ASCOM.DSLR.Classes
             {
                 _cancelConnectCameraSource?.Dispose();
                 _cancelConnectCameraSource = new CancellationTokenSource();
-                var connected = Connect(_cancelConnectCameraSource.Token);
+                //var connected = Connect(_cancelConnectCameraSource.Token);
+                var connected = Task.Run(() => Connect(_cancelConnectCameraSource.Token));
                 Task.WhenAll(connected).Wait();
+                //Connected = connected.Result;
                 Connected = connected.Result;
-
 
             }
         }
@@ -287,10 +288,11 @@ namespace ASCOM.DSLR.Classes
             throw new System.NotImplementedException();
         }
 
-        public async Task<bool> Connect(CancellationToken token)
+        public bool Connect(CancellationToken token)
         {
-            Task.Run(async () => {
-                var connected = false;
+            var connected = false;
+            Task.Run(() =>
+            {
                 try
                 {
                     _nikonManagers.Clear();
@@ -330,9 +332,11 @@ namespace ASCOM.DSLR.Classes
                     CleanupUnusedManagers(_activeNikonManager);
                 }
 
-                return connected;
+                //return connected;
+                return Task.FromResult<bool>(connected);
             }).Wait();
-            return true;
+            return connected;
+            //return Task.FromResult<bool>(true);
         }
 
         private void CleanupUnusedManagers(NikonManager activeManager)
