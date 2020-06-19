@@ -170,6 +170,9 @@
     <Content Include="SDK\X86\Nikon\D40_Mod\NkdPTPDi.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SDK\X86\Nikon\D60_Mod\NkdPTP.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SDK\X86\Nikon\D80_Mod\NkdPTP.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -527,6 +530,9 @@
     <Content Include="SDK\X86\Nikon\D80_Mod\D80_Mod.md3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="SDK\X86\Nikon\D60_Mod\D40_Mod.md3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
