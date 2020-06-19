@@ -14,7 +14,7 @@ The project uses C#, DigicamControl for Old Nikon Cameras, Nikoncswrapper for ne
 
 If you would like to contribute documenting ASCOM.DSLR, let me know to get you started.
 
-Discord Channel: https://discord.gg/zPCa9qw
+Discord Channel: https://discord.gg/Q8GtTKW
 
 Instalation Guide: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
 
