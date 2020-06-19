@@ -395,13 +395,17 @@ namespace ASCOM.DSLR.Classes
         public void Disconnect()
         {
             Connected = false;
-            _camera = null;
             _activeNikonManager?.Shutdown();
             _nikonManagers?.Clear();
+            _camera.ImageReady -= Camera_ImageReady;
+            _camera.CaptureComplete -= _camera_CaptureComplete;
+            _camera = null;
+
         }
 
         public void Init(NikonDevice cam)
         {
+
             Logger.WriteTraceMessage("Initializing Nikon camera '" + cam.Name + "'");
             _camera = cam;
             _camera.ImageReady += Camera_ImageReady;
