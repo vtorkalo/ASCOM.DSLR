@@ -82,7 +82,7 @@ namespace ASCOM.DSLR.Classes
                 Task.WhenAll(connected).Wait();
                 //Connected = connected.Result;
                 Connected = connected.Result;
-
+                Logger.WriteTraceMessage("Connected: " + Connected.ToString());
             }
         }
 
