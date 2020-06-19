@@ -88,11 +88,13 @@ namespace ASCOM.DSLR.Classes
 
         public void DisconnectCamera()
         {
-            Disconnect();
+            if (Connected)
+                Disconnect();
         }
 
         public void Dispose()
         {
+            if (Connected)
             Disconnect();
         }
 
