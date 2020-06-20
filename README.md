@@ -44,4 +44,5 @@ Release Notes
 
 6/19/2020 - Fixed Connection with Nikon 3X00
 
+6/20/2020 - Enabled Liveview for supported apps (SharpCap)
 
