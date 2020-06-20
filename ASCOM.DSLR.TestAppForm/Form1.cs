@@ -116,97 +116,6 @@ namespace ASCOM.DSLR
         }
 
 
-        // Create the Bitmap object and populate its pixel data with the stored pixel values.
-        private Bitmap CreateBitmap(int width, int height, ushort[] pixels16)
-        {
-            
-
-            Bitmap bmp = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            BitmapData bmd = bmp.LockBits(new Rectangle(0, 0, width, height),
-                System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
-
-            // This 'unsafe' part of the code populates the bitmap bmp with data stored in pixel16.
-            // It does so using pointers, and therefore the need for 'unsafe'. 
-            unsafe
-            {
-                int pixelSize = 3;
-                int i, j, j1, i1;
-                byte b;
-                ushort sVal;
-                double lPixval;
-
-                for (i = 0; i < bmd.Height; ++i)
-                {
-                    byte* row = (byte*)bmd.Scan0 + (i * bmd.Stride);
-                    i1 = i * bmd.Height;
-
-                    for (j = 0; j < bmd.Width; ++j)
-                    {
-                        sVal = (ushort)(pixels16[i1 + j]);
-                        lPixval = (sVal / 255.0); // Convert to a 255 value range
-                        if (lPixval > 255) lPixval = 255;
-                        if (lPixval < 0) lPixval = 0;
-                        b = (byte)(lPixval);
-                        j1 = j * pixelSize;
-                        row[j1] = b;            // Red
-                        row[j1 + 1] = b;            // Green
-                        row[j1 + 2] = b;            // Blue
-                    }
-                }
-            }
-            bmp.UnlockBits(bmd);
-
-            return bmp;
-        }
-
-
-        private Bitmap ByteToImage(int w, int h, byte[] pixels)
-            {
-                var bmp = new Bitmap(w, h, PixelFormat.Format16bppRgb555);
-                byte bpp = 2;
-                var BoundsRect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-                BitmapData bmpData = bmp.LockBits(BoundsRect,
-                                                ImageLockMode.WriteOnly,
-                                                bmp.PixelFormat);
-                // copy line by line:
-                for (int y = 0; y < h; y++)
-                System.Runtime.InteropServices.Marshal.Copy(pixels, y * w * bpp, bmpData.Scan0 + bmpData.Stride * y, w * bpp);
-                bmp.UnlockBits(bmpData);
-
-                return bmp;
-            }
-
-
-        private static ushort[] FlipAndConvert2d(Array input)
-        {
-                Int32[,] arr = (Int32[,])input;
-                int width = arr.GetLength(0);
-                int height = arr.GetLength(1);
-
-                int length = width * height;
-                ushort[] flatArray = new ushort[length];
-                ushort value;
-
-                unsafe
-                {
-                    fixed (Int32* ptr = arr)
-                    {
-                        int idx = 0, row = 0;
-                        for (int i = 0; i < length; i++)
-                        {
-                            value = (ushort)ptr[i];
-
-                            idx = ((i % height) * width) + row;
-                            if ((i % (height)) == (height - 1)) row++;
-
-                            ushort b = value;
-                            flatArray[idx] = b;
-                        }
-                    }
-                }
-                return flatArray;
-        }
-
 
         Bitmap createImage(Int32[,] Iarray)
         {
@@ -223,8 +132,7 @@ namespace ASCOM.DSLR
             int B1 = 0, B2 = 0, B3 = 0, B4 = 0;
             int R1 = 0, R2 = 0, R3 = 0, R4 = 0;
 
-            ImageDataProcessor imgp = new ImageDataProcessor();
-
+            
             for (int y = 0; y < Iarray.GetLength(1); y++)
             {
 
@@ -287,32 +195,10 @@ namespace ASCOM.DSLR
 
 
             }
-
+            
 
             return bmp;
 
-        }
-
-        public static Bitmap Array2DToBitmap(Int32[,] integers)
-        {
-            int width = integers.GetLength(0);
-            int height = integers.GetLength(1);
-
-            int stride = width * 4;//int == 4-bytes
-
-            //stride = 4 * ((width * 8 + 3) / 4);
-
-            Bitmap bitmap = null;
-
-            unsafe
-            {
-                fixed (Int32* intPtr = &integers[0, 0])
-                {
-                    bitmap = new Bitmap(width, height, stride, PixelFormat.Format32bppRgb, new IntPtr(intPtr));
-                }
-            }
-
-            return bitmap;
         }
 
         Bitmap createImage(Int32[,,] Iarray)
@@ -338,9 +224,6 @@ namespace ASCOM.DSLR
             }
             return bmp;
         }
-
-
-
 
 
         Bitmap ColorBalance(Bitmap sourceBitmap, byte blueLevel, byte greenLevel, byte redLevel)
@@ -434,21 +317,12 @@ namespace ASCOM.DSLR
             ImageDataProcessor imgp = new ImageDataProcessor();
 
 
-            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\IMG_0,00025s_200iso_0C_2020-06-14--18-06-36.NEF");
-
-            //var buffer = new byte[_imagearray.GetLength(0) * _imagearray.GetLength(1) * System.Runtime.InteropServices.Marshal.SizeOf(typeof(Int16))];
-            //Buffer.BlockCopy(_imagearray, 0, buffer, 0, buffer.Length);
-
-            //var flatarray = FlipAndConvert2d(_imagearray);
-
-
-            //byte[] flatarraybyte = new byte[flatarray.Length * 2];
-            //Buffer.BlockCopy(flatarray, 0, flatarraybyte, 0, flatarray.Length * 2);
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\E1DXINBI000050.CR2");
 
             RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
-            
-            RawIMG.Save("C:\\temp\\test.png");
 
+            RawIMG.Save("C:\\temp\\test.png");
+            
             pictTestfrm.Image = RawIMG;
 
 
@@ -530,7 +404,6 @@ namespace ASCOM.DSLR
 
             return resultBitmap;
         }
-
 
 
 

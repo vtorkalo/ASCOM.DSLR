@@ -46,8 +46,6 @@ namespace ASCOM.DSLR
                 _dslrCamera = new CanonSdkCamera(_cameraSettings.CameraModelsHistory);
                 _dslrCamera.IsLiveViewMode = _cameraSettings.LiveViewCaptureMode;
                 _dslrCamera.LiveViewZoom = _cameraSettings.LiveViewZoom;
-                //Future Test
-                //_dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
             }
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {
@@ -241,10 +239,18 @@ namespace ASCOM.DSLR
 
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
         {
+            //cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
+            //cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
+            //ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
+
             cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
-            cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
+
+            //cameraImageArray = _imageDataProcessor.ToMonochrome(cameraImageArray, _imageDataProcessor.From8To16Bit);
+            //cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
-      
+
+
+
             _cameraState = CameraStates.cameraIdle;
             cameraImageReady = true;
         }
@@ -656,7 +662,7 @@ namespace ASCOM.DSLR
 
                 if (CameraSettings.LiveViewCaptureMode)
                 {
-                    sensorType = SensorType.Monochrome;
+                    sensorType = SensorType.Color;
                 }
                 else
                 {
