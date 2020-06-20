@@ -16,7 +16,7 @@ If you would like to contribute documenting ASCOM.DSLR, let me know to get you s
 
 Discord Channel: https://discord.gg/Q8GtTKW
 
-Instalation Guide: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
+Installation Guide: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
 
 Development environment preparation
 1. Install Visual studio 2017/2019
