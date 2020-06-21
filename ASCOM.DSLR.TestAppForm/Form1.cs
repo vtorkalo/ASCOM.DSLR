@@ -208,6 +208,7 @@ namespace ASCOM.DSLR
             int b = 0;
             Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format32bppRgb);
 
+
             for (int y = 0; y < Iarray.GetLength(1); y++)
             {
                 for (int x = 0; x < Iarray.GetLength(0); x++)
@@ -222,6 +223,7 @@ namespace ASCOM.DSLR
                     bmp.SetPixel(x, y, Color);
                 }
             }
+
             return bmp;
         }
 
@@ -317,10 +319,10 @@ namespace ASCOM.DSLR
             ImageDataProcessor imgp = new ImageDataProcessor();
 
 
-            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\E1DXINBI000050.CR2");
+            Int32[,,] _imagearray = imgp.ReadAndDebayerRaw("C:\\temp\\IMG_0,00025s_200iso_0C_2020-06-14--18-06-36.nef");
 
-            RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
-
+            //RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
+            RawIMG = createImage(_imagearray);
             RawIMG.Save("C:\\temp\\test.png");
             
             pictTestfrm.Image = RawIMG;
