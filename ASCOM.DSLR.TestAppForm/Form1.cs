@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
 using ASCOM.DSLR.Classes;
+using ASCOM.DeviceInterface;
 
 namespace ASCOM.DSLR
 {
@@ -46,6 +47,19 @@ namespace ASCOM.DSLR
                 driver.Connected = true;
                 btnTakeImage.Enabled = true;
             }
+
+            if (ApiContainer.DslrCamera.IsLiveViewMode && IsConnected)
+            {
+                btnTakeImage.Text = "Live View";
+                chkPreview.Checked = true;
+            }
+            else {
+                btnTakeImage.Text = "Take Image";
+                chkPreview.Checked = false;
+            }
+
+
+
             SetUIState();
         }
 
@@ -76,6 +90,7 @@ namespace ASCOM.DSLR
             {
                 //driver.StartExposure(exposuretime, true);
 
+
                 Cursor.Current = Cursors.WaitCursor;
                 btnTakeImage.Enabled = false;
 
@@ -101,8 +116,21 @@ namespace ASCOM.DSLR
                     }
                     catch
                     {
+
                         Int32[,,] _imagearray = (Int32[,,])driver.ImageArray;
                         RawIMG = Contrast(ColorBalance(createImage(_imagearray), 50, 50, 50), 15);
+
+                        if (ApiContainer.DslrCamera.IsLiveViewMode)
+                        {
+                            while (ApiContainer.DslrCamera.IsLiveViewMode && IsConnected) { 
+                            _imagearray = (Int32[,,])driver.ImageArray;
+                            RawIMG = createImage(_imagearray);
+                            pictTestfrm.Image = RawIMG;
+                            driver.StartExposure(exposuretime, true);
+                            await Task.Delay(10);
+                            }
+                        }
+
 
                     }
 
@@ -207,7 +235,6 @@ namespace ASCOM.DSLR
             int g = 0;
             int b = 0;
             Bitmap bmp = new Bitmap(Iarray.GetLength(0), Iarray.GetLength(1), System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-
 
             for (int y = 0; y < Iarray.GetLength(1); y++)
             {
