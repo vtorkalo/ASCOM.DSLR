@@ -319,10 +319,10 @@ namespace ASCOM.DSLR
             ImageDataProcessor imgp = new ImageDataProcessor();
 
 
-            Int32[,,] _imagearray = imgp.ReadAndDebayerRaw("C:\\temp\\IMG_0,00025s_200iso_0C_2020-06-14--18-06-36.nef");
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\IMG_0,00025s_200iso_0C_2020-06-14--18-06-36.nef");
 
-            //RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
-            RawIMG = createImage(_imagearray);
+            RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
+            //RawIMG = createImage(_imagearray);
             RawIMG.Save("C:\\temp\\test.png");
             
             pictTestfrm.Image = RawIMG;

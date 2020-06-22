@@ -334,8 +334,8 @@ namespace ASCOM.DSLR.Classes
                     CleanupUnusedManagers(_activeNikonManager);
                 }
 
-                //return connected;
-                return Task.FromResult<bool>(connected);
+                return connected;
+                //return Task.FromResult<bool>(connected);
             }).Wait();
             return connected;
             //return Task.FromResult<bool>(true);
@@ -402,8 +402,6 @@ namespace ASCOM.DSLR.Classes
             _activeNikonManager = null;
             //_camera.ImageReady -= Camera_ImageReady;
             //_camera.CaptureComplete -= _camera_CaptureComplete;
-
-
         }
 
         public void Init(NikonDevice cam)

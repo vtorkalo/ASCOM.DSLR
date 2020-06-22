@@ -221,7 +221,7 @@ namespace ASCOM.DSLR.Classes
                  int i0 = NativeMethods.libraw_COLOR(data, y, 0);
                  int i1 = NativeMethods.libraw_COLOR(data, y, 1);
                  ushort* ptr = (ushort*)((byte*)dataStructure.image.ToPointer() + width * 8 * y);
-                
+
                  for (int x = 0; x < width - xoffs; x += 2)
                  {
                      pixels[x + xoffs, y + yoffs] = *(ptr + i0);
@@ -229,6 +229,7 @@ namespace ASCOM.DSLR.Classes
                      pixels[x + xoffs + 1, y + yoffs] = *(ptr + i1);
                      ptr += 4;
                  }
+
              }
             );
 
@@ -258,11 +259,15 @@ namespace ASCOM.DSLR.Classes
                     Parallel.For(0, height, y =>
                     {
 
-                        Parallel.For(0, width, x =>
+                        /*Parallel.For(0, width, x =>
                         {
                             pixels[x, y] *= multiplier;
                         }
-                        );
+                        );*/
+                        for (int x = 0; x < width; x++)
+                        {
+                            pixels[x, y] *= multiplier;
+                        }
 
                     }
                     );

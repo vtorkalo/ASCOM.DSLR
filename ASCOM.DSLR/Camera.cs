@@ -173,6 +173,7 @@ namespace ASCOM.DSLR
                         if (ApiContainer.DslrCamera.IsLiveViewMode)
                         {
                             LvExposure(Duration);
+                            //LvExposure(0.5);
                         }
                         else
                         {
@@ -234,22 +235,17 @@ namespace ASCOM.DSLR
         {
             ApiContainer.DslrCamera.LiveViewImageReady += DslrCamera_LiveViewImageReady;
             ApiContainer.DslrCamera.StartExposure(duration, true);
-            
         }
 
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
         {
-            //cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
+            cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
             //cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             //ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
-
-            cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
 
             //cameraImageArray = _imageDataProcessor.ToMonochrome(cameraImageArray, _imageDataProcessor.From8To16Bit);
             //cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
-
-
 
             _cameraState = CameraStates.cameraIdle;
             cameraImageReady = true;
