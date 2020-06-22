@@ -287,6 +287,9 @@ namespace ASCOM.DSLR
             camera.Iso = Gain > 50 ? Gain : settings.Iso;
             camera.StorePath = settings.StorePath;
             camera.SaveFile = settings.SaveFile;
+            camera.IsLiveViewMode = settings.LiveViewCaptureMode;
+            camera.LiveViewZoom = settings.LiveViewZoom;
+
 
             switch (CameraSettings.CameraMode)
             {
