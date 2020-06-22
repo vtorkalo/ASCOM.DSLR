@@ -14,6 +14,7 @@ using ASCOM.Utilities;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace ASCOM.DSLR.Classes
 {
@@ -34,6 +35,8 @@ namespace ASCOM.DSLR.Classes
         private int _bulbShutterSpeedIndex;
         private int _flashSyncSpeedIndex;
 
+        private bool _lvCapture = false;
+        DispatcherTimer liveViewTimer;
 
         public NikonSDKCamera(List<CameraModel> cameraModelsHistory) : base(cameraModelsHistory)
         {
@@ -73,6 +76,7 @@ namespace ASCOM.DSLR.Classes
         private CancellationTokenSource _cancelConnectCameraSource;
         public void ConnectCamera()
         {
+
             if (!Connected)
             {
                 _cancelConnectCameraSource?.Dispose();
@@ -112,24 +116,86 @@ namespace ASCOM.DSLR.Classes
 
             if (Connected)
             {
-                Logger.WriteTraceMessage("Prepare start of exposure: ");
-                _downloadExposure = new TaskCompletionSource<object>();
-
-                if (Duration <= 30.0)
+                if (!IsLiveViewMode)
                 {
-                    Logger.WriteTraceMessage("Exposuretime <= 30. Setting automatic shutter speed.");
-                    var speed = _shutterSpeeds.Aggregate((x, y) => Math.Abs(x.Value - Duration) < Math.Abs(y.Value - Duration) ? x : y);
-                    SetCameraShutterSpeed(speed.Key);
+                    liveViewTimer.Stop();
+                    Logger.WriteTraceMessage("Prepare start of exposure: ");
+                    _downloadExposure = new TaskCompletionSource<object>();
 
-                    Logger.WriteTraceMessage("Start capture");
-                    _camera.Capture();
+                    if (Duration <= 30.0)
+                    {
+                        Logger.WriteTraceMessage("Exposuretime <= 30. Setting automatic shutter speed.");
+                        var speed = _shutterSpeeds.Aggregate((x, y) => Math.Abs(x.Value - Duration) < Math.Abs(y.Value - Duration) ? x : y);
+                        SetCameraShutterSpeed(speed.Key);
+
+                        Logger.WriteTraceMessage("Start capture");
+                        _camera.Capture();
+                    }
+                    else
+                    {
+                        Logger.WriteTraceMessage("Use Bulb capture");
+                        Task.Run(() => BulbCapture(Duration));
+                    }
                 }
-                else
-                {
-                    Logger.WriteTraceMessage("Use Bulb capture");
-                    Task.Run(() => BulbCapture(Duration));
+                else {
+                    _camera.LiveViewEnabled = true;
+                    liveViewTimer.Start();
                 }
+
             }
+        }
+
+
+        void liveViewTimer_Tick(object sender, EventArgs e)
+        {
+            // Get live view image
+            NikonLiveViewImage image = null;
+ 
+
+            try
+            {
+                image = _camera.GetLiveViewImage();
+            }
+            catch (NikonException ex)
+            {
+                Logger.WriteTraceMessage("Failed to get live view image: " + ex.ToString());
+                _lvCapture = false;
+                liveViewTimer.Stop();
+            }
+
+            if (image == null)
+            {
+                liveViewTimer.Stop();
+                return;
+            }
+
+
+            ThreadPool.QueueUserWorkItem(new WaitCallback((o) =>
+            {
+                Logger.WriteTraceMessage("Reading Memory Stream");
+                MemoryStream stream = new MemoryStream(image.JpegBuffer);
+                Logger.WriteTraceMessage("Converting to Bitimap");
+                var Evf_Bmp = new Bitmap(Image.FromStream(stream));
+                Logger.WriteTraceMessage("Grabbing the Sizes");
+                LvFrameWidth = Evf_Bmp.Width;
+                LvFrameHeight = Evf_Bmp.Height;
+                //LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
+                Dispatcher.CurrentDispatcher.Invoke((Action)(() =>
+                {
+                    Logger.WriteTraceMessage("Sending to Array");
+                    LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
+                }));
+            }));
+
+            /*
+            if (image != null && _lvCapture)
+            {
+                MemoryStream stream = new MemoryStream(image.JpegBuffer);
+                var Evf_Bmp = new Bitmap(Image.FromStream(stream));
+                LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
+            }*/
+
+
         }
 
         private void BulbCapture(double exposureTime)
@@ -395,6 +461,8 @@ namespace ASCOM.DSLR.Classes
         public void Disconnect()
         {
             Connected = false;
+            liveViewTimer.Stop();
+            _camera.LiveViewEnabled = false;
             _camera = null;
             _activeNikonManager?.Shutdown();
             _nikonManagers?.Clear();
@@ -411,6 +479,11 @@ namespace ASCOM.DSLR.Classes
             _camera = cam;
             _camera.ImageReady += Camera_ImageReady;
             _camera.CaptureComplete += _camera_CaptureComplete;
+
+            //Live View 
+            liveViewTimer = new DispatcherTimer();
+            liveViewTimer.Interval = TimeSpan.FromMilliseconds(33.0);
+            liveViewTimer.Tick += new EventHandler(liveViewTimer_Tick);
 
             //Set to shoot in RAW
             Logger.WriteTraceMessage("Setting compression to RAW");

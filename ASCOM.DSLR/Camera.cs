@@ -62,6 +62,8 @@ namespace ASCOM.DSLR
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
             {
                 _dslrCamera = new NikonSDKCamera(_cameraSettings.CameraModelsHistory);
+                _dslrCamera.IsLiveViewMode = _cameraSettings.LiveViewCaptureMode;
+                _dslrCamera.LiveViewZoom = _cameraSettings.LiveViewZoom;
             }
         }
 

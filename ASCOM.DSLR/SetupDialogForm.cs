@@ -262,7 +262,7 @@ namespace ASCOM.DSLR
             cbShutterPort.Visible = isDigiCamControl;
             bool isCanon = IsCanon();
             bool isPentax = IsPentax();
-            if (isCanon)
+            if (isCanon || isNikonSDK)
             {
                 chkEnableLiveView.Visible = true;
                 lblLiveViewZoom.Visible = true;
@@ -289,7 +289,7 @@ namespace ASCOM.DSLR
 
         private bool IsDigiCamControl()
         {
-            return cbIntegrationApi.SelectedItem !=null &&  (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Nikon;
+            return cbIntegrationApi.SelectedItem !=null &&  (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.NikonLegacy;
         }
 
         private bool IsBeos()
@@ -299,7 +299,7 @@ namespace ASCOM.DSLR
 
         private bool IsNikonSDK()
         {
-            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.NikonLegacy;
+            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Nikon;
         }
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)
