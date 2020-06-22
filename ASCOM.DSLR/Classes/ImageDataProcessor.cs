@@ -259,16 +259,11 @@ namespace ASCOM.DSLR.Classes
                     Parallel.For(0, height, y =>
                     {
 
-                        /*Parallel.For(0, width, x =>
+                        Parallel.For(0, width, x =>
                         {
                             pixels[x, y] *= multiplier;
                         }
-                        );*/
-                        for (int x = 0; x < width; x++)
-                        {
-                            pixels[x, y] *= multiplier;
-                        }
-
+                        );
                     }
                     );
 
