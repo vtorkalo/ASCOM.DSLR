@@ -76,6 +76,7 @@ namespace ASCOM.DSLR
 
             if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Fatal)
                 Logger.SetLogLevelFatal();
+
         }
 
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler

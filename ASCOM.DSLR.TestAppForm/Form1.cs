@@ -103,7 +103,6 @@ namespace ASCOM.DSLR
                     }
                 });
 
-
                 if (chkPreview.Checked)
                 {
                     Bitmap RawIMG;

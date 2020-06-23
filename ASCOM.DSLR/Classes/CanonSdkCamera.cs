@@ -124,7 +124,8 @@ namespace ASCOM.DSLR.Classes
                 _mainCamera.ProgressChanged -= MainCamera_ProgressChanged;
                 _mainCamera.StateChanged -= MainCamera_StateChanged;
                 _mainCamera.DownloadReady -= MainCamera_DownloadReady;
-                MainCamera.LiveViewUpdated -= MainCamera_LiveViewUpdated;
+                //MainCamera.LiveViewUpdated -= MainCamera_LiveViewUpdated;
+                _mainCamera.LiveViewUpdated -= MainCamera_LiveViewUpdated;
                 _mainCamera.CloseSession();
             }
         }
@@ -134,6 +135,7 @@ namespace ASCOM.DSLR.Classes
             ScanForCameras();
             if (!MainCamera.SessionOpen)
             {
+                
                 MainCamera.OpenSession();
                 MainCamera.ProgressChanged += MainCamera_ProgressChanged;
                 MainCamera.StateChanged += MainCamera_StateChanged;
@@ -171,7 +173,8 @@ namespace ASCOM.DSLR.Classes
                 short iso = 0;
                 if (IsLiveViewMode)
                 {
-                    iso = (short)(ExpCompValues.Values.Count() - 1);
+                    //iso = (short)(ExpCompValues.Values.Count() - 1);
+                    iso = base.MaxIso;
                 }
                 else
                 {
@@ -182,12 +185,19 @@ namespace ASCOM.DSLR.Classes
             }
         }
 
+        double lvexposure = 1;
         private void MainCamera_LiveViewUpdated(EOSDigital.API.Camera sender, Stream img)
         {
             var Evf_Bmp = new Bitmap(img);
 
             if (_lvInitialized)
             {
+                
+                if (lvexposure > 0 && lvexposure <= 30) { 
+                    CameraValue tvCameraValue = GetSelectedTv(lvexposure);
+                    MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
+                }
+
                 var expComp = MainCamera.GetUInt32Setting(PropertyID.ExposureCompensation);
                 if (Iso > 0 && Iso <= MaxIso)
                 {
@@ -374,6 +384,7 @@ namespace ASCOM.DSLR.Classes
             else
             {
                 Thread.Sleep(100);
+                lvexposure = Duration;
                 _lvCapture = true;
             }
         }
@@ -391,14 +402,17 @@ namespace ASCOM.DSLR.Classes
         private bool _lvInitialized;
         public void ConnectCamera()
         {
+
             OpenSession();
+
+
+            Thread.Sleep(1000);
             if (IsLiveViewMode)
             {
                 LvFrameHeight = 0;
                 LvFrameWidth = 0;
 
                 MainCamera.StartLiveView();
-
                 Thread.Sleep(1000);
 
                 int retryCount = 0;

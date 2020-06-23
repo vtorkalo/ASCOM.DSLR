@@ -89,6 +89,7 @@ namespace ASCOM.DSLR.Classes
                 Task.WhenAll(connected).Wait();
                 //Connected = connected.Result;
 
+                Thread.Sleep(1000);
                 if (IsLiveViewMode)
                 {
                     LvFrameHeight = 0;
