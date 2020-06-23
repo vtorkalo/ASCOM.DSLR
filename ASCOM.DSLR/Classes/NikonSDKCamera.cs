@@ -88,15 +88,24 @@ namespace ASCOM.DSLR.Classes
                 var connected = Task.Run(() => Connect(_cancelConnectCameraSource.Token));
                 Task.WhenAll(connected).Wait();
                 //Connected = connected.Result;
-                _camera.LiveViewEnabled = true;
 
-                Thread.Sleep(1000);
-                int retryCount = 0;
-                while ((LvFrameHeight == 0 || LvFrameWidth == 0) && retryCount < 5)
+                if (IsLiveViewMode)
                 {
-                    Thread.Sleep(500);
-                    retryCount++;
+                    LvFrameHeight = 0;
+                    LvFrameWidth = 0;
+
+                    _camera.LiveViewEnabled = true;
+                    updateLV();
+                    Thread.Sleep(1000);
+
+                    int retryCount = 0;
+                    while ((LvFrameHeight == 0 || LvFrameWidth == 0) && retryCount < 5)
+                    {
+                        Thread.Sleep(500);
+                        retryCount++;
+                    }
                 }
+                else { _camera.LiveViewEnabled = false; }
 
                 Connected = connected.Result;
                 Logger.WriteTraceMessage("Connected: " + Connected.ToString());
