@@ -192,11 +192,12 @@ namespace ASCOM.DSLR.Classes
 
             if (_lvInitialized)
             {
-                
-                if (lvexposure > 0 && lvexposure <= 30) { 
+                if (MainCamera.IsManualMode())
+                    if (lvexposure > 0 && lvexposure <= 30) { 
                     CameraValue tvCameraValue = GetSelectedTv(lvexposure);
                     MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
                 }
+
 
                 var expComp = MainCamera.GetUInt32Setting(PropertyID.ExposureCompensation);
                 if (Iso > 0 && Iso <= MaxIso)
