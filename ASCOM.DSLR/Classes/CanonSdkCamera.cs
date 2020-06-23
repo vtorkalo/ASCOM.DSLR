@@ -417,7 +417,7 @@ namespace ASCOM.DSLR.Classes
                 Thread.Sleep(1000);
 
                 int retryCount = 0;
-                while ((LvFrameHeight == 0 || LvFrameWidth == 0) && retryCount < 5)
+                while ((LvFrameHeight == 0 || LvFrameWidth == 0) && retryCount < 15)
                 {
                     Thread.Sleep(500);
                     retryCount++;
