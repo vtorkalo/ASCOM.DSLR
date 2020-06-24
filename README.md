@@ -46,3 +46,5 @@ Release Notes
 
 6/20/2020 - Enabled Canon Liveview for supported apps (SharpCap)
 
+6/23/2020 - Enabled Nikon LiveView for supported apps 
+
