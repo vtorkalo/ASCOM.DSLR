@@ -344,11 +344,15 @@ namespace ASCOM.DSLR
 
             ImageDataProcessor imgp = new ImageDataProcessor();
 
+            Bitmap Test = new Bitmap("C:\\temp\\allskynikon.jpg");
 
-            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\IMG_0,00025s_200iso_0C_2020-06-14--18-06-36.nef");
+            Int32[,,] _imagearray = imgp.ReadBitmap(Test);
 
-            RawIMG = Contrast(ColorBalance(createImage(_imagearray),50, 50, 50),15);
+            //RawIMG = Contrast(ColorBalance(createImage(_imagearray), 50, 50, 50), 15);
             //RawIMG = createImage(_imagearray);
+
+            RawIMG = createImage(_imagearray);
+
             RawIMG.Save("C:\\temp\\test.png");
             
             pictTestfrm.Image = RawIMG;

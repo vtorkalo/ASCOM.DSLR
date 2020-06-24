@@ -207,8 +207,8 @@ namespace ASCOM.DSLR.Classes
                 Logger.WriteTraceMessage("Reading Memory Stream");
                 MemoryStream stream = new MemoryStream(image.JpegBuffer);
                 Logger.WriteTraceMessage("Converting to Bitimap");
-                var Evf_Bmp = new Bitmap(Image.FromStream(stream));
-
+                var Evf_BmpTMP = new Bitmap(Image.FromStream(stream));
+                Bitmap Evf_Bmp = Evf_BmpTMP.Clone(new Rectangle(0, 0, Evf_BmpTMP.Width, Evf_BmpTMP.Height), PixelFormat.Format24bppRgb);
                 Logger.WriteTraceMessage("Grabbing the Sizes");
                 LvFrameWidth = Evf_Bmp.Width;
                 LvFrameHeight = Evf_Bmp.Height;
@@ -252,7 +252,8 @@ namespace ASCOM.DSLR.Classes
                 Logger.WriteTraceMessage("Reading Memory Stream");
                 MemoryStream stream = new MemoryStream(image.JpegBuffer);
                 Logger.WriteTraceMessage("Converting to Bitimap");
-                var Evf_Bmp = new Bitmap(Image.FromStream(stream));
+                var Evf_BmpTMP = new Bitmap(Image.FromStream(stream));
+                Bitmap Evf_Bmp = Evf_BmpTMP.Clone(new Rectangle(0, 0, Evf_BmpTMP.Width, Evf_BmpTMP.Height), PixelFormat.Format24bppRgb);
                 Logger.WriteTraceMessage("Grabbing the Sizes");
                 if (LvFrameHeight == 0 || LvFrameWidth == 0)
                 {
