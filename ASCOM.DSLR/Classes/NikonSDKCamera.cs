@@ -581,9 +581,10 @@ namespace ASCOM.DSLR.Classes
             //Changed to function
             SetCameraToManual();
 
-
+            GetIsoList();
             GetShutterSpeeds();
             GetCapabilities();
+
 
             /* Setting SaveMedia when supported, to save images via SDRAM and not to the internal memory card */
             if (Capabilities.ContainsKey(eNkMAIDCapability.kNkMAIDCapability_SaveMedia) && Capabilities[eNkMAIDCapability.kNkMAIDCapability_SaveMedia].CanSet())
@@ -646,6 +647,35 @@ namespace ASCOM.DSLR.Classes
                 File.Delete(newFilePath);
             }
         }
+
+        List<short> NikonIsoList = new List<short>();
+        private void GetIsoList()
+        {
+            NikonIsoList.Clear();
+            Logger.WriteTraceMessage("Getting Nikon iso values");
+
+            var ISOCOntrolList = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_Sensitivity);
+            Logger.WriteTraceMessage("Available Isos: " + ISOCOntrolList.Length);
+
+
+
+            for (int i = 0; i < ISOCOntrolList.Length; i++)
+            {
+                var val = ISOCOntrolList.GetEnumValueByIndex(i).ToString();
+                Logger.WriteTraceMessage("Found iso value: " + val);
+                if (val.Contains("-"))
+                {
+                    continue;
+                }
+
+                NikonIsoList.Add(Convert.ToInt16(val));
+            }
+
+            SimpleISOList = NikonIsoList;
+
+
+        }
+
 
         private Dictionary<eNkMAIDCapability, NkMAIDCapInfo> Capabilities = new Dictionary<eNkMAIDCapability, NkMAIDCapInfo>();
 

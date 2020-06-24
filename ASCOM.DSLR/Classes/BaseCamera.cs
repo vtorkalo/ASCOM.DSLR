@@ -10,6 +10,13 @@ using System.Text.RegularExpressions;
 
 namespace ASCOM.DSLR.Classes
 {
+
+    public class ISOValue 
+    {
+        public string ISOName { get; set; }
+
+        public int ISOId { get; set; }
+    }
     public abstract class BaseCamera
     {
         public BaseCamera(List<CameraModel> cameraModelsHistory)
@@ -35,6 +42,8 @@ namespace ASCOM.DSLR.Classes
 
         public CameraValue[] TvList;
         public CameraValue[] ISOList;
+        public List<short> SimpleISOList;
+
 
         public bool IsLiveViewMode { get; set; }
 
@@ -139,7 +148,14 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
-                    result = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0).Select(v => (short)v.DoubleValue).ToList();
+                    if (SimpleISOList != null)
+                    {
+                        result = SimpleISOList;
+                    }
+                    else
+                    {
+                        result = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0).Select(v => (short)v.DoubleValue).ToList();
+                    }
                 }
 
                 return result;
