@@ -668,7 +668,12 @@ namespace ASCOM.DSLR.Classes
                     continue;
                 }
 
-                NikonIsoList.Add(Convert.ToInt16(val));
+                if (Convert.ToInt16(val)> 32767)
+                {
+                    continue;
+                }
+
+                NikonIsoList.Add((short)Convert.ToInt16(val));
             }
 
             SimpleISOList = NikonIsoList;
