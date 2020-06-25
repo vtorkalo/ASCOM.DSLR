@@ -425,14 +425,16 @@ namespace ASCOM.DSLR.Classes
                 selectedIsoValue = nearest;
             }
 
-
+            selectedIsoValueIndex = _NikonIsoList.Where((x) => x.Value == Convert.ToString(selectedIsoValue)).FirstOrDefault().Key;
+            /*
             foreach (KeyValuePair<int, string> NikonisoValue in _NikonIsoList)
             {
                 if (NikonisoValue.Value == Convert.ToString(selectedIsoValue))
                 {
                     selectedIsoValueIndex = NikonisoValue.Key;
                 }
-            }
+            }*/
+
             return selectedIsoValueIndex;
         }
 
