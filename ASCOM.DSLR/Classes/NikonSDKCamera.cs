@@ -140,6 +140,9 @@ namespace ASCOM.DSLR.Classes
             return cameraModel;
         }
 
+
+
+
         public void StartExposure(double Duration, bool Light)
         {
             _startTime = DateTime.Now;
@@ -158,6 +161,8 @@ namespace ASCOM.DSLR.Classes
                         Logger.WriteTraceMessage("Exposuretime <= 30. Setting automatic shutter speed.");
                         var speed = _shutterSpeeds.Aggregate((x, y) => Math.Abs(x.Value - Duration) < Math.Abs(y.Value - Duration) ? x : y);
                         SetCameraShutterSpeed(speed.Key);
+                
+                        SetCameraISO(GetSelectedIsoValueIndex());
 
                         Logger.WriteTraceMessage("Start capture");
                         _camera.Capture();
@@ -407,6 +412,47 @@ namespace ASCOM.DSLR.Classes
         }
 
 
+        private int GetSelectedIsoValueIndex()
+        {
+            var selectedIsoValue = SimpleISOList.SingleOrDefault(v => v == Iso && v > 0);
+            int selectedIsoValueIndex = 1;
+
+            if (selectedIsoValue == 0)
+            {
+                var nearest = SimpleISOList.Where(v => v < short.MaxValue && v > 0)
+                    .Select(v => new { value = v, difference = Math.Abs(v - Iso) }).OrderBy(d => d.difference).First().value;
+
+                selectedIsoValue = nearest;
+            }
+
+
+            foreach (KeyValuePair<int, string> NikonisoValue in _NikonIsoList)
+            {
+                if (NikonisoValue.Value == Convert.ToString(selectedIsoValue))
+                {
+                    selectedIsoValueIndex = NikonisoValue.Key;
+                }
+            }
+            return selectedIsoValueIndex;
+        }
+
+
+        private void SetCameraISO(int index)
+        {
+            if (Capabilities.ContainsKey(eNkMAIDCapability.kNkMAIDCapability_Sensitivity) && Capabilities[eNkMAIDCapability.kNkMAIDCapability_Sensitivity].CanSet())
+            {
+                Logger.WriteTraceMessage("Setting ISO to index: " + index);
+                var ISOCOntrolList = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_Sensitivity);
+                ISOCOntrolList.Index = index;
+                _camera.SetEnum(eNkMAIDCapability.kNkMAIDCapability_Sensitivity, ISOCOntrolList);
+            }
+            else
+            {
+                Logger.WriteTraceMessage("Cannot set camera ISO. Skipping...");
+            }
+        }
+
+
         private int _prevShutterSpeed;
         private void SetCameraShutterSpeed(int index)
         {
@@ -649,20 +695,22 @@ namespace ASCOM.DSLR.Classes
         }
 
         List<short> NikonIsoList = new List<short>();
+        private Dictionary<int, string> _NikonIsoList = new Dictionary<int, string>();
         private void GetIsoList()
         {
             NikonIsoList.Clear();
+            _NikonIsoList.Clear();
             Logger.WriteTraceMessage("Getting Nikon iso values");
 
             var ISOCOntrolList = _camera.GetEnum(eNkMAIDCapability.kNkMAIDCapability_Sensitivity);
             Logger.WriteTraceMessage("Available Isos: " + ISOCOntrolList.Length);
 
-
-
             for (int i = 0; i < ISOCOntrolList.Length; i++)
             {
                 var val = ISOCOntrolList.GetEnumValueByIndex(i).ToString();
                 Logger.WriteTraceMessage("Found iso value: " + val);
+                _NikonIsoList.Add(i, val);
+
                 if (val.Contains("-"))
                 {
                     continue;
