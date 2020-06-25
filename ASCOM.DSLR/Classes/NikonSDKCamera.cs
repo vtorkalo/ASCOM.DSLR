@@ -668,7 +668,7 @@ namespace ASCOM.DSLR.Classes
                     continue;
                 }
 
-                if (Convert.ToInt16(val)> 32767)
+                if (Convert.ToInt16(val)<= short.MaxValue)
                 {
                     continue;
                 }
