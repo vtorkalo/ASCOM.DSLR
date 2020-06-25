@@ -668,7 +668,7 @@ namespace ASCOM.DSLR.Classes
                     continue;
                 }
 
-                if (Convert.ToInt16(val) <= short.MaxValue)
+                if (Convert.ToInt32(val) <= short.MaxValue)
                 {
                     NikonIsoList.Add((short)Convert.ToInt16(val));
                 }
