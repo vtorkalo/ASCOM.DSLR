@@ -48,3 +48,4 @@ Release Notes
 
 6/23/2020 - Enabled Nikon LiveView for supported apps 
 
+6/27/2020 - Added utility to clean SC DSLR camera profile in order to avoid issues changing LiveView<>Frame modes. (PLease read the instruction on Wiki Page)
