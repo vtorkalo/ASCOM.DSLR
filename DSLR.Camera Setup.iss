@@ -40,6 +40,7 @@ Name: "{cf}\ASCOM\Uninstall\Camera\DSLR.Camera"
 
 [Icons]
 Name: "{userdesktop}\ASCOMDSLRTest"; Filename: "{app}\ASCOM.DSLR.Test.exe"
+Name: "{userdesktop}\ClearDSLRSCProfile"; Filename: "{app}\ClearDSLRSCProfile.exe"
 
 [Files]
 Source: "bin\ASCOM.DSLR.Camera.dll"; DestDir: "{app}"
@@ -54,6 +55,7 @@ Source: "bin\Registrar.exe"; DestDir: "{app}"
 Source: "bin\OTelescope.API.dll"; DestDir: "{app}"
 Source: "bin\Nlog.dll";  DestDir: "{app}"
 Source: "bin\ErrorLogging.dll"; DestDir: "{app}"
+Source: "bin\ClearDSLRSCProfile.exe"; DestDir: "{app}"
 ;Source: "bin\Newtonsoft.Json.dll"; DestDir: "{app}"
 ;Nikon and Pentax
 Source: "bin\CameraControl.Devices.dll"; DestDir: "{app}"
