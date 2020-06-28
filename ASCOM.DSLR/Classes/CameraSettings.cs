@@ -22,6 +22,7 @@ namespace ASCOM.DSLR.Classes
             BinningMode = BinningMode.Sum;
             CameraModelsHistory = new List<CameraModel>();
             LogLevel = DebugLogLevels.Error;
+            maxADU = 65535;
         }
 
         public bool TraceLog { get; set; }
@@ -34,6 +35,11 @@ namespace ASCOM.DSLR.Classes
 
         public bool SaveFile { get; set; }
 
+        public int maxADU { get; set; }
+
+        public bool maxADUOverride { get; set; }
+
+        
         public short Iso { get; set; }
 
         public int BackyardEosPort { get; set; }

@@ -39,6 +39,11 @@ namespace ASCOM.DSLR
         public ImageFormat ImageFormat { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string StorePath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool SaveFile { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public int maxADU { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public bool maxADUOverride { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        
         public bool UseExternalShutter { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string ExternalShutterPort { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

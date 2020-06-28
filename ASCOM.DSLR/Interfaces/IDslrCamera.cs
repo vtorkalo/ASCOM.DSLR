@@ -36,6 +36,11 @@ namespace ASCOM.DSLR.Interfaces
         ImageFormat ImageFormat {get;set;}
 
         string StorePath { get; set; }
+
+        int maxADU { get; set; }
+
+        bool maxADUOverride { get; set; }
+
         CameraModel ScanCameras();
 
         bool UseExternalShutter { get; set; }

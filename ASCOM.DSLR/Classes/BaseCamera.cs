@@ -90,6 +90,9 @@ namespace ASCOM.DSLR.Classes
 
         public string StorePath { get; set; }
         public bool SaveFile { get; set; }
+
+        public bool maxADUOverride { get; set; }
+        public int maxADU { get; set; }
         public double SensorTemperature { get; protected set; }
 
         public abstract CameraModel ScanCameras();

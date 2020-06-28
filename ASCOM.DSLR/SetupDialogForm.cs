@@ -59,6 +59,10 @@ namespace ASCOM.DSLR
 
             Settings.LogLevel = (DebugLogLevels)cbTraceLevel.SelectedItem;
 
+            Settings.maxADU = Convert.ToInt32(txtMAXADU.Text);
+
+            Settings.maxADUOverride = chkMAXADU.Checked;
+
             if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Trace)
                 Logger.SetLogLevelTrace();
 
@@ -146,6 +150,10 @@ namespace ASCOM.DSLR
 
 
             tbSavePath.Text = Settings.StorePath;
+
+            txtMAXADU.Text = Convert.ToString(Settings.maxADU);
+
+            chkMAXADU.Checked = Settings.maxADUOverride;
 
             tbBackyardEosPort.Text = Settings.BackyardEosPort.ToString();
 
@@ -391,6 +399,18 @@ namespace ASCOM.DSLR
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void chxMAXADU_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkMAXADU.Checked)
+            {
+                txtMAXADU.Enabled = true;
+            }
+            else
+            {
+                txtMAXADU.Enabled = false;
+            }
         }
     }
 }

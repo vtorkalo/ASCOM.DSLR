@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using Logging;
 using System.Threading;
+using ASCOM.DSLR.Properties;
 
 namespace ASCOM.DSLR
 {
@@ -291,7 +292,9 @@ namespace ASCOM.DSLR
             camera.SaveFile = settings.SaveFile;
             camera.IsLiveViewMode = settings.LiveViewCaptureMode;
             camera.LiveViewZoom = settings.LiveViewZoom;
+            camera.maxADU = settings.maxADU;
 
+            camera.maxADUOverride = settings.maxADUOverride;
 
             switch (CameraSettings.CameraMode)
             {
@@ -581,14 +584,35 @@ namespace ASCOM.DSLR
                     switch (CameraSettings.CameraMode)
                     {
                         case Enums.CameraMode.RGGB:
-                            maxValue = short.MaxValue;
+                            if (CameraSettings.maxADUOverride)
+                            {
+                                maxValue = CameraSettings.maxADU;
+                            }
+                            else 
+                            {
+                                maxValue = short.MaxValue;
+                             }
                             break;
                         case Enums.CameraMode.Color16:
-                            maxValue = short.MaxValue;
+                            if (CameraSettings.maxADUOverride)
+                            {
+                                maxValue = CameraSettings.maxADU;
+                            }
+                            else
+                            {
+                                maxValue = short.MaxValue;
+                            }
                             break;
 
                         case Enums.CameraMode.ColorJpg:
-                            maxValue = byte.MaxValue;
+                            if (CameraSettings.maxADUOverride)
+                            {
+                                maxValue = CameraSettings.maxADU;
+                            }
+                            else
+                            {
+                                maxValue = short.MaxValue;
+                            }
                             break;
                     }
                 }
