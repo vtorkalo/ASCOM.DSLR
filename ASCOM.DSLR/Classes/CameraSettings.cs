@@ -22,7 +22,7 @@ namespace ASCOM.DSLR.Classes
             BinningMode = BinningMode.Sum;
             CameraModelsHistory = new List<CameraModel>();
             LogLevel = DebugLogLevels.Error;
-            maxADU = 32767;
+            maxADU = 16384;
         }
 
         public bool TraceLog { get; set; }

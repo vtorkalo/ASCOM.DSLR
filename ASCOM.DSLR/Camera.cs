@@ -590,8 +590,8 @@ namespace ASCOM.DSLR
                             }
                             else 
                             {
-                                maxValue = short.MaxValue;
-                             }
+                                maxValue = 16384;
+                            }
                             break;
                         case Enums.CameraMode.Color16:
                             if (CameraSettings.maxADUOverride)
@@ -600,7 +600,7 @@ namespace ASCOM.DSLR
                             }
                             else
                             {
-                                maxValue = short.MaxValue;
+                                maxValue = 16384;
                             }
                             break;
 
@@ -611,7 +611,7 @@ namespace ASCOM.DSLR
                             }
                             else
                             {
-                                maxValue = short.MaxValue;
+                                maxValue = 16384;
                             }
                             break;
                     }
