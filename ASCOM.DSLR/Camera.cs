@@ -412,9 +412,9 @@ namespace ASCOM.DSLR
 
         public double ElectronsPerADU { get { return 1; } }
 
-        public double ExposureMax { get { return double.MaxValue; } }
+        public double ExposureMax { get { return 600; } }
 
-        public double ExposureMin { get { return 0; } }
+        public double ExposureMin { get { return 0.000125; } }
 
         public double ExposureResolution { get { return 0.01; } }
 

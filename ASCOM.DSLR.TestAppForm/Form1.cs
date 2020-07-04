@@ -344,9 +344,9 @@ namespace ASCOM.DSLR
 
             ImageDataProcessor imgp = new ImageDataProcessor();
 
-            Bitmap Test = new Bitmap("C:\\temp\\allskynikon.jpg");
+            //Bitmap Test = new Bitmap("C:\\temp\\allskynikon.jpg");
 
-            Int32[,,] _imagearray = imgp.ReadBitmap(Test);
+            Int32[,] _imagearray = imgp.ReadRaw("C:\\temp\\canon2.CR2");
 
             //RawIMG = Contrast(ColorBalance(createImage(_imagearray), 50, 50, 50), 15);
             //RawIMG = createImage(_imagearray);
