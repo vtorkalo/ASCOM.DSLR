@@ -414,7 +414,7 @@ namespace ASCOM.DSLR
 
         public double ExposureMax { get { return 600; } }
 
-        public double ExposureMin { get { return 0.000125; } }
+        public double ExposureMin { get { return 0.00025; } }
 
         public double ExposureResolution { get { return 0.01; } }
 
