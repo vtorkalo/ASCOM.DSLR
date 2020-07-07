@@ -6,6 +6,7 @@ using FileAccess = EOSDigital.SDK.FileAccess;
 using System.Collections.Generic;
 using System.Linq;
 using EDSDKLib.API.Base;
+using Logging;
 
 namespace EOSDigital.API
 {
@@ -432,6 +433,8 @@ namespace EOSDigital.API
 
         #endregion
 
+
+
         #region Methods
 
         #region Take Photo
@@ -473,11 +476,15 @@ namespace EOSDigital.API
         public void TakePhotoShutter()
         {
             CheckState();
-            MainThread.Invoke(() =>
-            {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
-            });
+            try
+                {
+                    MainThread.Invoke(() =>
+                {
+                    SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                    //SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                });
+            }
+            catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
         }
 
         /// <summary>
@@ -496,7 +503,7 @@ namespace EOSDigital.API
                     MainThread.Invoke(() =>
                     {
                         SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                        SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+                        //SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                     });
                 }
                 catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
@@ -566,7 +573,8 @@ namespace EOSDigital.API
 
             try
             {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF); // Test for new cameras
             }
             catch (ExecutionException)
             {
@@ -818,9 +826,16 @@ namespace EOSDigital.API
         public void SendCommand(CameraCommand command, int inParam = 0)
         {
             CheckState();
+
+            Logger.WriteTraceMessage("Sending Command = " + command.ToString() + "'");
+
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendCommand(CamRef, command, inParam)));
         }
 
+
+
+
+        
         /// <summary>
         /// Sends a Status Command to the camera
         /// </summary>
@@ -832,6 +847,8 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SendStatusCommand(CameraStatusCommand command, int inParam = 0)
         {
+            Logger.WriteTraceMessage("SendStatusCommand = " + command.ToString() + "'");
+
             CheckState();
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendStatusCommand(CamRef, command, inParam)));
         }

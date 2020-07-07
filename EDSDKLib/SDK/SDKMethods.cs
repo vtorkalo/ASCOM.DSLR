@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.IO;
+using Logging;
 
 namespace EOSDigital.SDK
 {
@@ -9,6 +11,9 @@ namespace EOSDigital.SDK
     /// </summary>
     public static class CanonSDK
     {
+
+                     
+
         /// <summary>
         /// Maximum length of string
         /// </summary>
@@ -21,9 +26,18 @@ namespace EOSDigital.SDK
         /// <summary>
         /// The path to the Canon SDK DLL
         /// </summary>
-        public const string DllPath = "EDSDK";
+
+        //public const string DllPath = "EDSDK";
+
+        public const string DllPath32 = "SDK/X86/EDSDK";
+
+        public const string DllPath64 = "SDK/X64/EDSDK";
+
+
+
 
         #region Version Check
+
 
         /// <summary>
         /// Version of the currently used Canon SDK DLL
@@ -52,6 +66,7 @@ namespace EOSDigital.SDK
         {
             try
             {
+
                 SDKVersion = GetSDKVersion();
                 if (SDKVersion == null) throw new InvalidOperationException("Could not find SDK version");
 
@@ -80,6 +95,8 @@ namespace EOSDigital.SDK
                     return new Version(vi.ProductMajorPart, vi.ProductMinorPart, vi.ProductBuildPart, vi.ProductPrivatePart);
                 }
             }
+           
+            
             return null;
         }
 
@@ -92,32 +109,65 @@ namespace EOSDigital.SDK
         /// This must be called before using the EDSDK API
         /// </summary>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsInitializeSDK();
+        [DllImport(DllPath32, EntryPoint = "EdsInitializeSDK")]
+        public extern static ErrorCode EdsInitializeSDK_32();
+
+        [DllImport(DllPath64, EntryPoint = "EdsInitializeSDK")]
+        public extern static ErrorCode EdsInitializeSDK_64();
+
+        public static ErrorCode EdsInitializeSDK()
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsInitializeSDK_32() : EdsInitializeSDK_64();
+        }
 
         /// <summary>
         /// Terminates the use of the libraries.
         /// This must be called when ending the SDK, it releases all resources used by the libraries.
         /// </summary>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsTerminateSDK();
+        [DllImport(DllPath32, EntryPoint = "EdsTerminateSDK")]
+        public extern static ErrorCode EdsTerminateSDK_32();
+
+        [DllImport(DllPath64, EntryPoint = "EdsTerminateSDK")]
+        public extern static ErrorCode EdsTerminateSDK_64();
+
+        public static ErrorCode EdsTerminateSDK()
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsTerminateSDK_32() : EdsTerminateSDK_64();
+        }
 
         /// <summary>
         /// Establishes a logical connection with a remote camera. Use this method after getting the camera object.
         /// </summary>
         /// <param name="inCameraRef">The reference of the camera.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsOpenSession(IntPtr inCameraRef);
+        [DllImport(DllPath32, EntryPoint = "EdsOpenSession")]
+        public extern static ErrorCode EdsOpenSession_32(IntPtr inCameraRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsOpenSession")]
+        public extern static ErrorCode EdsOpenSession_64(IntPtr inCameraRef);
+
+        public static ErrorCode EdsOpenSession(IntPtr inCameraRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsOpenSession_32(inCameraRef) : EdsOpenSession_64(inCameraRef);
+        }
 
         /// <summary>
         /// Closes a logical connection with a remote camera.
         /// </summary>
         /// <param name="inCameraRef">The reference of the camera.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCloseSession(IntPtr inCameraRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCloseSession")]
+        public extern static ErrorCode EdsCloseSession_32(IntPtr inCameraRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCloseSession")]
+        public extern static ErrorCode EdsCloseSession_64(IntPtr inCameraRef);
+
+        public static ErrorCode EdsCloseSession(IntPtr inCameraRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCloseSession_32(inCameraRef) : EdsCloseSession_64(inCameraRef);
+        }
+
 
         #endregion
 
@@ -132,8 +182,17 @@ namespace EOSDigital.SDK
         /// <param name="outDataType">Pointer to the buffer that is to receive the property type data.</param>
         /// <param name="outSize">Pointer to the buffer that is to receive the property size.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetPropertySize(IntPtr inRef, PropertyID inPropertyID, int inParam, out DataType outDataType, out int outSize);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPropertySize")]
+        public extern static ErrorCode EdsGetPropertySize_32(IntPtr inRef, PropertyID inPropertyID, int inParam, out DataType outDataType, out int outSize);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPropertySize")]
+        public extern static ErrorCode EdsGetPropertySize_64(IntPtr inRef, PropertyID inPropertyID, int inParam, out DataType outDataType, out int outSize);
+
+        public static ErrorCode EdsGetPropertySize(IntPtr inRef, PropertyID inPropertyID, int inParam, out DataType outDataType, out int outSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPropertySize_32(inRef,  inPropertyID,  inParam, out outDataType, out outSize) : EdsGetPropertySize_64(inRef, inPropertyID, inParam, out outDataType, out outSize);
+        }
+
 
         /// <summary>
         /// Gets property information from the object designated in inRef.
@@ -144,8 +203,17 @@ namespace EOSDigital.SDK
         /// <param name="inPropertySize">The number of bytes of the prepared buffer for receive property-value.</param>
         /// <param name="outPropertyData">The buffer pointer to receive property-value.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, IntPtr outPropertyData);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPropertyData")]
+        public extern static ErrorCode EdsGetPropertyData_32(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, IntPtr outPropertyData);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPropertyData")]
+        public extern static ErrorCode EdsGetPropertyData_64(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, IntPtr outPropertyData);
+
+
+        public static ErrorCode EdsGetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, IntPtr outPropertyData)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPropertyData_32(inRef, inPropertyID, inParam, inPropertySize,  outPropertyData) : EdsGetPropertyData_64(inRef, inPropertyID, inParam, inPropertySize, outPropertyData);
+        }
 
         /// <summary>
         /// Sets property data for the object designated in inRef.
@@ -156,8 +224,16 @@ namespace EOSDigital.SDK
         /// <param name="inPropertySize">The number of bytes of the prepared buffer for set property-value.</param>
         /// <param name="inPropertyData">The buffer pointer to set property-value.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData);
+        [DllImport(DllPath32, EntryPoint = "EdsSetPropertyData")]
+        public extern static ErrorCode EdsSetPropertyData_32(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetPropertyData")]
+        public extern static ErrorCode EdsSetPropertyData_64(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData);
+
+        public static ErrorCode EdsSetPropertyData(IntPtr inRef, PropertyID inPropertyID, int inParam, int inPropertySize, [MarshalAs(UnmanagedType.AsAny), In] object inPropertyData)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetPropertyData_32( inRef,  inPropertyID,  inParam,  inPropertySize, inPropertyData) : EdsSetPropertyData_64(inRef, inPropertyID, inParam, inPropertySize, inPropertyData);
+        }
 
         /// <summary>
         /// Gets a list of property data that can be set for the object designated in inRef,
@@ -167,8 +243,16 @@ namespace EOSDigital.SDK
         /// <param name="inPropertyID">The property ID.</param>
         /// <param name="outPropertyDesc">Array of the values which can be set up.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetPropertyDesc(IntPtr inRef, PropertyID inPropertyID, out PropertyDesc outPropertyDesc);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPropertyDesc")]
+        public extern static ErrorCode EdsGetPropertyDesc_32(IntPtr inRef, PropertyID inPropertyID, out PropertyDesc outPropertyDesc);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPropertyDesc")]
+        public extern static ErrorCode EdsGetPropertyDesc_64(IntPtr inRef, PropertyID inPropertyID, out PropertyDesc outPropertyDesc);
+
+        public static ErrorCode EdsGetPropertyDesc(IntPtr inRef, PropertyID inPropertyID, out PropertyDesc outPropertyDesc)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPropertyDesc_32(inRef, inPropertyID, out outPropertyDesc) : EdsGetPropertyDesc_64(inRef, inPropertyID, out outPropertyDesc);
+        }
 
         #endregion
 
@@ -181,8 +265,18 @@ namespace EOSDigital.SDK
         /// <param name="inCommand">Specifies the command to be sent</param>
         /// <param name="inParam">Specifies additional command-specific information.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSendCommand(IntPtr inCameraRef, CameraCommand inCommand, int inParam);
+        [DllImport(DllPath32, EntryPoint = "EdsSendCommand")]
+        public extern static ErrorCode EdsSendCommand_32(IntPtr inCameraRef, CameraCommand inCommand, int inParam);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSendCommand")]
+        public extern static ErrorCode EdsSendCommand_64(IntPtr inCameraRef, CameraCommand inCommand, int inParam);
+
+        public static ErrorCode EdsSendCommand(IntPtr inCameraRef, CameraCommand inCommand, int inParam)
+        {
+            Logger.WriteTraceMessage("EdsSendCommand(), inCommand = '" + inCommand.ToString() + "'");
+
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSendCommand_32(inCameraRef, inCommand, inParam) : EdsSendCommand_64(inCameraRef, inCommand, inParam);
+        }
 
         /// <summary>
         /// Sets the remote camera state or mode.
@@ -191,8 +285,19 @@ namespace EOSDigital.SDK
         /// <param name="inCameraState">Specifies the command to be sent.</param>
         /// <param name="inParam">Specifies additional command-specific information.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSendStatusCommand(IntPtr inCameraRef, CameraStatusCommand inCameraState, int inParam);
+        [DllImport(DllPath32, EntryPoint = "EdsSendStatusCommand")]
+        public extern static ErrorCode EdsSendStatusCommand_32(IntPtr inCameraRef, CameraStatusCommand inCameraState, int inParam);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSendStatusCommand")]
+        public extern static ErrorCode EdsSendStatusCommand_64(IntPtr inCameraRef, CameraStatusCommand inCameraState, int inParam);
+
+
+        public static ErrorCode EdsSendStatusCommand(IntPtr inCameraRef, CameraStatusCommand inCameraState, int inParam)
+        {
+            Logger.WriteTraceMessage("EdsSendStatusCommand(), inCameraState = '" + inCameraState.ToString() + "'");
+
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSendStatusCommand_32(inCameraRef, inCameraState, inParam) : EdsSendStatusCommand_64(inCameraRef, inCameraState, inParam);
+        }
 
         #endregion
 
@@ -207,8 +312,16 @@ namespace EOSDigital.SDK
         /// <param name="inCameraRef">The reference of the camera which will receive the command.</param>
         /// <param name="inCapacity">The remaining capacity of a transmission place.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetCapacity(IntPtr inCameraRef, Capacity inCapacity);
+        [DllImport(DllPath32, EntryPoint = "EdsSetCapacity")]
+        public extern static ErrorCode EdsSetCapacity_32(IntPtr inCameraRef, Capacity inCapacity);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetCapacity")]
+        public extern static ErrorCode EdsSetCapacity_64(IntPtr inCameraRef, Capacity inCapacity);
+
+        public static ErrorCode EdsSetCapacity(IntPtr inCameraRef, Capacity inCapacity)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetCapacity_32(inCameraRef, inCapacity) : EdsSetCapacity_64(inCameraRef, inCapacity);
+        }
 
         /// <summary>
         /// Gets volume information for a memory card in the camera
@@ -216,16 +329,32 @@ namespace EOSDigital.SDK
         /// <param name="inCameraRef">Information of the volume</param>
         /// <param name="outVolumeInfo"></param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetVolumeInfo(IntPtr inCameraRef, out VolumeInfo outVolumeInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetVolumeInfo")]
+        public extern static ErrorCode EdsGetVolumeInfo_32(IntPtr inCameraRef, out VolumeInfo outVolumeInfo);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetVolumeInfo")]
+        public extern static ErrorCode EdsGetVolumeInfo_64(IntPtr inCameraRef, out VolumeInfo outVolumeInfo);
+
+        public static ErrorCode EdsGetVolumeInfo(IntPtr inCameraRef, out VolumeInfo outVolumeInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetVolumeInfo_32(inCameraRef, out outVolumeInfo) : EdsGetVolumeInfo_64(inCameraRef, out outVolumeInfo);
+        }
 
         /// <summary>
         /// Formats a volume.
         /// </summary>
         /// <param name="inVolumeRef">The reference of the volume.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsFormatVolume(IntPtr inVolumeRef);
+        [DllImport(DllPath32, EntryPoint = "EdsFormatVolume")]
+        public extern static ErrorCode EdsFormatVolume_32(IntPtr inVolumeRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsFormatVolume")]
+        public extern static ErrorCode EdsFormatVolume_64(IntPtr inVolumeRef);
+
+        public static ErrorCode EdsFormatVolume(IntPtr inVolumeRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsFormatVolume_32(inVolumeRef) : EdsFormatVolume_64(inVolumeRef);
+        }
 
         /// <summary>
         /// Gets information about the directory or file object on the memory card (volume) in a remote camera.
@@ -233,8 +362,16 @@ namespace EOSDigital.SDK
         /// <param name="inDirItemRef">The reference of the directory item.</param>
         /// <param name="outDirItemInfo">Information of the directory item.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetDirectoryItemInfo(IntPtr inDirItemRef, out DirectoryItemInfo outDirItemInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetDirectoryItemInfo")]
+        public extern static ErrorCode EdsGetDirectoryItemInfo_32(IntPtr inDirItemRef, out DirectoryItemInfo outDirItemInfo);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetDirectoryItemInfo")]
+        public extern static ErrorCode EdsGetDirectoryItemInfo_64(IntPtr inDirItemRef, out DirectoryItemInfo outDirItemInfo);
+
+        public static ErrorCode EdsGetDirectoryItemInfo(IntPtr inDirItemRef, out DirectoryItemInfo outDirItemInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetDirectoryItemInfo_32(inDirItemRef, out  outDirItemInfo) : EdsGetDirectoryItemInfo_64(inDirItemRef, out outDirItemInfo);
+        }
 
         /// <summary>
         /// Deletes a camera folder or file.
@@ -244,8 +381,16 @@ namespace EOSDigital.SDK
         /// </summary>
         /// <param name="inDirItemRef"></param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsDeleteDirectoryItem(IntPtr inDirItemRef);
+        [DllImport(DllPath32, EntryPoint = "EdsDeleteDirectoryItem")]
+        public extern static ErrorCode EdsDeleteDirectoryItem_32(IntPtr inDirItemRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsDeleteDirectoryItem")]
+        public extern static ErrorCode EdsDeleteDirectoryItem_64(IntPtr inDirItemRef);
+
+        public static ErrorCode EdsDeleteDirectoryItem(IntPtr inDirItemRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDeleteDirectoryItem_32(inDirItemRef) : EdsDeleteDirectoryItem_64(inDirItemRef);
+        }
 
         /// <summary>
         /// Gets attributes of files of a camera.
@@ -257,8 +402,16 @@ namespace EOSDigital.SDK
         /// Thus, when determining the file attributes, it must be checked if an attribute flag is set for target attributes.
         /// </param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetAttribute(IntPtr inDirItemRef, out FileAttribute outFileAttribute);
+        [DllImport(DllPath32, EntryPoint = "EdsGetAttribute")]
+        public extern static ErrorCode EdsGetAttribute_32(IntPtr inDirItemRef, out FileAttribute outFileAttribute);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetAttribute")]
+        public extern static ErrorCode EdsGetAttribute_64(IntPtr inDirItemRef, out FileAttribute outFileAttribute);
+
+        public static ErrorCode EdsDeleteDirectoryItem(IntPtr inDirItemRef, out FileAttribute outFileAttribute)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetAttribute_32(inDirItemRef, out outFileAttribute) : EdsGetAttribute_64(inDirItemRef, out outFileAttribute);
+        }
 
         /// <summary>
         /// Changes attributes of files on a camera.
@@ -269,8 +422,16 @@ namespace EOSDigital.SDK
         /// As for the file attributes, OR values of the value defined by enum FileAttributes can be retrieved.
         /// </param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetAttribute(IntPtr inDirItemRef, FileAttribute inFileAttribute);
+        [DllImport(DllPath32, EntryPoint = "EdsSetAttribute")]
+        public extern static ErrorCode EdsSetAttribute_32(IntPtr inDirItemRef, FileAttribute inFileAttribute);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetAttribute")]
+        public extern static ErrorCode EdsSetAttribute_64(IntPtr inDirItemRef, FileAttribute inFileAttribute);
+
+        public static ErrorCode EdsSetAttribute(IntPtr inDirItemRef, FileAttribute inFileAttribute)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetAttribute_32(inDirItemRef, inFileAttribute) : EdsSetAttribute_64(inDirItemRef, inFileAttribute);
+        }
 
         #endregion
 
@@ -287,8 +448,17 @@ namespace EOSDigital.SDK
         /// <param name="inReadSize">-</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsDownload(IntPtr inDirItemRef, int inReadSize, IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsDownload")]
+        public extern static ErrorCode EdsDownload_32(IntPtr inDirItemRef, int inReadSize, IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsDownload")]
+        public extern static ErrorCode EdsDownload_64(IntPtr inDirItemRef, int inReadSize, IntPtr outStream);
+
+        public static ErrorCode EdsDownload(IntPtr inDirItemRef, int inReadSize, IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownload_32( inDirItemRef,  inReadSize,  outStream) : EdsDownload_64(inDirItemRef, inReadSize, outStream);
+        }
+
 
         /// <summary>
         /// Downloads a file on a remote camera (in the camera memory or on a memory card) to the host computer.
@@ -301,8 +471,16 @@ namespace EOSDigital.SDK
         /// <param name="inReadSize">-</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsDownload(IntPtr inDirItemRef, long inReadSize, IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsDownload")]
+        public extern static ErrorCode EdsDownload_32(IntPtr inDirItemRef, long inReadSize, IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsDownload")]
+        public extern static ErrorCode EdsDownload_64(IntPtr inDirItemRef, long inReadSize, IntPtr outStream);
+
+        public static ErrorCode EdsDownload(IntPtr inDirItemRef, long inReadSize, IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownload_32(inDirItemRef, inReadSize, outStream) : EdsDownload_64(inDirItemRef, inReadSize, outStream);
+        }
 
         /// <summary>
         /// Must be executed when downloading of a directory item is canceled.
@@ -312,8 +490,16 @@ namespace EOSDigital.SDK
         /// </summary>
         /// <param name="inDirItemRef">The reference of the directory item.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsDownloadCancel(IntPtr inDirItemRef);
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadCancel")]
+        public extern static ErrorCode EdsDownloadCancel_32(IntPtr inDirItemRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadCancel")]
+        public extern static ErrorCode EdsDownloadCancel_64(IntPtr inDirItemRef);
+
+        public static ErrorCode EdsDownloadCancel(IntPtr inDirItemRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadCancel_32(inDirItemRef) : EdsDownloadCancel_64(inDirItemRef);
+        }
 
         /// <summary>
         /// Must be called when downloading of directory items is complete.
@@ -322,8 +508,16 @@ namespace EOSDigital.SDK
         /// </summary>
         /// <param name="inDirItemRef"></param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsDownloadComplete(IntPtr inDirItemRef);
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadComplete")]
+        public extern static ErrorCode EdsDownloadComplete_32(IntPtr inDirItemRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadComplete")]
+        public extern static ErrorCode EdsDownloadComplete_64(IntPtr inDirItemRef);
+
+        public static ErrorCode EdsDownloadComplete(IntPtr inDirItemRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadComplete_32(inDirItemRef) : EdsDownloadComplete_64(inDirItemRef);
+        }
 
         /// <summary>
         /// Extracts and downloads thumbnail information from image files in a camera.
@@ -333,8 +527,16 @@ namespace EOSDigital.SDK
         /// <param name="inDirItemRef">The reference of the directory item.</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsDownloadThumbnail(IntPtr inDirItemRef, IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadThumbnail")]
+        public extern static ErrorCode EdsDownloadThumbnail_32(IntPtr inDirItemRef, IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadThumbnail")]
+        public extern static ErrorCode EdsDownloadThumbnail_64(IntPtr inDirItemRef, IntPtr outStream);
+
+        public static ErrorCode EdsDownloadThumbnail(IntPtr inDirItemRef, IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadThumbnail_32(inDirItemRef, outStream) : EdsDownloadThumbnail_64(inDirItemRef, outStream);
+        }
 
         #endregion
 
@@ -349,8 +551,16 @@ namespace EOSDigital.SDK
         /// <param name="inDesiredAccess">Access to the stream (reading, writing, or both).</param>
         /// <param name="outStream">The reference of the stream</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateFileStream(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateFileStream")]
+        public extern static ErrorCode EdsCreateFileStream_32(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateFileStream")]
+        public extern static ErrorCode EdsCreateFileStream_64(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream);
+
+        public static ErrorCode EdsCreateFileStream(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateFileStream_32(inFileName, inCreateDisposition, inDesiredAccess, out outStream) : EdsCreateFileStream_64(inFileName, inCreateDisposition, inDesiredAccess, out outStream);
+        }
 
         /// <summary>
         /// Creates a stream in the memory of a host computer.
@@ -360,8 +570,17 @@ namespace EOSDigital.SDK
         /// <param name="inBufferSize">The number of bytes of the memory to allocate.</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateMemoryStream(int inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStream")]
+        public extern static ErrorCode EdsCreateMemoryStream_32(int inBufferSize, out IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStream")]
+        public extern static ErrorCode EdsCreateMemoryStream_64(int inBufferSize, out IntPtr outStream);
+
+
+        public static ErrorCode EdsCreateMemoryStream(int inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStream_32(inBufferSize, out outStream) : EdsCreateMemoryStream_64(inBufferSize, out outStream);
+        }
 
         /// <summary>
         /// Creates a stream in the memory of a host computer.
@@ -371,8 +590,16 @@ namespace EOSDigital.SDK
         /// <param name="inBufferSize">The number of bytes of the memory to allocate.</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateMemoryStream(long inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStream")]
+        public extern static ErrorCode EdsCreateMemoryStream_32(long inBufferSize, out IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStream")]
+        public extern static ErrorCode EdsCreateMemoryStream_64(long inBufferSize, out IntPtr outStream);
+
+        public static ErrorCode EdsCreateMemoryStream(long inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStream_32(inBufferSize, out outStream) : EdsCreateMemoryStream_64(inBufferSize, out outStream);
+        }
 
         /// <summary>
         /// An extended version of CreateStreamFromFile.
@@ -383,8 +610,16 @@ namespace EOSDigital.SDK
         /// <param name="inDesiredAccess">Access to the stream (reading, writing, or both)</param>
         /// <param name="outStream">The reference of the stream</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath, CharSet = CharSet.Unicode)]
-        public extern static ErrorCode EdsCreateFileStreamEx(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateFileStreamEx", CharSet = CharSet.Unicode)]
+        public extern static ErrorCode EdsCreateFileStreamEx_32(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateFileStreamEx", CharSet = CharSet.Unicode)]
+        public extern static ErrorCode EdsCreateFileStreamEx_64(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream);
+
+        public static ErrorCode EdsCreateFileStreamEx(string inFileName, FileCreateDisposition inCreateDisposition, FileAccess inDesiredAccess, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateFileStreamEx_32(inFileName, inCreateDisposition, inDesiredAccess, out outStream) : EdsCreateFileStreamEx_64(inFileName, inCreateDisposition, inDesiredAccess, out outStream);
+        }
 
         /// <summary>
         /// Creates a stream from the memory buffer you prepared.
@@ -396,8 +631,16 @@ namespace EOSDigital.SDK
         /// <param name="inBufferSize">The number of bytes of the memory to allocate.</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateMemoryStreamFromPointer(IntPtr inUserBuffer, int inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_32(IntPtr inUserBuffer, int inBufferSize, out IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_64(IntPtr inUserBuffer, int inBufferSize, out IntPtr outStream);
+
+        public static ErrorCode EdsCreateMemoryStreamFromPointer(IntPtr inUserBuffer, int inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStreamFromPointer_32( inUserBuffer, inBufferSize, out outStream) : EdsCreateMemoryStreamFromPointer_64(inUserBuffer, inBufferSize, out outStream);
+        }
 
         /// <summary>
         /// Creates a stream from the memory buffer you prepared.
@@ -409,8 +652,16 @@ namespace EOSDigital.SDK
         /// <param name="inBufferSize">The number of bytes of the memory to allocate.</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateMemoryStreamFromPointer(IntPtr inUserBuffer, long inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_32(IntPtr inUserBuffer, long inBufferSize, out IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_64(IntPtr inUserBuffer, long inBufferSize, out IntPtr outStream);
+
+        public static ErrorCode EdsCreateMemoryStreamFromPointer(IntPtr inUserBuffer, long inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStreamFromPointer_32(inUserBuffer, inBufferSize, out outStream) : EdsCreateMemoryStreamFromPointer_64(inUserBuffer, inBufferSize, out outStream);
+        }
 
         /// <summary>
         /// Creates a stream from the memory buffer you prepared.
@@ -421,8 +672,16 @@ namespace EOSDigital.SDK
         /// <param name="inBufferSize">The number of bytes of the memory to allocate.</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateMemoryStreamFromPointer(byte[] inUserBuffer, int inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_32(byte[] inUserBuffer, int inBufferSize, out IntPtr outStream);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_64(byte[] inUserBuffer, int inBufferSize, out IntPtr outStream);
+
+        public static ErrorCode EdsCreateMemoryStreamFromPointer(byte[] inUserBuffer, int inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStreamFromPointer_32(inUserBuffer, inBufferSize, out outStream) : EdsCreateMemoryStreamFromPointer_64(inUserBuffer, inBufferSize, out outStream);
+        }
 
         /// <summary>
         /// Creates a stream from the memory buffer you prepared.
@@ -433,18 +692,32 @@ namespace EOSDigital.SDK
         /// <param name="inBufferSize">The number of bytes of the memory to allocate.</param>
         /// <param name="outStream">The reference of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateMemoryStreamFromPointer(byte[] inUserBuffer, long inBufferSize, out IntPtr outStream);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_32(byte[] inUserBuffer, long inBufferSize, out IntPtr outStream);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateMemoryStreamFromPointer")]
+        public extern static ErrorCode EdsCreateMemoryStreamFromPointer_64(byte[] inUserBuffer, long inBufferSize, out IntPtr outStream);
+
+        public static ErrorCode EdsCreateMemoryStreamFromPointer(byte[] inUserBuffer, long inBufferSize, out IntPtr outStream)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateMemoryStreamFromPointer_32(inUserBuffer, inBufferSize, out outStream) : EdsCreateMemoryStreamFromPointer_64(inUserBuffer, inBufferSize, out outStream);
+        }
         /// <summary>
         /// Creates a stream from an existing stream.
         /// </summary>
         /// <param name="inStream">The reference of the input stream.</param>
         /// <param name="outStreamRef">The reference of the output stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateStream(IntPtr inStream, IntPtr outStreamRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateStream")]
+        public extern static ErrorCode EdsCreateStream_32(IntPtr inStream, IntPtr outStreamRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateStream")]
+        public extern static ErrorCode EdsCreateStream_64(IntPtr inStream, IntPtr outStreamRef);
+
+        public static ErrorCode EdsCreateStream(IntPtr inStream, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateStream_32(inStream, outStreamRef) : EdsCreateStream_64(inStream, outStreamRef);
+        }
         /// <summary>
         /// Gets the pointer to the start address of memory managed by the memory stream. 
         /// As the EDSDK automatically resizes the buffer, the memory stream provides you with the same access methods as for the file stream. 
@@ -454,8 +727,17 @@ namespace EOSDigital.SDK
         /// <param name="inStreamRef">Designate the memory stream for the pointer to retrieve.</param>
         /// <param name="outPointer">If successful, returns the pointer to the buffer written in the memory stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetPointer(IntPtr inStreamRef, out IntPtr outPointer);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPointer")]
+        public extern static ErrorCode EdsGetPointer_32(IntPtr inStreamRef, out IntPtr outPointer);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPointer")]
+        public extern static ErrorCode EdsGetPointer_64(IntPtr inStreamRef, out IntPtr outPointer);
+
+
+        public static ErrorCode EdsGetPointer(IntPtr inStreamRef, out IntPtr outPointe)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPointer_32(inStreamRef, out outPointe) : EdsGetPointer_64(inStreamRef, out outPointe);
+        }
 
         /// <summary>
         /// Reads data the size of inReadSize into the outBuffer buffer, starting at the current read or write position of the stream.
@@ -467,8 +749,16 @@ namespace EOSDigital.SDK
         /// <param name="outBuffer">Pointer to the user-supplied buffer that is to receive the data read from the stream.</param>
         /// <param name="outReadSize">The actually read number of bytes.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsRead(IntPtr inStreamRef, int inReadSize, IntPtr outBuffer, out int outReadSize);
+        [DllImport(DllPath32, EntryPoint = "EdsRead")]
+        public extern static ErrorCode EdsRead_32(IntPtr inStreamRef, int inReadSize, IntPtr outBuffer, out int outReadSize);
+
+        [DllImport(DllPath64, EntryPoint = "EdsRead")]
+        public extern static ErrorCode EdsRead_64(IntPtr inStreamRef, int inReadSize, IntPtr outBuffer, out int outReadSize);
+
+        public static ErrorCode EdsRead(IntPtr inStreamRef, int inReadSize, IntPtr outBuffer, out int outReadSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsRead_32(inStreamRef, inReadSize, outBuffer, out outReadSize) : EdsRead_64(inStreamRef, inReadSize, outBuffer, out outReadSize);
+        }
 
         /// <summary>
         /// Reads data the size of inReadSize into the outBuffer buffer, starting at the current read or write position of the stream.
@@ -480,8 +770,16 @@ namespace EOSDigital.SDK
         /// <param name="outBuffer">Pointer to the user-supplied buffer that is to receive the data read from the stream.</param>
         /// <param name="outReadSize">The actually read number of bytes.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsRead(IntPtr inStreamRef, long inReadSize, IntPtr outBuffer, out long outReadSize);
+        [DllImport(DllPath32, EntryPoint = "EdsRead")]
+        public extern static ErrorCode EdsRead_32(IntPtr inStreamRef, long inReadSize, IntPtr outBuffer, out long outReadSize);
+
+        [DllImport(DllPath64, EntryPoint = "EdsRead")]
+        public extern static ErrorCode EdsRead_64(IntPtr inStreamRef, long inReadSize, IntPtr outBuffer, out long outReadSize);
+        
+        public static ErrorCode EdsRead(IntPtr inStreamRef, long inReadSize, IntPtr outBuffer, out long outReadSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsRead_32(inStreamRef, inReadSize, outBuffer, out outReadSize) : EdsRead_64(inStreamRef, inReadSize, outBuffer, out outReadSize);
+        }
 
         /// <summary>
         /// Writes data of a designated buffer to the current read or write position of the stream.
@@ -492,9 +790,16 @@ namespace EOSDigital.SDK
         /// <param name="inBuffer">A pointer to the user-supplied buffer that contains the data to be written (in number of bytes)</param>
         /// <param name="outWrittenSize"></param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsWrite(IntPtr inStreamRef, int inWriteSize, IntPtr inBuffer, out int outWrittenSize);
+        [DllImport(DllPath32, EntryPoint = "EdsWrite")]
+        public extern static ErrorCode EdsWrite_32(IntPtr inStreamRef, int inWriteSize, IntPtr inBuffer, out int outWrittenSize);
 
+        [DllImport(DllPath64, EntryPoint = "EdsWrite")]
+        public extern static ErrorCode EdsWrite_64(IntPtr inStreamRef, int inWriteSize, IntPtr inBuffer, out int outWrittenSize);
+
+        public static ErrorCode EdsWrite(IntPtr inStreamRef, int inWriteSize, IntPtr inBuffer, out int outWrittenSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsWrite_32(inStreamRef, inWriteSize, inBuffer, out outWrittenSize) : EdsWrite_64(inStreamRef, inWriteSize, inBuffer, out outWrittenSize);
+        }
         /// <summary>
         /// Writes data of a designated buffer to the current read or write position of the stream.
         /// <para>USE ONLY WITH SDK VERSION &gt;=3.4</para>
@@ -504,8 +809,16 @@ namespace EOSDigital.SDK
         /// <param name="inBuffer">A pointer to the user-supplied buffer that contains the data to be written (in number of bytes)</param>
         /// <param name="outWrittenSize"></param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsWrite(IntPtr inStreamRef, long inWriteSize, IntPtr inBuffer, out long outWrittenSize);
+        [DllImport(DllPath32, EntryPoint = "EdsWrite")]
+        public extern static ErrorCode EdsWrite_32(IntPtr inStreamRef, long inWriteSize, IntPtr inBuffer, out long outWrittenSize);
+
+        [DllImport(DllPath64, EntryPoint = "EdsWrite")]
+        public extern static ErrorCode EdsWrite_64(IntPtr inStreamRef, long inWriteSize, IntPtr inBuffer, out long outWrittenSize);
+
+        public static ErrorCode EdsWrite(IntPtr inStreamRef, long inWriteSize, IntPtr inBuffer, out long outWrittenSize)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsWrite_32(inStreamRef, inWriteSize, inBuffer, out outWrittenSize) : EdsWrite_64(inStreamRef, inWriteSize, inBuffer, out outWrittenSize);
+        }
 
         /// <summary>
         /// Moves the read or write position of the stream (that is, the file position indicator)
@@ -515,8 +828,16 @@ namespace EOSDigital.SDK
         /// <param name="inSeekOffset">Number of bytes to move the pointer.</param>
         /// <param name="inSeekOrigin">Pointer movement mode.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSeek(IntPtr inStreamRef, int inSeekOffset, SeekOrigin inSeekOrigin);
+        [DllImport(DllPath32, EntryPoint = "EdsSeek")]
+        public extern static ErrorCode EdsSeek_32(IntPtr inStreamRef, int inSeekOffset, SeekOrigin inSeekOrigin);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSeek")]
+        public extern static ErrorCode EdsSeek_64(IntPtr inStreamRef, int inSeekOffset, SeekOrigin inSeekOrigin);
+
+        public static ErrorCode EdsSeek(IntPtr inStreamRef, int inSeekOffset, SeekOrigin inSeekOrigin)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSeek_32(inStreamRef, inSeekOffset, inSeekOrigin) : EdsSeek_64(inStreamRef, inSeekOffset, inSeekOrigin);
+        }
 
         /// <summary>
         /// Moves the read or write position of the stream (that is, the file position indicator)
@@ -526,8 +847,16 @@ namespace EOSDigital.SDK
         /// <param name="inSeekOffset">Number of bytes to move the pointer.</param>
         /// <param name="inSeekOrigin">Pointer movement mode.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSeek(IntPtr inStreamRef, long inSeekOffset, SeekOrigin inSeekOrigin);
+        [DllImport(DllPath32, EntryPoint = "EdsSeek")]
+        public extern static ErrorCode EdsSeek_32(IntPtr inStreamRef, long inSeekOffset, SeekOrigin inSeekOrigin);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSeek")]
+        public extern static ErrorCode EdsSeek_64(IntPtr inStreamRef, long inSeekOffset, SeekOrigin inSeekOrigin);
+
+        public static ErrorCode EdsSeek(IntPtr inStreamRef, long inSeekOffset, SeekOrigin inSeekOrigin)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSeek_32(inStreamRef, inSeekOffset, inSeekOrigin) : EdsSeek_64(inStreamRef, inSeekOffset, inSeekOrigin);
+        }
 
         /// <summary>
         /// Gets the current read or write position of the stream (that is, the file position indicator)
@@ -536,8 +865,16 @@ namespace EOSDigital.SDK
         /// <param name="inStreamRef">The reference of the stream or image.</param>
         /// <param name="outPosition">The current stream pointer.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetPosition(IntPtr inStreamRef, out int outPosition);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPosition")]
+        public extern static ErrorCode EdsGetPosition_32(IntPtr inStreamRef, out int outPosition);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPosition")]
+        public extern static ErrorCode EdsGetPosition_64(IntPtr inStreamRef, out int outPosition);
+
+        public static ErrorCode EdsGetPosition(IntPtr inStreamRef, out int outPosition)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPosition_32(inStreamRef, out outPosition) : EdsGetPosition_64(inStreamRef, out outPosition);
+        }
 
         /// <summary>
         /// Gets the current read or write position of the stream (that is, the file position indicator)
@@ -546,8 +883,16 @@ namespace EOSDigital.SDK
         /// <param name="inStreamRef">The reference of the stream or image.</param>
         /// <param name="outPosition">The current stream pointer.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetPosition(IntPtr inStreamRef, out long outPosition);
+        [DllImport(DllPath32, EntryPoint = "EdsGetPosition")]
+        public extern static ErrorCode EdsGetPosition_32(IntPtr inStreamRef, out long outPosition);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetPosition")]
+        public extern static ErrorCode EdsGetPosition_64(IntPtr inStreamRef, out long outPosition);
+
+        public static ErrorCode EdsGetPosition(IntPtr inStreamRef, out long outPosition)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetPosition_32(inStreamRef, out outPosition) : EdsGetPosition_64(inStreamRef, out outPosition);
+        }
 
         /// <summary>
         /// Gets the stream size.
@@ -556,8 +901,16 @@ namespace EOSDigital.SDK
         /// <param name="inStreamRef">The reference of the stream or image.</param>
         /// <param name="outLength">The length of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetLength(IntPtr inStreamRef, out int outLength);
+        [DllImport(DllPath32, EntryPoint = "EdsGetLength")]
+        public extern static ErrorCode EdsGetLength_32(IntPtr inStreamRef, out int outLength);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetLength")]
+        public extern static ErrorCode EdsGetLength_64(IntPtr inStreamRef, out int outLength);
+
+        public static ErrorCode EdsGetLength(IntPtr inStreamRef, out int outLength)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetLength_32(inStreamRef, out outLength) : EdsGetLength_64(inStreamRef, out outLength);
+        }
 
         /// <summary>
         /// Gets the stream size.
@@ -566,8 +919,16 @@ namespace EOSDigital.SDK
         /// <param name="inStreamRef">The reference of the stream or image.</param>
         /// <param name="outLength">The length of the stream.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetLength(IntPtr inStreamRef, out long outLength);
+        [DllImport(DllPath32, EntryPoint = "EdsGetLength")]
+        public extern static ErrorCode EdsGetLength_32(IntPtr inStreamRef, out long outLength);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetLength")]
+        public extern static ErrorCode EdsGetLength_64(IntPtr inStreamRef, out long outLength);
+
+        public static ErrorCode EdsGetLength(IntPtr inStreamRef, out long outLength)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetLength_32(inStreamRef, out outLength) : EdsGetLength_64(inStreamRef, out outLength);
+        }
 
         /// <summary>
         /// Copies data from the copy source stream to the copy destination stream.
@@ -580,8 +941,16 @@ namespace EOSDigital.SDK
         /// <param name="inWriteSize">The number of bytes to copy.</param>
         /// <param name="outStreamRef">The reference of the stream or image.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCopyData(IntPtr inStreamRef, int inWriteSize, IntPtr outStreamRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCopyData")]
+        public extern static ErrorCode EdsCopyData_32(IntPtr inStreamRef, int inWriteSize, IntPtr outStreamRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCopyData")]
+        public extern static ErrorCode EdsCopyData_64(IntPtr inStreamRef, int inWriteSize, IntPtr outStreamRef);
+
+        public static ErrorCode EdsCopyData(IntPtr inStreamRef, int inWriteSize, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCopyData_32(inStreamRef, inWriteSize, outStreamRef) : EdsCopyData_64(inStreamRef, inWriteSize, outStreamRef);
+        }
 
         /// <summary>
         /// Copies data from the copy source stream to the copy destination stream.
@@ -594,9 +963,16 @@ namespace EOSDigital.SDK
         /// <param name="inWriteSize">The number of bytes to copy.</param>
         /// <param name="outStreamRef">The reference of the stream or image.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCopyData(IntPtr inStreamRef, long inWriteSize, IntPtr outStreamRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCopyData")]
+        public extern static ErrorCode EdsCopyData_32(IntPtr inStreamRef, long inWriteSize, IntPtr outStreamRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCopyData")]
+        public extern static ErrorCode EdsCopyData_64(IntPtr inStreamRef, long inWriteSize, IntPtr outStreamRef);
+
+        public static ErrorCode EdsCopyData(IntPtr inStreamRef, long inWriteSize, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCopyData_32(inStreamRef, inWriteSize, outStreamRef) : EdsCopyData_64(inStreamRef, inWriteSize, outStreamRef);
+        }
         #endregion
 
         #region Image Handling
@@ -611,9 +987,16 @@ namespace EOSDigital.SDK
         /// <param name="inStreamRef">The reference of the stream.</param>
         /// <param name="outImageRef">The reference of the image.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateImageRef(IntPtr inStreamRef, out IntPtr outImageRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateImageRef")]
+        public extern static ErrorCode EdsCreateImageRef_32(IntPtr inStreamRef, out IntPtr outImageRef);
 
+        [DllImport(DllPath64, EntryPoint = "EdsCreateImageRef")]
+        public extern static ErrorCode EdsCreateImageRef_64(IntPtr inStreamRef, out IntPtr outImageRef);
+
+        public static ErrorCode EdsCreateImageRef(IntPtr inStreamRef, out IntPtr outImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateImageRef_32(inStreamRef, out outImageRef) : EdsCreateImageRef_64(inStreamRef, out outImageRef);
+        }
         /// <summary>
         /// Gets image information from a designated image object.
         /// Here, image information means the image width and height, number of color components, resolution, and effective image area.
@@ -625,8 +1008,16 @@ namespace EOSDigital.SDK
         /// </param>
         /// <param name="outImageInfo">Stores the image information designated in inImageSource</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetImageInfo(IntPtr inImageRef, ImageSource inImageSource, out ImageInfo outImageInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetImageInfo")]
+        public extern static ErrorCode EdsGetImageInfo_32(IntPtr inImageRef, ImageSource inImageSource, out ImageInfo outImageInfo);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetImageInfo")]
+        public extern static ErrorCode EdsGetImageInfo_64(IntPtr inImageRef, ImageSource inImageSource, out ImageInfo outImageInfo);
+
+        public static ErrorCode EdsGetImageInfo(IntPtr inImageRef, ImageSource inImageSource, out ImageInfo outImageInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetImageInfo_32(inImageRef, inImageSource, out outImageInfo) : EdsGetImageInfo_64(inImageRef, inImageSource, out outImageInfo);
+        }
 
         /// <summary>
         /// Gets designated image data from an image file, in the form of a designated rectangle. 
@@ -646,8 +1037,16 @@ namespace EOSDigital.SDK
         /// <param name="inDstSize">Designate the rectangle size for output.</param>
         /// <param name="outStreamRef">Designate the memory or file stream for output of the image.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetImage(IntPtr inImageRef, ImageSource inImageSource, TargetImageType inImageType, Rectangle inSrcRect, Size inDstSize, IntPtr outStreamRef);
+        [DllImport(DllPath32, EntryPoint = "EdsGetImage")]
+        public extern static ErrorCode EdsGetImage_32(IntPtr inImageRef, ImageSource inImageSource, TargetImageType inImageType, Rectangle inSrcRect, Size inDstSize, IntPtr outStreamRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetImage")]
+        public extern static ErrorCode EdsGetImage_64(IntPtr inImageRef, ImageSource inImageSource, TargetImageType inImageType, Rectangle inSrcRect, Size inDstSize, IntPtr outStreamRef);
+
+        public static ErrorCode EdsGetImage(IntPtr inImageRef, ImageSource inImageSource, TargetImageType inImageType, Rectangle inSrcRect, Size inDstSize, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetImage_32(inImageRef, inImageSource, inImageType, inSrcRect, inDstSize, outStreamRef) : EdsGetImage_64(inImageRef, inImageSource, inImageType, inSrcRect, inDstSize, outStreamRef);
+        }
 
         /// <summary>
         /// Saves as a designated image type after RAW processing.
@@ -658,8 +1057,16 @@ namespace EOSDigital.SDK
         /// <param name="inSaveSetting">Designate saving options, such as JPEG image quality.</param>
         /// <param name="outStreamRef">Specifies the output file stream. The memory stream cannot be specified here.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSaveImage(IntPtr inImageRef, SaveImageType inImageType, SaveImageSetting inSaveSetting, IntPtr outStreamRef);
+        [DllImport(DllPath32, EntryPoint = "EdsSaveImage")]
+        public extern static ErrorCode EdsSaveImage_32(IntPtr inImageRef, SaveImageType inImageType, SaveImageSetting inSaveSetting, IntPtr outStreamRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSaveImage")]
+        public extern static ErrorCode EdsSaveImage_64(IntPtr inImageRef, SaveImageType inImageType, SaveImageSetting inSaveSetting, IntPtr outStreamRef);
+
+        public static ErrorCode EdsSaveImage(IntPtr inImageRef, SaveImageType inImageType, SaveImageSetting inSaveSetting, IntPtr outStreamRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSaveImage_32(inImageRef, inImageType, inSaveSetting, outStreamRef) : EdsSaveImage_64(inImageRef, inImageType, inSaveSetting, outStreamRef);
+        }
 
         /// <summary>
         /// Switches a setting on and off for creation of an image cache in the SDK for a designated image object during extraction (processing) of the image data.
@@ -667,16 +1074,32 @@ namespace EOSDigital.SDK
         /// <param name="inImageRef">The reference of the image.</param>
         /// <param name="inUseCache">If cache image data or not. If set to false, the cached image data will be released.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCacheImage(IntPtr inImageRef, bool inUseCache);
+        [DllImport(DllPath32, EntryPoint = "EdsCacheImage")]
+        public extern static ErrorCode EdsCacheImage_32(IntPtr inImageRef, bool inUseCache);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCacheImage")]
+        public extern static ErrorCode EdsCacheImage_64(IntPtr inImageRef, bool inUseCache);
+
+        public static ErrorCode EdsCacheImage(IntPtr inImageRef, bool inUseCache)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCacheImage_32(inImageRef, inUseCache) : EdsCacheImage_64(inImageRef, inUseCache);
+        }
 
         /// <summary>
         /// Incorporates image object property changes (effected by means of SetPropertyData) in the stream.
         /// </summary>
         /// <param name="inImageRef">The reference of the image.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsReflectImageProperty(IntPtr inImageRef);
+        [DllImport(DllPath32, EntryPoint = "EdsReflectImageProperty")]
+        public extern static ErrorCode EdsReflectImageProperty_32(IntPtr inImageRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsReflectImageProperty")]
+        public extern static ErrorCode EdsReflectImageProperty_64(IntPtr inImageRef);
+
+        public static ErrorCode EdsReflectImageProperty(IntPtr inImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsReflectImageProperty_32(inImageRef) : EdsReflectImageProperty_64(inImageRef);
+        }
 
         #endregion
 
@@ -688,8 +1111,16 @@ namespace EOSDigital.SDK
         /// <param name="inCameraAddedHandler">Pointer to a callback function called when a camera is connected physically.</param>
         /// <param name="inContext">Specifies an application-defined value to be sent to the callback function pointed to by CallBack parameter.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetCameraAddedHandler(SDKCameraAddedHandler inCameraAddedHandler, IntPtr inContext);
+        [DllImport(DllPath32, EntryPoint = "EdsSetCameraAddedHandler")]
+        public extern static ErrorCode EdsSetCameraAddedHandler_32(SDKCameraAddedHandler inCameraAddedHandler, IntPtr inContext);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetCameraAddedHandler")]
+        public extern static ErrorCode EdsSetCameraAddedHandler_64(SDKCameraAddedHandler inCameraAddedHandler, IntPtr inContext);
+
+        public static ErrorCode EdsSetCameraAddedHandler(SDKCameraAddedHandler inCameraAddedHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetCameraAddedHandler_32(inCameraAddedHandler, inContext) : EdsSetCameraAddedHandler_64(inCameraAddedHandler, inContext);
+        }
 
         /// <summary>
         /// Registers a callback function for receiving status change notification events for property-related camera evens.
@@ -699,8 +1130,16 @@ namespace EOSDigital.SDK
         /// <param name="inPropertyEventHandler">Designate the pointer to the callback function for receiving property-related camera events.</param>
         /// <param name="inContext">Designate application information to be passed by mens of the callback funcion.Any data needed for your application can be passed.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetPropertyEventHandler(IntPtr inCameraRef, PropertyEventID inEvent, SDKPropertyEventHandler inPropertyEventHandler, IntPtr inContext);
+        [DllImport(DllPath32, EntryPoint = "EdsSetPropertyEventHandler")]
+        public extern static ErrorCode EdsSetPropertyEventHandler_32(IntPtr inCameraRef, PropertyEventID inEvent, SDKPropertyEventHandler inPropertyEventHandler, IntPtr inContext);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetPropertyEventHandler")]
+        public extern static ErrorCode EdsSetPropertyEventHandler_64(IntPtr inCameraRef, PropertyEventID inEvent, SDKPropertyEventHandler inPropertyEventHandler, IntPtr inContext);
+
+        public static ErrorCode EdsSetPropertyEventHandler(IntPtr inCameraRef, PropertyEventID inEvent, SDKPropertyEventHandler inPropertyEventHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetPropertyEventHandler_32(inCameraRef, inEvent, inPropertyEventHandler, inContext) : EdsSetPropertyEventHandler_64(inCameraRef, inEvent, inPropertyEventHandler, inContext);
+        }
 
         /// <summary>
         /// Registers a callback function for receiving status change notification events for objects on a remote camera.
@@ -711,9 +1150,16 @@ namespace EOSDigital.SDK
         /// <param name="inObjectEventHandler">Designate the pointer to the callback function for receiving object-related camera events.</param>
         /// <param name="inContext">Passes inContext without modification, as designated as an SetObjectEventHandler argument.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetObjectEventHandler(IntPtr inCameraRef, ObjectEventID inEvent, SDKObjectEventHandler inObjectEventHandler, IntPtr inContext);
+        [DllImport(DllPath32, EntryPoint = "EdsSetObjectEventHandler")]
+        public extern static ErrorCode EdsSetObjectEventHandler_32(IntPtr inCameraRef, ObjectEventID inEvent, SDKObjectEventHandler inObjectEventHandler, IntPtr inContext);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSetObjectEventHandler")]
+        public extern static ErrorCode EdsSetObjectEventHandler_64(IntPtr inCameraRef, ObjectEventID inEvent, SDKObjectEventHandler inObjectEventHandler, IntPtr inContext);
+
+        public static ErrorCode EdsSetObjectEventHandler(IntPtr inCameraRef, ObjectEventID inEvent, SDKObjectEventHandler inObjectEventHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetObjectEventHandler_32(inCameraRef, inEvent, inObjectEventHandler, inContext) : EdsSetObjectEventHandler_64(inCameraRef, inEvent, inObjectEventHandler, inContext);
+        }
         /// <summary>
         /// Registers a callback function for receiving status change notification events for property states on a camera.
         /// </summary>
@@ -722,9 +1168,16 @@ namespace EOSDigital.SDK
         /// <param name="inStateEventHandler">Designate the pointer to the callback function for receiving events related to camera object states.</param>
         /// <param name="inContext">Designate application information to be passed by means of the callback function. Any data needed for the application can be passed.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetCameraStateEventHandler(IntPtr inCameraRef, StateEventID inEvent, SDKStateEventHandler inStateEventHandler, IntPtr inContext);
+        [DllImport(DllPath32, EntryPoint = "EdsSetCameraStateEventHandler")]
+        public extern static ErrorCode EdsSetCameraStateEventHandler_32(IntPtr inCameraRef, StateEventID inEvent, SDKStateEventHandler inStateEventHandler, IntPtr inContext);
 
+        [DllImport(DllPath64, EntryPoint = "EdsSetCameraStateEventHandler")]
+        public extern static ErrorCode EdsSetCameraStateEventHandler_64(IntPtr inCameraRef, StateEventID inEvent, SDKStateEventHandler inStateEventHandler, IntPtr inContext);
+
+        public static ErrorCode EdsSetCameraStateEventHandler(IntPtr inCameraRef, StateEventID inEvent, SDKStateEventHandler inStateEventHandler, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetCameraStateEventHandler_32(inCameraRef, inEvent, inStateEventHandler, inContext) : EdsSetCameraStateEventHandler_64(inCameraRef, inEvent, inStateEventHandler, inContext);
+        }
         /// <summary>
         /// Register a progress callback function. 
         /// An event is received as notification of progress during processing that takes a relatively long time, such as downloading files from a remote camera. 
@@ -739,8 +1192,16 @@ namespace EOSDigital.SDK
         /// Any information required for the program may be added.
         /// </param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsSetProgressCallback(IntPtr inRef, SDKProgressCallback inProgressFunc, ProgressOption inProgressOption, IntPtr inContext);
+        [DllImport(DllPath32, EntryPoint = "EdsSetProgressCallback")]
+        public extern static ErrorCode EdsSetProgressCallback_32(IntPtr inRef, SDKProgressCallback inProgressFunc, ProgressOption inProgressOption, IntPtr inContext);
+
+        [DllImport(DllPath64, EntryPoint = "EdsSetProgressCallback")]
+        public extern static ErrorCode EdsSetProgressCallback_64(IntPtr inRef, SDKProgressCallback inProgressFunc, ProgressOption inProgressOption, IntPtr inContext);
+
+        public static ErrorCode EdsSetProgressCallback(IntPtr inRef, SDKProgressCallback inProgressFunc, ProgressOption inProgressOption, IntPtr inContext)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsSetProgressCallback_32(inRef, inProgressFunc, inProgressOption, inContext) : EdsSetProgressCallback_64(inRef, inProgressFunc, inProgressOption, inContext);
+        }
 
         /// <summary>
         /// This function acquires an event. 
@@ -748,8 +1209,17 @@ namespace EOSDigital.SDK
         /// the event from a camera.
         /// </summary>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetEvent();
+        [DllImport(DllPath32, EntryPoint = "EdsGetEvent")]
+        public extern static ErrorCode EdsGetEvent_32();
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetEvent")]
+        public extern static ErrorCode EdsGetEvent_64();
+
+        public static ErrorCode EdsGetEvent()
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetEvent_32() : EdsGetEvent_64();
+        }
+
 
         #endregion
 
@@ -761,8 +1231,17 @@ namespace EOSDigital.SDK
         /// <param name="inStreamRef">The stream reference which opened to get EVF JPEG image.</param>
         /// <param name="outEvfImageRef">The EVFData reference.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsCreateEvfImageRef(IntPtr inStreamRef, out IntPtr outEvfImageRef);
+        [DllImport(DllPath32, EntryPoint = "EdsCreateEvfImageRef")]
+        public extern static ErrorCode EdsCreateEvfImageRef_32(IntPtr inStreamRef, out IntPtr outEvfImageRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsCreateEvfImageRef")]
+        public extern static ErrorCode EdsCreateEvfImageRef_64(IntPtr inStreamRef, out IntPtr outEvfImageRef);
+
+        public static ErrorCode EdsCreateEvfImageRef(IntPtr inStreamRef, out IntPtr outEvfImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsCreateEvfImageRef_32(inStreamRef, out outEvfImageRef) : EdsCreateEvfImageRef_64(inStreamRef, out outEvfImageRef);
+        }
+
 
         /// <summary>
         /// Downloads the live view image data set for a camera currently in live view mode.
@@ -777,8 +1256,16 @@ namespace EOSDigital.SDK
         /// <param name="inCameraRef">The camera reference.</param>
         /// <param name="outEvfImageRef">The EVFData reference.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsDownloadEvfImage(IntPtr inCameraRef, IntPtr outEvfImageRef);
+        [DllImport(DllPath32, EntryPoint = "EdsDownloadEvfImage")]
+        public extern static ErrorCode EdsDownloadEvfImage_32(IntPtr inCameraRef, IntPtr outEvfImageRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsDownloadEvfImage")]
+        public extern static ErrorCode EdsDownloadEvfImage_64(IntPtr inCameraRef, IntPtr outEvfImageRef);
+
+        public static ErrorCode EdsDownloadEvfImage(IntPtr inCameraRef, IntPtr outEvfImageRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsDownloadEvfImage_32(inCameraRef, outEvfImageRef) : EdsDownloadEvfImage_64(inCameraRef, outEvfImageRef);
+        }
 
         #endregion
 
@@ -789,8 +1276,16 @@ namespace EOSDigital.SDK
         /// </summary>
         /// <param name="outCameraListRef">Pointer to the camera-list.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetCameraList(out IntPtr outCameraListRef);
+        [DllImport(DllPath32, EntryPoint = "EdsGetCameraList")]
+        public extern static ErrorCode EdsGetCameraList_32(out IntPtr outCameraListRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetCameraList")]
+        public extern static ErrorCode EdsGetCameraList_64(out IntPtr outCameraListRef);
+
+        public static ErrorCode EdsGetCameraList(out IntPtr outCameraListRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetCameraList_32(out outCameraListRef) : EdsGetCameraList_64(out outCameraListRef);
+        }
 
         /// <summary>
         /// Gets device information, such as the device name.
@@ -799,16 +1294,32 @@ namespace EOSDigital.SDK
         /// <param name="inCameraRef">The reference of the camera.</param>
         /// <param name="outDeviceInfo">Information as device of camera.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetDeviceInfo(IntPtr inCameraRef, out DeviceInfo outDeviceInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetDeviceInfo")]
+        public extern static ErrorCode EdsGetDeviceInfo_32(IntPtr inCameraRef, out DeviceInfo outDeviceInfo);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetDeviceInfo")]
+        public extern static ErrorCode EdsGetDeviceInfo_64(IntPtr inCameraRef, out DeviceInfo outDeviceInfo);
+
+        public static ErrorCode EdsGetDeviceInfo(IntPtr inCameraRef, out DeviceInfo outDeviceInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetDeviceInfo_32(inCameraRef, out outDeviceInfo) : EdsGetDeviceInfo_64(inCameraRef, out outDeviceInfo);
+        }
 
         /// <summary>
         /// Increments the reference counter of existing objects.
         /// </summary>
         /// <param name="inRef">The reference for the item</param>
         /// <returns>The number of references for this pointer or 0xFFFFFFFF for an error</returns>
-        [DllImport(DllPath)]
-        public extern static int EdsRetain(IntPtr inRef);
+        [DllImport(DllPath32, EntryPoint = "EdsRetain")]
+        public extern static int EdsRetain_32(IntPtr inRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsRetain")]
+        public extern static int EdsRetain_64(IntPtr inRef);
+
+        public static int EdsRetain(IntPtr inRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsRetain_32(inRef) : EdsRetain_64(inRef);
+        }
 
         /// <summary>
         /// Decrements the reference counter of an object.
@@ -816,8 +1327,16 @@ namespace EOSDigital.SDK
         /// </summary>
         /// <param name="inRef">The reference of the item.</param>
         /// <returns>The number of references for this pointer or 0xFFFFFFFF for an error</returns>
-        [DllImport(DllPath)]
-        public extern static int EdsRelease(IntPtr inRef);
+        [DllImport(DllPath32, EntryPoint = "EdsRelease")]
+        public extern static int EdsRelease_32(IntPtr inRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsRelease")]
+        public extern static int EdsRelease_64(IntPtr inRef);
+
+        public static int EdsRelease(IntPtr inRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsRelease_32(inRef) : EdsRelease_64(inRef);
+        }
 
         /// <summary>
         /// Gets the number of child objects of the designated object.
@@ -826,8 +1345,16 @@ namespace EOSDigital.SDK
         /// <param name="inRef">The reference of the list</param>
         /// <param name="outCount">Number of elements in this list.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetChildCount(IntPtr inRef, out int outCount);
+        [DllImport(DllPath32, EntryPoint = "EdsGetChildCount")]
+        public extern static ErrorCode EdsGetChildCount_32(IntPtr inRef, out int outCount);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetChildCount")]
+        public extern static ErrorCode EdsGetChildCount_64(IntPtr inRef, out int outCount);
+
+        public static ErrorCode EdsGetChildCount(IntPtr inRef, out int outCount)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetChildCount_32(inRef, out outCount) : EdsGetChildCount_64(inRef, out outCount);
+        }
 
         /// <summary>
         /// Gets an indexed child object of the designated object.
@@ -836,8 +1363,16 @@ namespace EOSDigital.SDK
         /// <param name="inIndex">The index that is passes in (zero based)</param>
         /// <param name="outRef">The pointer which receives reference of the specific index.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetChildAtIndex(IntPtr inRef, int inIndex, out IntPtr outRef);
+        [DllImport(DllPath32, EntryPoint = "EdsGetChildAtIndex")]
+        public extern static ErrorCode EdsGetChildAtIndex_32(IntPtr inRef, int inIndex, out IntPtr outRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetChildAtIndex")]
+        public extern static ErrorCode EdsGetChildAtIndex_64(IntPtr inRef, int inIndex, out IntPtr outRef);
+
+        public static ErrorCode EdsGetChildAtIndex(IntPtr inRef, int inIndex, out IntPtr outRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetChildAtIndex_32(inRef, inIndex, out outRef) : EdsGetChildAtIndex_64(inRef, inIndex, out outRef);
+        }
 
         /// <summary>
         /// Gets the parent object of the designated object.
@@ -845,8 +1380,16 @@ namespace EOSDigital.SDK
         /// <param name="inRef">The reference of the item.</param>
         /// <param name="outParentRef">The pointer which receives reference.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        public extern static ErrorCode EdsGetParent(IntPtr inRef, out IntPtr outParentRef);
+        [DllImport(DllPath32, EntryPoint = "EdsGetParent")]
+        public extern static ErrorCode EdsGetParent_32(IntPtr inRef, out IntPtr outParentRef);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetParent")]
+        public extern static ErrorCode EdsGetParent_64(IntPtr inRef, out IntPtr outParentRef);
+
+        public static ErrorCode EdsGetParent(IntPtr inRef, out IntPtr outParentRef)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetParent_32(inRef, out outParentRef) : EdsGetParent_64(inRef, out outParentRef);
+        }
 
         #endregion
 
@@ -884,8 +1427,17 @@ namespace EOSDigital.SDK
         /// <param name="inDirItemRef">The reference of the directory item.</param>
         /// <param name="outDirItemInfo">Information of the directory item.</param>
         /// <returns>Any of the SDK errors</returns>
-        [DllImport(DllPath)]
-        private extern static ErrorCode EdsGetDirectoryItemInfo(IntPtr inDirItemRef, out DirectoryItemInfo_3_4 outDirItemInfo);
+        [DllImport(DllPath32, EntryPoint = "EdsGetDirectoryItemInfo")]
+        private extern static ErrorCode EdsGetDirectoryItemInfo_32(IntPtr inDirItemRef, out DirectoryItemInfo_3_4 outDirItemInfo);
+
+        [DllImport(DllPath64, EntryPoint = "EdsGetDirectoryItemInfo")]
+        private extern static ErrorCode EdsGetDirectoryItemInfo_64(IntPtr inDirItemRef, out DirectoryItemInfo_3_4 outDirItemInfo);
+
+        public static ErrorCode EdsGetDirectoryItemInfo(IntPtr inDirItemRef, out DirectoryItemInfo_3_4 outDirItemInfo)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? EdsGetDirectoryItemInfo_32(inDirItemRef, out outDirItemInfo) : EdsGetDirectoryItemInfo_64(inDirItemRef, out outDirItemInfo);
+        }
+
 
         #endregion
 

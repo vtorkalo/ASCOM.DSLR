@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Threading.Tasks;
 using EOSDigital.SDK;
+using Logging;
 
 namespace EOSDigital.API
 {
@@ -347,6 +348,8 @@ namespace EOSDigital.API
         /// event is null with a non-severe error, it will be thrown as an exception</exception>
         public static void CheckError(object sender, ErrorCode errorCode)
         {
+            Logger.WriteTraceMessage("CheckError(object, errorCode) errorCode = '" + errorCode.ToString() + "'");
+
             if (errorCode == ErrorCode.OK) return;
             else
             {
@@ -355,9 +358,16 @@ namespace EOSDigital.API
                 var NonSevereErrorHappenedEvent = NonSevereErrorHappened;
                 if (!Severe) Severe = NonSevereErrorHappenedEvent == null;
 
-                if (Severe) throw new SDKException(errorCode);
+                if (Severe)
+                {
+                    Logger.WriteTraceMessage("CheckError, throwing SKDException");
+
+                    throw new SDKException(errorCode);
+                }
                 else
                 {
+                    Logger.WriteTraceMessage("CheckError, invoking '" + sender.ToString() + "'");
+
                     Task.Run(() => NonSevereErrorHappenedEvent.Invoke(sender, errorCode));
                 }
             }
@@ -370,6 +380,8 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">If <paramref name="errorCode"/> is something other than <see cref="ErrorCode.OK"/></exception>
         public static void CheckError(ErrorCode errorCode)
         {
+            Logger.WriteTraceMessage("CheckError(errorCode) errorCode = '" + errorCode.ToString() + "'");
+
             if (errorCode != ErrorCode.OK) throw new SDKException(errorCode);
         }
 
@@ -381,6 +393,8 @@ namespace EOSDigital.API
         /// <returns>The number of references for the pointer that was used for the SDK call</returns>
         public static int CheckError(int countOrError)
         {
+            Logger.WriteTraceMessage("CheckError(countOrError) countOrError = '" + countOrError.ToString() + "'");
+
             if (countOrError == unchecked((int) 0xFFFFFFFF)) throw new SDKException(ErrorCode.INVALID_HANDLE);
             else return countOrError;
         }
@@ -394,6 +408,7 @@ namespace EOSDigital.API
         /// <returns>The number of references for the pointer that was used for the SDK call</returns>
         public static int CheckError(object sender, int countOrError)
         {
+            Logger.WriteTraceMessage("CheckError(object, countOrError) errorCode = '" + countOrError.ToString() + "'");
             return CheckError(countOrError);
         }
 

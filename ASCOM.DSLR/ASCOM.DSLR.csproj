@@ -56,6 +56,7 @@
     <OutputPath>..\bin\</OutputPath>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -97,9 +98,13 @@
     <Compile Include="Classes\CameraSettings.cs" />
     <Compile Include="Classes\CameraSettingsProvider.cs" />
     <Compile Include="Classes\CanonSdkCamera.cs" />
+    <Compile Include="Classes\DigiCamControlCamera.cs" />
     <Compile Include="Classes\ErrorMessages.cs" />
     <Compile Include="Classes\ExifToolWrapper.cs" />
+    <Compile Include="Classes\PentaxCamera.cs" />
+    <Compile Include="Classes\SerialPortShutterRelease.cs" />
     <Compile Include="Driver.cs" />
+    <Compile Include="Enums\BinningMode.cs" />
     <Compile Include="Enums\CameraMode.cs" />
     <Compile Include="Enums\ImageFormat.cs" />
     <Compile Include="Enums\ConnectionMethod.cs" />
@@ -119,6 +124,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Classes\SensorSizes.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SetupDialogForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -152,13 +158,19 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="ASCOM.ico" />
-    <Content Include="EDSDK.dll">
+    <Content Include="SDK\X64\EDSDK.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDK\X86\EDSDK.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="exiftool.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="libraw.dll">
+    <Content Include="SDK\X64\libraw.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SDK\X86\libraw.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ReadMe.htm">
@@ -184,9 +196,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DigiCamControl\CameraControl.Devices\CameraControl.Devices.csproj">
+      <Project>{e8572d8b-c987-4d20-bd88-1f8925a64a82}</Project>
+      <Name>CameraControl.Devices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EDSDKLib\EDSDKLib.csproj">
       <Project>{15e99248-6161-46a4-9183-609ca62406a6}</Project>
       <Name>EDSDKLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ErrorLogging\Logging.csproj">
+      <Project>{7eb5d33d-e000-4766-9119-eda40d04af74}</Project>
+      <Name>Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\OTelescope.API\OTelescope.API.csproj">
       <Project>{b7e42253-59ab-4ce0-b1e7-43fc61f4cd07}</Project>
@@ -198,13 +218,17 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\GitInfo.2.0.11\build\GitInfo.targets" Condition="Exists('..\packages\GitInfo.2.0.11\build\GitInfo.targets')" />
+  <Import Project="..\packages\GitInfo.2.0.26\build\GitInfo.targets" Condition="Exists('..\packages\GitInfo.2.0.26\build\GitInfo.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitInfo.2.0.11\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitInfo.2.0.11\build\GitInfo.targets'))" />
+    <Error Condition="!Exists('..\packages\GitInfo.2.0.26\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitInfo.2.0.26\build\GitInfo.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

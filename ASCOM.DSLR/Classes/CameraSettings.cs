@@ -13,10 +13,12 @@ namespace ASCOM.DSLR.Classes
             TraceLog = true;
             CameraMode = CameraMode.RGGB;
             StorePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "ASCOM_DSLR");
+            SaveFile = false;
             IntegrationApi = ConnectionMethod.CanonSdk;
             Iso = 400;
             BackyardEosPort = 1491;
             LiveViewZoom = LiveViewZoom.Fit;
+            BinningMode = BinningMode.Sum;
             CameraModelsHistory = new List<CameraModel>();
         }
 
@@ -28,6 +30,8 @@ namespace ASCOM.DSLR.Classes
 
         public string StorePath { get; set; }
 
+        public bool SaveFile { get; set; }
+
         public short Iso { get; set; }
 
         public int BackyardEosPort { get; set; }
@@ -37,5 +41,14 @@ namespace ASCOM.DSLR.Classes
         public LiveViewZoom LiveViewZoom { get; set; }
 
         public List<CameraModel> CameraModelsHistory { get; set; }
+
+        public BinningMode BinningMode { get; set; }
+
+        public bool EnableBinning { get; set; }
+
+        public bool UseExternalShutter { get; set; }
+
+        public string ExternalShutterPortName { get; set; }
+
     }
 }

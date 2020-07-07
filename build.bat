@@ -1,4 +1,4 @@
-"C:\Program Files (x86)\MSBuild\14.0\Bin\msbuild.exe" "./ASCOM.DSLR.sln" /p:configuration=debug /property:Platform="x86"
+"C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild.exe" "./ASCOM.DSLR.sln" /p:configuration=debug
 powershell -NoLogo -NoProfile -Command (get-item -Path bin\ASCOM.DSLR.Camera.dll).VersionInfo.FileVersion>version.txt
 set /p VERSION=<version.txt
 del version.txt

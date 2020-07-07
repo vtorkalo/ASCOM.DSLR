@@ -78,6 +78,7 @@ namespace ASCOM.DSLR.Classes
         }
 
         public string StorePath { get; set; }
+        public bool SaveFile { get; set; }
         public double SensorTemperature { get; protected set; }
 
         public abstract CameraModel ScanCameras();
@@ -87,8 +88,13 @@ namespace ASCOM.DSLR.Classes
             var cameraModel = _cameraModelsHistory.FirstOrDefault(c => c?.Name == cameraDescription); //try get sensor params from history
             if (cameraModel == null)
             {
+                // TODO: handle an exception here!
+
                 var cameraModelDetector = new CameraModelDetector(new ImageDataProcessor());
                 cameraModel = cameraModelDetector.GetCameraModel((IDslrCamera)this, StorePath ?? Path.GetTempPath());//make test shot to determine height/width
+
+                // TODO: handle an exception here!
+
                 if (cameraModel != null)
                     _cameraModelsHistory.Add(cameraModel);
             }
@@ -98,7 +104,7 @@ namespace ASCOM.DSLR.Classes
 
         public short Iso
         {
-            get; set;
+            get;set;
         }
 
         public virtual short MinIso

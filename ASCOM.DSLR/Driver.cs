@@ -54,7 +54,7 @@ namespace ASCOM.DSLR
     /// ASCOM Camera Driver for DSLR.
     /// </summary>
     [ComVisible(true)]
-    [Guid("37206417-4b15-49f0-ae46-a1e52aa20c2e")]
+    //[Guid("37206417-4b15-49f0-ae46-a1e52aa20c2e")]
     [ClassInterface(ClassInterfaceType.None)]
     public partial class Camera : ICameraV2
     {
@@ -91,6 +91,9 @@ namespace ASCOM.DSLR
         /// the new settings are saved, otherwise the old values are reloaded.
         /// THIS IS THE ONLY PLACE WHERE SHOWING USER INTERFACE IS ALLOWED!
         /// </summary>
+        /// 
+
+
         public void SetupDialog()
         {
             Connected = false;
@@ -171,6 +174,9 @@ namespace ASCOM.DSLR
                 {
                     connectedState = true;
                     var previousModelHistory = CameraSettings.CameraModelsHistory.ToList();
+
+                    // TODO: add exception handling here, the camera may not connect!
+
                     ApiContainer.DslrCamera.ConnectCamera();
                     var model = ApiContainer.DslrCamera.CameraModel;
                     if (model != null && previousModelHistory.All(c => c.Name != model.Name))

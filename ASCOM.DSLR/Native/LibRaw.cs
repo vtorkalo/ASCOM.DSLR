@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Security;
-
+using System.IO;
 namespace ASCOM.DSLR.Native
 {
 
@@ -13,47 +13,141 @@ namespace ASCOM.DSLR.Native
         LIBRAW_OPIONS_NO_DATAERR_CALLBACK = 1 << 1
     }
 
+
     [SuppressUnmanagedCodeSecurity]
     internal static class NativeMethods
     {
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr libraw_init(LibRaw_constructor_flags flags);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_open_file(IntPtr data, string fileName);
+        public const string DllPath32 = "SDK/X86/libraw";
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_unpack(IntPtr data);
+        public const string DllPath64 = "SDK/X64/libraw";
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_raw2image(IntPtr data);
+        //public const string DllPath = "SDK/X64/libraw";
+        //public const string DllPath = "libraw";
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_subtract_black(IntPtr data);
+        [DllImport(DllPath32, EntryPoint = "libraw_init", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_init_32(LibRaw_constructor_flags flags);
 
+        [DllImport(DllPath64, EntryPoint = "libraw_init", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_init_64(LibRaw_constructor_flags flags);
+        
+        public static IntPtr libraw_init(LibRaw_constructor_flags flags)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_init_32(flags) : libraw_init_64(flags);
+        }
+        
+        [DllImport(DllPath32, EntryPoint = "libraw_open_file", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_open_file_32(IntPtr data, string fileName);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_close(IntPtr data);
+        [DllImport(DllPath64, EntryPoint = "libraw_open_file", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_open_file_64(IntPtr data, string fileName);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_dcraw_process(IntPtr lr);
+        public static int libraw_open_file(IntPtr data, string fileName)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_open_file_32(data, fileName) : libraw_open_file_64(data, fileName);
+        }
+        
+        [DllImport(DllPath32, EntryPoint = "libraw_unpack", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_unpack_32(IntPtr data);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr libraw_dcraw_make_mem_image(IntPtr data, out int errc);
+        [DllImport(DllPath64, EntryPoint = "libraw_unpack", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_unpack_64(IntPtr data);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_dcraw_clear_mem(IntPtr processed);
+        public static int libraw_unpack(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_unpack_32(data) : libraw_unpack_64(data);
+        }
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr libraw_set_exifparser_handler(IntPtr data, exif_parser_callback cb, IntPtr datap);
+        [DllImport(DllPath32, EntryPoint = "libraw_raw2image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_raw2image_32(IntPtr data);
 
+        [DllImport(DllPath64, EntryPoint = "libraw_raw2image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_raw2image_64(IntPtr data);
+
+        public static int libraw_raw2image(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_raw2image_32(data) : libraw_raw2image_64(data);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_subtract_black", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_subtract_black_32(IntPtr data);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_subtract_black", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_subtract_black_64(IntPtr data);
+
+        public static int libraw_subtract_black(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_subtract_black_32(data) : libraw_subtract_black_64(data);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_close", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_close_32(IntPtr data);
+                
+        [DllImport(DllPath64, EntryPoint = "libraw_close", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_close_64(IntPtr data);
+
+        public static int libraw_close(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_close_32(data) : libraw_close_64(data);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_dcraw_process", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_process_32(IntPtr lr);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_dcraw_process", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_process_64(IntPtr lr);
+
+        public static int libraw_dcraw_process(IntPtr lr)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_dcraw_process_32(lr) : libraw_dcraw_process_64(lr);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_dcraw_make_mem_image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_dcraw_make_mem_image_32(IntPtr data, out int errc);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_dcraw_make_mem_image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_dcraw_make_mem_image_64(IntPtr data, out int errc);
+
+        public static IntPtr libraw_dcraw_make_mem_image(IntPtr data, out int errc)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_dcraw_make_mem_image_32(data, out errc) : libraw_dcraw_make_mem_image_64(data, out errc);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_dcraw_clear_mem", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_clear_mem_32(IntPtr processed);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_dcraw_clear_mem", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_clear_mem_64(IntPtr processed);
+
+        public static int libraw_dcraw_clear_mem(IntPtr processed)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_dcraw_clear_mem_32(processed) : libraw_dcraw_clear_mem_64(processed);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_set_exifparser_handler", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_set_exifparser_handler_32(IntPtr data, exif_parser_callback cb, IntPtr datap);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_set_exifparser_handler", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_set_exifparser_handler_64(IntPtr data, exif_parser_callback cb, IntPtr datap);
+
+        public static IntPtr libraw_dcraw_clear_mem(IntPtr data, exif_parser_callback cb, IntPtr datap)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_set_exifparser_handler_32(data, cb, datap) : libraw_set_exifparser_handler_64(data, cb, datap);
+        }
 
         public delegate IntPtr exif_parser_callback(IntPtr context, int tag, int type, int len, uint ord, IntPtr ifp);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_COLOR(IntPtr data, int row, int col);
-    }
+        [DllImport(DllPath32, EntryPoint = "libraw_COLOR", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_COLOR_32(IntPtr data, int row, int col);
 
+        [DllImport(DllPath64, EntryPoint = "libraw_COLOR", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_COLOR_64(IntPtr data, int row, int col);
+
+        public static int libraw_COLOR(IntPtr data, int row, int col)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_COLOR_32(data, row, col) : libraw_COLOR_64(data, row, col);
+        }
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_data_t

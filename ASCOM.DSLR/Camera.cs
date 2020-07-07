@@ -5,6 +5,7 @@ using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using System;
 using System.Collections;
+using Logging;
 
 namespace ASCOM.DSLR
 {
@@ -37,6 +38,8 @@ namespace ASCOM.DSLR
 
         private static void CreateCamera()
         {
+            Logger.WriteTraceMessage("CreateCamera(), _cameraSettings.IntegrationAPI = '" + _cameraSettings.IntegrationApi.ToString() + "'");
+
             if (_cameraSettings.IntegrationApi == ConnectionMethod.CanonSdk)
             {
                 _dslrCamera = new CanonSdkCamera(_cameraSettings.CameraModelsHistory);
@@ -46,6 +49,14 @@ namespace ASCOM.DSLR
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort, _cameraSettings.CameraModelsHistory);
+            }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
+            {
+                _dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
+            }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Pentax)
+            {
+                _dslrCamera = new PentaxCamera(_cameraSettings.CameraModelsHistory);
             }
         }
 
@@ -80,6 +91,8 @@ namespace ASCOM.DSLR
 
             BinX = 1;
             BinY = 1;
+
+
         }
 
         private void _dslrCamera_ImageReady(object sender, ImageReadyEventArgs args)
@@ -207,9 +220,13 @@ namespace ASCOM.DSLR
         {
             camera.Iso = Gain > 0 ? Gain : settings.Iso;
             camera.StorePath = settings.StorePath;
+            camera.SaveFile = settings.SaveFile;
+
+            
 
             switch (CameraSettings.CameraMode)
             {
+
                 case CameraMode.RGGB:
                 case CameraMode.Color16:
                     camera.ImageFormat = ImageFormat.RAW;
@@ -218,6 +235,10 @@ namespace ASCOM.DSLR
                     camera.ImageFormat = ImageFormat.JPEG;
                     break;
             }
+
+            camera.UseExternalShutter = settings.UseExternalShutter;
+            camera.ExternalShutterPort = settings.ExternalShutterPortName;
+
         }
 
         private void PrepareCameraImageArray(string rawFileName)
@@ -234,6 +255,10 @@ namespace ASCOM.DSLR
             else if (CameraSettings.CameraMode == Enums.CameraMode.RGGB)
             {
                 cameraImageArray = _imageDataProcessor.ReadRaw(rawFileName);
+            }
+            if (BinX > 1 || BinY > 1)
+            {
+                cameraImageArray = _imageDataProcessor.Binning(cameraImageArray, BinX, BinY, CameraSettings.BinningMode);
             }
 
             cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
@@ -329,17 +354,27 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return ApiContainer.DslrCamera.Iso;
+                if (ApiContainer.DslrCamera.Iso == 0)
+                { return CameraSettings.Iso; } else
+                { return ApiContainer.DslrCamera.Iso; }
+
+                //return ApiContainer.DslrCamera.Iso;
             }
             set
             {
                 ApiContainer.DslrCamera.Iso = value;
+                CameraSettings.Iso = value;
             }
         }
 
+  
         public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
+        //public short GainMax { get; }
 
         public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
+        //public short GainMin { get; }
+
+        private ArrayList _gains;
 
         public ArrayList Gains
         {
@@ -349,7 +384,10 @@ namespace ASCOM.DSLR
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
                 throw new PropertyNotImplementedException("The Gains property is not implemented");
+                //return new ArrayList(ApiContainer.DslrCamera.IsoValues);
+
             }
+ 
         }
 
         public bool HasShutter { get { return true; } }
@@ -450,7 +488,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return 1;
+                return (short)(CameraSettings.EnableBinning ? 4 : 1);
             }
         }
 
@@ -508,15 +546,26 @@ namespace ASCOM.DSLR
             {
                 SensorType sensorType;
 
-                switch (CameraSettings.CameraMode)
+                if (CameraSettings.LiveViewCaptureMode)
                 {
-                    case CameraMode.Color16:
-                    case CameraMode.ColorJpg:
-                        sensorType = SensorType.Color;
-                        break;
-                    default:
-                        sensorType = SensorType.RGGB;
-                        break;
+                    sensorType = SensorType.Monochrome;
+                }
+                else
+                {
+                    switch (CameraSettings.CameraMode)
+                    {
+                        case CameraMode.RGGB:
+                            sensorType = CameraSettings.EnableBinning ? SensorType.Monochrome : SensorType.RGGB;
+                            //sensorType = SensorType.RGGB;
+                            break;
+                        case CameraMode.Color16:
+                        case CameraMode.ColorJpg:
+                            sensorType = SensorType.Color;
+                            break;
+                        default:
+                            sensorType = SensorType.RGGB;
+                            break;
+                    }
                 }
 
                 return sensorType;
@@ -531,6 +580,7 @@ namespace ASCOM.DSLR
             }
             set
             {
+                
             }
         }
 
