@@ -132,15 +132,8 @@
           <object class="GtkToggleAction" id="menu_buffer_window">
             <property name="active">True</property>
             <property name="name">menu_buffer_window</property>
-            <property name="label" translatable="yes">_Thumbnails</property>
+            <property name="label" translatable="yes">_Preview Buffer</property>
             <signal handler="menu_buffer_window_toggled_cb" name="toggled"/>
-          </object>
-        </child>
-        <child>
-          <object class="GtkToggleAction" id="menu_histogram_window">
-            <property name="name">menu_histogram_window</property>
-            <property name="label" translatable="yes">Thumbnail _Histogram</property>
-            <signal handler="menu_histogram_window_toggled_cb" name="toggled"/>
           </object>
         </child>
         <child>
@@ -149,6 +142,13 @@
             <property name="name">menu_settings_window</property>
             <property name="label" translatable="yes">_Settings Window</property>
             <signal handler="menu_settings_window_toggled_cb" name="toggled"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToggleAction" id="menu_histogram_window">
+            <property name="name">menu_histogram_window</property>
+            <property name="label" translatable="yes">_Histogram</property>
+            <signal handler="menu_histogram_window_toggled_cb" name="toggled"/>
           </object>
         </child>
         <child>
@@ -169,8 +169,19 @@
     <ui>
       <menubar name="menubar1">
         <menu action="menuitem1">
+<!--          <menuitem action="imagemenuitem1"/>
+          <menuitem action="imagemenuitem2"/>
+          <menuitem action="imagemenuitem3"/>
+          <menuitem action="imagemenuitem4"/>
+          <separator/> -->
           <menuitem action="menu_quit"/>
         </menu>
+<!--        <menu action="menuitem2">
+          <menuitem action="imagemenuitem6"/>
+          <menuitem action="imagemenuitem7"/>
+          <menuitem action="imagemenuitem8"/>
+          <menuitem action="imagemenuitem9"/>
+        </menu>-->
         <menu action="menuitem3">
           <menuitem action="menu_buffer_window"/>
           <menuitem action="menu_settings_window"/>
@@ -805,21 +816,6 @@ Library.
                 <property name="position">3</property>
               </packing>
             </child>
-            <child>
-              <object class="GtkButton" id="settings_button">
-                <property name="label" translatable="yes">Settings Info</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <signal handler="settings_button_clicked_cb" name="clicked"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">4</property>
-              </packing>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -997,7 +993,7 @@ Library.
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="n_rows">5</property>
+                            <property name="n_rows">4</property>
                             <property name="n_columns">2</property>
                             <property name="column_spacing">6</property>
                             <property name="row_spacing">2</property>
@@ -1020,7 +1016,7 @@ Library.
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="ec_label">
+                              <object class="GtkLabel" id="label19">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -1034,7 +1030,7 @@ Library.
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="aperture_label">
+                              <object class="GtkLabel" id="label1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -1060,7 +1056,7 @@ Library.
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="iso_label">
+                              <object class="GtkLabel" id="label5">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>

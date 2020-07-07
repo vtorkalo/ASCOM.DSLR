@@ -53,8 +53,6 @@ namespace ASCOM.DSLR.Interfaces
         ConnectionMethod IntegrationApi { get; }
 
         CameraModel CameraModel { get; }      
-
-        bool SaveFile { get; set; }
     }
 
     public class LiveViewImageReadyEventArgs : EventArgs

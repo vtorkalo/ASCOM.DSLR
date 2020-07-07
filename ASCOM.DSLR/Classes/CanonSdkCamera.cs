@@ -11,8 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Logging;
-
 
 namespace ASCOM.DSLR.Classes
 {
@@ -57,9 +55,6 @@ namespace ASCOM.DSLR.Classes
         {
             ScanForCameras();
             _mainCamera = CamList.First();
-
-            // TODO: handle exceptions here, this can fail!
-
             var cameraModel = GetCameraModel(_mainCamera.DeviceName);
             return cameraModel;
         }
@@ -102,11 +97,6 @@ namespace ASCOM.DSLR.Classes
 
             string newFilePath = RenameFile(downloadedFilePath, _duration, _startTime);
             ImageReady?.Invoke(this, new ImageReadyEventArgs(newFilePath));
-
-            if ((File.Exists(newFilePath)) && (SaveFile==false ))
-            {
-                File.Delete(newFilePath);
-            }
         }
 
         private void ErrorHandler_NonSevereErrorHappened(object sender, ErrorCode ex)
@@ -144,7 +134,6 @@ namespace ASCOM.DSLR.Classes
 
                 TvList = MainCamera.GetSettingsList(PropertyID.Tv);
                 ISOList = MainCamera.GetSettingsList(PropertyID.ISO);
-                
             }
         }
 
@@ -298,12 +287,10 @@ namespace ASCOM.DSLR.Classes
                 _startTime = DateTime.Now;
                 _canceledFlag.IsCanceled = false;
 
-
                 if (Duration >= 1)
                 {
                     MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
                     MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
-
                 }
                 else
                 {
