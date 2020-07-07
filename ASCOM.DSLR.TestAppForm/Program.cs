@@ -20,17 +20,21 @@ namespace ASCOM.DSLR
         [STAThread]
         static void Main()
         {
-            // Commented out the following
+            ExecuteCommand("--status --debug --timeout 3");
 
-            // ExecuteCommand("--status --debug --timeout 3");
+            var d = ParseStatus(File.ReadAllText(@"c:\git-vtorkalo\ASCOM.DSLR\testdata\status.txt"));
 
-            // var d = ParseStatus(File.ReadAllText(@"c:\git-vtorkalo\ASCOM.DSLR\testdata\status.txt"));
 
-            // var p = new ImageDataProcessor();
 
-            // var detector = new CameraModelDetector(p);
+            var p = new ImageDataProcessor();
 
-            // var data0 = p.ReadRaw(@"d:\ascomdev\git\ASCOM.DSLR\testdata\test.dng-0000.dng");
+            var detector = new CameraModelDetector(p);
+
+            var data0 = p.ReadRaw(@"d:\ascomdev\git\ASCOM.DSLR\testdata\test.dng-0000.dng");
+
+
+            
+
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

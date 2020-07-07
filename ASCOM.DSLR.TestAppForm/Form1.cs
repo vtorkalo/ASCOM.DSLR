@@ -33,13 +33,12 @@ namespace ASCOM.DSLR
             if (IsConnected)
             {
                 driver.Connected = false;
-                btnTakeImage.Enabled = false;
             }
             else
             {
                 driver = new ASCOM.DriverAccess.Camera(Properties.Settings.Default.DriverId);
                 driver.Connected = true;
-                btnTakeImage.Enabled = true;
+               
             }
             SetUIState();
         }
@@ -49,7 +48,6 @@ namespace ASCOM.DSLR
             buttonConnect.Enabled = !string.IsNullOrEmpty(Properties.Settings.Default.DriverId);
             buttonChoose.Enabled = !IsConnected;
             buttonConnect.Text = IsConnected ? "Disconnect" : "Connect";
-
         }
 
         private bool IsConnected
@@ -62,15 +60,7 @@ namespace ASCOM.DSLR
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (IsConnected)
-            {
-                driver.StartExposure(2, true);
-            }
-        }
-
-        private void labelDriverId_Click(object sender, EventArgs e)
-        {
-
+            driver.StartExposure(2, true);
         }
     }
 }
