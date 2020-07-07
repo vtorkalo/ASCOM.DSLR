@@ -6,19 +6,29 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Logging;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ASCOM.DSLR.Classes
 {
     public class ImageDataProcessor
     {
+       
+
         private IntPtr LoadRaw(string fileName)
         {
+            Logger.WriteTraceMessage("libraw_init");
             IntPtr data = NativeMethods.libraw_init(LibRaw_constructor_flags.LIBRAW_OPIONS_NO_DATAERR_CALLBACK);
+            Logger.WriteTraceMessage("libraw_open_file");
             CheckError(NativeMethods.libraw_open_file(data, fileName), "open file");
+            Logger.WriteTraceMessage("unpack");
             CheckError(NativeMethods.libraw_unpack(data), "unpack");
+            Logger.WriteTraceMessage("raw2image");
             CheckError(NativeMethods.libraw_raw2image(data), "raw2image");
+            Logger.WriteTraceMessage("return");
             // Don't subtract black level as that pushes the histogram right down to the left hand side for dark areas - ie data being lost
-//            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
+            //            CheckError(NativeMethods.libraw_subtract_black(data), "subtract");
 
             return data;
         }
@@ -32,6 +42,7 @@ namespace ASCOM.DSLR.Classes
         public int[,,] ReadAndDebayerRaw(string fileName)
         {
             IntPtr data = LoadRaw(fileName);
+            Logger.WriteTraceMessage("libraw_dcraw_process");
             NativeMethods.libraw_dcraw_process(data);
 
             var dataStructure = GetStructure<libraw_data_t>(data);
@@ -40,7 +51,7 @@ namespace ASCOM.DSLR.Classes
 
             var pixels = new int[width, height, 3];
 
-            for (int rc = 0; rc < height * width; rc++)
+            Parallel.For(0, width * height, rc =>
             {
                 var r = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8);
                 var g = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + 2);
@@ -52,8 +63,24 @@ namespace ASCOM.DSLR.Classes
                 pixels[col, row, 0] = b;
                 pixels[col, row, 1] = g;
                 pixels[col, row, 2] = r;
-            }
-            NativeMethods.libraw_close(data);
+            });
+
+                /*
+                for (int rc = 0; rc < height * width; rc++)
+                {
+                    var r = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8);
+                    var g = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + 2);
+                    var b = (ushort)Marshal.ReadInt16(dataStructure.image, rc * 8 + 4);
+
+                    int row = rc / width;
+                    int col = rc - width * row;
+                    //int rowReversed = height - row - 1;
+                    pixels[col, row, 0] = b;
+                    pixels[col, row, 1] = g;
+                    pixels[col, row, 2] = r;
+                }*/
+
+                NativeMethods.libraw_close(data);
 
             return pixels;
         }
@@ -72,7 +99,24 @@ namespace ASCOM.DSLR.Classes
             return result;
         }
 
-        
+        public int[,] ToMonochrome(Array data, Func<int, int> process)
+        {
+            var result = new int[data.GetLength(0), data.GetLength(1)];
+            for (int x = 0; x < data.GetLength(0); x++)
+                for (int y = 0; y < data.GetLength(1); y++)
+                {
+                    for (int c = 0; c < 3; c++)
+                    {
+                        result[x, y] += (int)data.GetValue(x, y, c);
+                    }
+                    result[x, y] = process(result[x, y]);
+                }
+
+            return result;
+        }
+
+
+
         public int[,,] ReadBitmap(Bitmap img)
         {
            
@@ -88,7 +132,7 @@ namespace ASCOM.DSLR.Classes
             var width = img.Width;
             var height = img.Height;
 
-            for (int rc = 0; rc < width * height; rc++)
+            Parallel.For(0, width * height, rc =>
             {
                 var b = bytesArray[rc * 3];
                 var g = bytesArray[rc * 3 + 1];
@@ -102,8 +146,25 @@ namespace ASCOM.DSLR.Classes
                 result[col, row, 1] = g;
                 result[col, row, 2] = r;
             }
+            );
 
-            return result;
+                /*
+                for (int rc = 0; rc < width * height; rc++)
+                {
+                    var b = bytesArray[rc * 3];
+                    var g = bytesArray[rc * 3 + 1];
+                    var r = bytesArray[rc * 3 + 2];
+
+                    int row = rc / width;
+                    int col = rc - width * row;
+
+                    //var rowReversed = height - row - 1;
+                    result[col, row, 0] = b;
+                    result[col, row, 1] = g;
+                    result[col, row, 2] = r;
+                }*/
+
+                return result;
         }
 
         private void exif_parser_callback(IntPtr context, int tag, int type, int len, uint ord, IntPtr ifp)
@@ -154,6 +215,25 @@ namespace ASCOM.DSLR.Classes
 
             var pixels = new int[width, height];
 
+            Parallel.For(0, height - yoffs, y =>
+             {
+
+                 int i0 = NativeMethods.libraw_COLOR(data, y, 0);
+                 int i1 = NativeMethods.libraw_COLOR(data, y, 1);
+                 ushort* ptr = (ushort*)((byte*)dataStructure.image.ToPointer() + width * 8 * y);
+
+                 for (int x = 0; x < width - xoffs; x += 2)
+                 {
+                     pixels[x + xoffs, y + yoffs] = *(ptr + i0);
+                     ptr += 4;
+                     pixels[x + xoffs + 1, y + yoffs] = *(ptr + i1);
+                     ptr += 4;
+                 }
+
+             }
+            );
+
+            /*
             for (int y = 0; y < height - yoffs; y++)
             {
                 int i0 = NativeMethods.libraw_COLOR(data, y,0);
@@ -168,25 +248,72 @@ namespace ASCOM.DSLR.Classes
                     pixels[x + xoffs+1, y + yoffs] = *(ptr + i1);
                     ptr += 4;
                 }
-            }
+            }*/
 
             if (dataStructure.color.maximum > 0)
             {
                 int multiplier = (int) Math.Pow(2, Math.Floor(Math.Log(32768.0 / dataStructure.color.maximum, 2)));
                 if (multiplier > 1)
                 {
-                    for (int y = 0; y < height; y++)
+
+                    Parallel.For(0, height, y =>
+                    {
+
+                        Parallel.For(0, width, x =>
+                        {
+                            pixels[x, y] *= multiplier;
+                        }
+                        );
+                    }
+                    );
+
+                    /*    for (int y = 0; y < height; y++)
                     {
                         for (int x = 0; x < width; x++)
                         {
                             pixels[x, y] *= multiplier;
                         }
-                    }
+                    }*/
                 }
             }
             NativeMethods.libraw_close(data);
 
             return pixels;
+        }
+
+        public Array Binning(Array data, int binx, int biny, BinningMode binningMode)
+        {
+            int width = data.GetLength(0);
+            int height = data.GetLength(1);
+            int binWidth = width / binx;
+            int binHeight = height / biny;
+
+            var result = Array.CreateInstance(typeof(int), binWidth, binHeight);
+
+            for (int x = 0; x < binWidth; x++)
+                for (int y = 0; y < binHeight; y++)
+                {
+                    var binBlockData = new List<int>();
+                    for (int x2 = x * binx; x2 < x * binx + binx; x2++)
+                        for (int y2 = y * biny; y2 < y * biny + biny; y2++)
+                        {
+                            binBlockData.Add((int)data.GetValue(x2, y2));
+                        }
+
+                    int value = 0;
+                    switch (binningMode)
+                    {
+                        case BinningMode.Sum:
+                            value = GetSum(binBlockData, binx, biny);
+                            break;
+                        case BinningMode.Median:
+                            value = GetMedian(binBlockData);
+                            break;
+                    }
+                    result.SetValue(value, x, y);
+                }
+
+            return result;
         }
 
         public Array CutArray(Array data, int StartX, int StartY, int NumX, int NumY, int CameraXSize, int CameraYSize)
@@ -202,7 +329,34 @@ namespace ASCOM.DSLR.Classes
                 result = rank == 3 ? Array.CreateInstance(typeof(int), NumX, NumY, 3)
                                    : Array.CreateInstance(typeof(int), NumX, NumY);
 
-                for (int x = 0; x < NumX; x++)
+
+                Parallel.For(0, NumX, x =>
+                {
+
+                    Parallel.For(0, NumY, y =>
+                    {
+                        int dataX = startXCorrected + x;
+                        int dataY = startYCorrected + y;
+                        if (rank == 3)
+                        {
+                            Parallel.For(0, 3, r =>
+                            {
+                                result.SetValue(data.GetValue(dataX, dataY, r), x, y, r);
+                            });
+                        }
+                        else
+                        {
+                            result.SetValue(data.GetValue(dataX, dataY), x, y);
+                        }
+
+                    });
+
+                });
+
+
+
+
+                /*for (int x = 0; x < NumX; x++)
                     for (int y = 0; y < NumY; y++)
                     {
                         int dataX = startXCorrected + x;
@@ -218,7 +372,7 @@ namespace ASCOM.DSLR.Classes
                         {
                             result.SetValue(data.GetValue(dataX, dataY), x, y);
                         }
-                    }
+                    }*/
             }
             else
             {
@@ -264,5 +418,6 @@ namespace ASCOM.DSLR.Classes
         {
             return (T)Marshal.PtrToStructure(ptr, typeof(T));
         }
+               
     }
 }

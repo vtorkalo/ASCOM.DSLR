@@ -15,10 +15,11 @@ using System.Linq;
 using EOSDigital.API;
 using System.Threading;
 using System.IO.Ports;
+using Logging;
 
 namespace ASCOM.DSLR
 {
-    [ComVisible(false)]
+    [ComVisible(false)]					
     public partial class SetupDialogForm : Form
     {
         public SetupDialogForm(CameraSettings settings)
@@ -33,6 +34,8 @@ namespace ASCOM.DSLR
             Settings.TraceLog = chkTrace.Checked;
             Settings.CameraMode = (CameraMode)cbImageMode.SelectedItem;
 
+            Settings.SaveFile = chkSaveFile.Checked;
+
             Settings.IntegrationApi = (ConnectionMethod)cbIntegrationApi.SelectedItem;
 
             if (Directory.Exists(tbSavePath.Text))
@@ -45,9 +48,39 @@ namespace ASCOM.DSLR
             {
                 Settings.BackyardEosPort = int.Parse(tbBackyardEosPort.Text);
             }
+            Settings.EnableBinning = chkEnableBin.Checked;
+            Settings.BinningMode = (BinningMode)cbBinningMode.SelectedItem;
+
+            Settings.UseExternalShutter = chkUseExternalShutter.Checked;
+            Settings.ExternalShutterPortName = cbShutterPort.SelectedItem as string;
 
             Settings.LiveViewCaptureMode = chkEnableLiveView.Checked;
             Settings.LiveViewZoom = (LiveViewZoom)cbLiveViewZoom.SelectedItem;
+
+            Settings.LogLevel = (DebugLogLevels)cbTraceLevel.SelectedItem;
+
+            Settings.maxADU = Convert.ToInt32(txtMAXADU.Text);
+
+            Settings.maxADUOverride = chkMAXADU.Checked;
+
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Trace)
+                Logger.SetLogLevelTrace();
+
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Debug)
+                Logger.SetLogLevelDebug();
+
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Info)
+                Logger.SetLogLevelInfo();
+
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Warn)
+                Logger.SetLogLevelWarn();
+
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Error)
+                Logger.SetLogLevelError();
+
+            if ((DebugLogLevels)cbTraceLevel.SelectedItem == DebugLogLevels.Fatal)
+                Logger.SetLogLevelFatal();
+
         }
 
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
@@ -86,25 +119,54 @@ namespace ASCOM.DSLR
         {
             chkTrace.Checked = Settings.TraceLog;
 
+            chkSaveFile.Checked = Settings.SaveFile;
+
             cbImageMode.Items.Clear();
             cbImageMode.Items.Add(CameraMode.RGGB);
             cbImageMode.Items.Add(CameraMode.Color16);
             cbImageMode.Items.Add(CameraMode.ColorJpg);
             SetSelectedItem(cbImageMode, Settings.CameraMode);
 
+            chkEnableBin.Checked = Settings.EnableBinning;
+            
             cbIntegrationApi.Items.Add(ConnectionMethod.CanonSdk);
             cbIntegrationApi.Items.Add(ConnectionMethod.BackyardEOS);
+            cbIntegrationApi.Items.Add(ConnectionMethod.Nikon);
+            cbIntegrationApi.Items.Add(ConnectionMethod.Pentax);
+            cbIntegrationApi.Items.Add(ConnectionMethod.NikonLegacy);
             SetSelectedItem(cbIntegrationApi, Settings.IntegrationApi);
+            
 
-            var isoValues = ISOValues.Values.Where(v => v.DoubleValue <= short.MaxValue && v.DoubleValue > 0).Select(v => (short)v.DoubleValue);
+            cbBinningMode.Items.Add(BinningMode.Sum);
+            cbBinningMode.Items.Add(BinningMode.Median);
+            SetSelectedItem(cbBinningMode, Settings.BinningMode);
+
+
+            var isoValues = ISOValues.Values.Where(v => v.DoubleValue <= short.MaxValue && v.DoubleValue>0).Select(v => (short)v.DoubleValue);
             cbIso.DisplayMember = "display";
             cbIso.ValueMember = "value";
-            cbIso.DataSource = isoValues.Select(v => new { value = v, display = v.ToString() }).ToArray();
+            cbIso.DataSource =  isoValues.Select(v => new { value = v, display = v.ToString() }).ToArray();
             cbIso.SelectedValue = Settings.Iso;
+
 
             tbSavePath.Text = Settings.StorePath;
 
+            txtMAXADU.Text = Convert.ToString(Settings.maxADU);
+
+            chkMAXADU.Checked = Settings.maxADUOverride;
+
             tbBackyardEosPort.Text = Settings.BackyardEosPort.ToString();
+
+            chkUseExternalShutter.Checked = Settings.UseExternalShutter;
+            
+            foreach (var port in SerialPort.GetPortNames())
+            {
+                cbShutterPort.Items.Add(port);
+            }
+            if (!string.IsNullOrEmpty(Settings.ExternalShutterPortName))
+            {
+                cbShutterPort.SelectedIndex = cbShutterPort.FindStringExact(Settings.ExternalShutterPortName);
+            }
 
             cbLiveViewZoom.Items.Add(LiveViewZoom.Fit);
             cbLiveViewZoom.Items.Add(LiveViewZoom.x5);
@@ -112,6 +174,14 @@ namespace ASCOM.DSLR
 
             chkEnableLiveView.Checked = Settings.LiveViewCaptureMode;
             SetSelectedItem(cbLiveViewZoom, Settings.LiveViewZoom);
+
+            cbTraceLevel.Items.Add(DebugLogLevels.Trace);
+            cbTraceLevel.Items.Add(DebugLogLevels.Debug);
+            cbTraceLevel.Items.Add(DebugLogLevels.Info);
+            cbTraceLevel.Items.Add(DebugLogLevels.Warn);
+            cbTraceLevel.Items.Add(DebugLogLevels.Error);
+            cbTraceLevel.Items.Add(DebugLogLevels.Fatal);
+            SetSelectedItem(cbTraceLevel, Settings.LogLevel);
 
             UpdateUiState();
 
@@ -124,7 +194,7 @@ namespace ASCOM.DSLR
                 folderBrowserDialog.SelectedPath = tbSavePath.Text;
             }
 
-            var thread = new Thread(new ParameterizedThreadStart(param =>
+            var thread = new Thread(new ParameterizedThreadStart(param => 
             {
                 if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
                 {
@@ -148,6 +218,24 @@ namespace ASCOM.DSLR
             UpdateUiState();
         }
 
+        private void EnableBinChanged()
+        {
+            bool isLv = IsLiveView();
+            if (chkEnableBin.Checked)
+            {
+                SetSelectedItem(cbImageMode, CameraMode.RGGB);
+
+                cbImageMode.Visible = false;
+                lbImageMode.Visible = false;
+                cbBinningMode.Enabled = true && !isLv;
+            }
+            else
+            {
+                cbImageMode.Visible = true && !isLv;
+                lbImageMode.Visible = true && !isLv;
+                cbBinningMode.Enabled = false;
+            }
+        }
 
         private void lblBinningMode_Click(object sender, EventArgs e)
         {
@@ -168,6 +256,8 @@ namespace ASCOM.DSLR
         {
             ConnectionMethodChanged();
             LiveViewModeChagned();
+            UseExternalShutterChanged();
+            EnableBinChanged();
         }
 
         private void ConnectionMethodChanged()
@@ -175,8 +265,13 @@ namespace ASCOM.DSLR
             bool isBEOS = IsBeos();
             tbBackyardEosPort.Visible = isBEOS;
             lblBackyardEosPort.Visible = isBEOS;
+            bool isNikonSDK = IsNikonSDK();
+            bool isDigiCamControl = IsDigiCamControl();
+            chkUseExternalShutter.Visible = isDigiCamControl;
+            cbShutterPort.Visible = isDigiCamControl;
             bool isCanon = IsCanon();
-            if (isCanon)
+            bool isPentax = IsPentax();
+            if (isCanon || isNikonSDK)
             {
                 chkEnableLiveView.Visible = true;
                 lblLiveViewZoom.Visible = true;
@@ -196,9 +291,24 @@ namespace ASCOM.DSLR
             return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.CanonSdk;
         }
 
+        private bool IsPentax()
+        {
+            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Pentax;
+        }
+
+        private bool IsDigiCamControl()
+        {
+            return cbIntegrationApi.SelectedItem !=null &&  (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.NikonLegacy;
+        }
+
         private bool IsBeos()
         {
             return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.BackyardEOS;
+        }
+
+        private bool IsNikonSDK()
+        {
+            return cbIntegrationApi.SelectedItem != null && (ConnectionMethod)cbIntegrationApi.SelectedItem == ConnectionMethod.Nikon;
         }
 
         private void chkUseExternalShutter_CheckedChanged(object sender, EventArgs e)
@@ -206,14 +316,25 @@ namespace ASCOM.DSLR
             UpdateUiState();
         }
 
+        private void UseExternalShutterChanged()
+        {
+            cbShutterPort.Enabled = chkUseExternalShutter.Checked;
+        }
+
         private void cbImageMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            
         }
 
         private void LiveViewModeChagned()
         {
-            bool isLiveView = IsLiveView() && IsCanon();
+            bool isLiveView = IsLiveView();
+
+            chkUseExternalShutter.Visible = !isLiveView;
+            cbShutterPort.Visible = !isLiveView;
+
+            chkEnableBin.Visible = !isLiveView;
+            cbBinningMode.Visible = !isLiveView;
 
             lblSavePhotosTo.Visible = !isLiveView;
             tbSavePath.Visible = !isLiveView;
@@ -243,6 +364,53 @@ namespace ASCOM.DSLR
         {
             var aboutForm = new About();
             aboutForm.ShowDialog(this);
+        }
+
+        private void SetupDialogForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkSaveFile_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbIso_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbTraceLevel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chkTrace_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void chxMAXADU_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkMAXADU.Checked)
+            {
+                txtMAXADU.Enabled = true;
+            }
+            else
+            {
+                txtMAXADU.Enabled = false;
+            }
         }
     }
 }

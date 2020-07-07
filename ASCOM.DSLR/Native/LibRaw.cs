@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.IO;
+using ASCOM.Utilities;
+using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace ASCOM.DSLR.Native
 {
@@ -13,47 +17,141 @@ namespace ASCOM.DSLR.Native
         LIBRAW_OPIONS_NO_DATAERR_CALLBACK = 1 << 1
     }
 
+
     [SuppressUnmanagedCodeSecurity]
     internal static class NativeMethods
     {
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr libraw_init(LibRaw_constructor_flags flags);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_open_file(IntPtr data, string fileName);
+        public const string DllPath32 = "SDK/X86/libraw";
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_unpack(IntPtr data);
+        public const string DllPath64 = "SDK/X64/libraw";
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_raw2image(IntPtr data);
+        //public const string DllPath = "SDK/X64/libraw";
+        //public const string DllPath = "libraw";
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_subtract_black(IntPtr data);
+        [DllImport(DllPath32, EntryPoint = "libraw_init", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_init_32(LibRaw_constructor_flags flags);
 
+        [DllImport(DllPath64, EntryPoint = "libraw_init", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_init_64(LibRaw_constructor_flags flags);
+        
+        public static IntPtr libraw_init(LibRaw_constructor_flags flags)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_init_32(flags) : libraw_init_64(flags);
+        }
+        
+        [DllImport(DllPath32, EntryPoint = "libraw_open_file", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_open_file_32(IntPtr data, string fileName);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_close(IntPtr data);
+        [DllImport(DllPath64, EntryPoint = "libraw_open_file", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_open_file_64(IntPtr data, string fileName);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_dcraw_process(IntPtr lr);
+        public static int libraw_open_file(IntPtr data, string fileName)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_open_file_32(data, fileName) : libraw_open_file_64(data, fileName);
+        }
+        
+        [DllImport(DllPath32, EntryPoint = "libraw_unpack", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_unpack_32(IntPtr data);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr libraw_dcraw_make_mem_image(IntPtr data, out int errc);
+        [DllImport(DllPath64, EntryPoint = "libraw_unpack", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_unpack_64(IntPtr data);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_dcraw_clear_mem(IntPtr processed);
+        public static int libraw_unpack(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_unpack_32(data) : libraw_unpack_64(data);
+        }
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr libraw_set_exifparser_handler(IntPtr data, exif_parser_callback cb, IntPtr datap);
+        [DllImport(DllPath32, EntryPoint = "libraw_raw2image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_raw2image_32(IntPtr data);
 
+        [DllImport(DllPath64, EntryPoint = "libraw_raw2image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_raw2image_64(IntPtr data);
+
+        public static int libraw_raw2image(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_raw2image_32(data) : libraw_raw2image_64(data);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_subtract_black", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_subtract_black_32(IntPtr data);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_subtract_black", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_subtract_black_64(IntPtr data);
+
+        public static int libraw_subtract_black(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_subtract_black_32(data) : libraw_subtract_black_64(data);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_close", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_close_32(IntPtr data);
+                
+        [DllImport(DllPath64, EntryPoint = "libraw_close", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_close_64(IntPtr data);
+
+        public static int libraw_close(IntPtr data)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_close_32(data) : libraw_close_64(data);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_dcraw_process", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_process_32(IntPtr lr);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_dcraw_process", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_process_64(IntPtr lr);
+
+        public static int libraw_dcraw_process(IntPtr lr)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_dcraw_process_32(lr) : libraw_dcraw_process_64(lr);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_dcraw_make_mem_image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_dcraw_make_mem_image_32(IntPtr data, out int errc);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_dcraw_make_mem_image", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_dcraw_make_mem_image_64(IntPtr data, out int errc);
+
+        public static IntPtr libraw_dcraw_make_mem_image(IntPtr data, out int errc)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_dcraw_make_mem_image_32(data, out errc) : libraw_dcraw_make_mem_image_64(data, out errc);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_dcraw_clear_mem", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_clear_mem_32(IntPtr processed);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_dcraw_clear_mem", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_dcraw_clear_mem_64(IntPtr processed);
+
+        public static int libraw_dcraw_clear_mem(IntPtr processed)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_dcraw_clear_mem_32(processed) : libraw_dcraw_clear_mem_64(processed);
+        }
+
+        [DllImport(DllPath32, EntryPoint = "libraw_set_exifparser_handler", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_set_exifparser_handler_32(IntPtr data, exif_parser_callback cb, IntPtr datap);
+
+        [DllImport(DllPath64, EntryPoint = "libraw_set_exifparser_handler", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr libraw_set_exifparser_handler_64(IntPtr data, exif_parser_callback cb, IntPtr datap);
+
+        public static IntPtr libraw_dcraw_clear_mem(IntPtr data, exif_parser_callback cb, IntPtr datap)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_set_exifparser_handler_32(data, cb, datap) : libraw_set_exifparser_handler_64(data, cb, datap);
+        }
 
         public delegate IntPtr exif_parser_callback(IntPtr context, int tag, int type, int len, uint ord, IntPtr ifp);
 
-        [DllImport("libraw", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int libraw_COLOR(IntPtr data, int row, int col);
-    }
+        [DllImport(DllPath32, EntryPoint = "libraw_COLOR", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_COLOR_32(IntPtr data, int row, int col);
 
+        [DllImport(DllPath64, EntryPoint = "libraw_COLOR", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int libraw_COLOR_64(IntPtr data, int row, int col);
+
+        public static int libraw_COLOR(IntPtr data, int row, int col)
+        {
+            return IntPtr.Size == 4 /* 64bit */ ? libraw_COLOR_32(data, row, col) : libraw_COLOR_64(data, row, col);
+        }
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_data_t
@@ -68,8 +166,8 @@ namespace ASCOM.DSLR.Native
         public uint progress_flags;
         public uint process_warnings;
         public libraw_colordata_t color;
-        //libraw_imgother_t other;
-        //libraw_thumbnail_t thumbnail;
+        libraw_imgother_t other;
+        // libraw_thumbnail_t thumbnail;
         //libraw_rawdata_t rawdata;
         //IntPtr* parent_class;
     }
@@ -98,16 +196,35 @@ namespace ASCOM.DSLR.Native
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] string model2;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] string UniqueCameraModel;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] string LocalizedCameraModel;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] string ImageUniqueID;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 17)] string RawDataUniqueID;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] string OriginalRawFileName;
         IntPtr profile;
         uint profile_length;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] uint[] black_stat;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] libraw_dng_color_t[] dng_color;
         libraw_dng_levels_t dng_levels;
-        float baseline_exposure;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256 * 4)] int[] WB_Coeffs;    /* R, G1, B, G2 coeffs */
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64 * 5)] float[] WBCT_Coeffs; /* CCT, than R, G1, B, G2 coeffs */
+        int as_shot_wb_applied;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] libraw_P1_color_t[] P1_color;
+        uint raw_bps; /* for Phase One, raw format */
+        /* Phase One raw format values, makernotes tag 0x010e:
+         * 0    Name unknown
+         * 1    "RAW 1"
+         * 2    "RAW 2"
+         * 3    "IIQ L"
+         * 4    Never seen
+         * 5    "IIQ S"
+         * 6    "IIQ S v.2"
+         * 7    Never seen
+         * 8    Name unknown
+         */
+        int ExifColorSpace;
     }
+
+    
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_dng_color_t
@@ -125,6 +242,8 @@ namespace ASCOM.DSLR.Native
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] float[] romm_cam;
     }
 
+    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct ph1_t
     {
@@ -139,12 +258,19 @@ namespace ASCOM.DSLR.Native
         uint parsedfields;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4102)] uint[] dng_cblack;
         uint dng_black;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4102)] uint[] dng_fcblack;
+        uint dng_fblack;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] uint[] dng_whitelevel;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] uint[] default_crop; /* Origin and size */
         uint preview_colorspace;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] float[] analogbalance;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] float[] asshotneutral;
+        float baseline_exposure;
+        float LineResponseLimit;
     }
+
     
+
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_shootinginfo_t
     {
@@ -158,6 +284,8 @@ namespace ASCOM.DSLR.Native
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)] string InternalBodySerial; /* this may be PCB or sensor serial, depends on make/model*/
     }
 
+    
+
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_internal_output_params_t
     {
@@ -167,6 +295,57 @@ namespace ASCOM.DSLR.Native
         ushort shrink;
         ushort fuji_width;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct libraw_gps_info_t
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] float[] latitude;     /* Deg,min,sec */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] float[] longtitude;     /* Deg,min,sec */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] float[] gpstimestamp;     /* Deg,min,sec */
+        float altitude;
+        char altref, latref, longref, gpsstatus;
+        char gpsparsed;
+    }
+
+    public struct libraw_imgother_t
+    {
+        float iso_speed;
+        float shutter;
+        float aperture;
+        float focal_len;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] byte[] timestamp;
+        uint shot_order;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] uint[] gpsdata;
+        libraw_gps_info_t parsed_gps;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)] char[] desc;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] char[] artist;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] float[] analogbalance;
+    }
+
+
+[StructLayout(LayoutKind.Sequential)]
+    public struct libraw_metadata_common_t {
+    float FlashEC;
+    float FlashGN;
+    float CameraTemperature;
+    float SensorTemperature;
+    float SensorTemperature2;
+    float LensTemperature;
+    float AmbientTemperature;
+    float BatteryTemperature;
+    float exifAmbientTemperature;
+    float exifHumidity;
+    float exifPressure;
+    float exifWaterDepth;
+    float exifAcceleration;
+    float exifCameraElevationAngle;
+    float real_ISO;
+    float exifExposureIndex;
+    ushort ColorSpace;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)] char[] firmware;
+}
+
+
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_output_params_t
@@ -223,14 +402,18 @@ namespace ASCOM.DSLR.Native
         /* Sony ARW2 digging mode */
         /* int sony_arw2_options; */
         uint raw_processing_options;
+        uint max_raw_memory_mb;
         int sony_arw2_posterization_thr;
         /* Nikon Coolscan */
         float coolscan_nef_gamma;
+        // TJH: [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] string p4shot_order;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] char[] p4shot_order;
         /* Custom camera list */
         IntPtr custom_camera_strings;
     }
     ;
+
+    // TODO: June 1 2020 - pick up here 
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_makernotes_t
@@ -244,6 +427,9 @@ namespace ASCOM.DSLR.Native
         libraw_kodak_makernotes_t kodak;
         libraw_panasonic_makernotes_t panasonic;
         libraw_pentax_makernotes_t pentax;
+        libraw_p1_makernotes_t phaseone;
+        libraw_samsung_makernotes_t samsung;
+        libraw_metadata_common_t common;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -309,6 +495,12 @@ namespace ASCOM.DSLR.Native
         short BlackMaskBottomBorder;
         int AFMicroAdjMode;
         float AFMicroAdjValue;
+        short MakernotesFlip;
+        short RecordMode;
+        short SRAWQuality;
+        uint wbi;
+        float firmware;
+        short RF_lensID;
 
     }
 ;
@@ -318,17 +510,55 @@ namespace ASCOM.DSLR.Native
     {
         int BaseISO;
         double Gain;
-    }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] char[] Sensor;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] char[] SensorUnit; // SU
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] char[] HostBody;   // HB
+        int SensorCode;
+        int SensorSubCode;
+        int CoatingCode;
+        int uncropped;
 
-    [StructLayout(LayoutKind.Sequential)]
+        /* CaptureSequenceInitiator is based on the content of the 'model' tag
+          - values like 'Pinhole', 'Flash Sync', '500 Mech.' etc in .3FR 'model' tag
+            come from MAIN MENU > SETTINGS > Camera;
+          - otherwise 'model' contains:
+            1. if CF/CFV/CFH, SU enclosure, can be with SU type if '-' is present
+            2. else if '-' is present, HB + SU type;
+            3. HB;
+        */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] char[] CaptureSequenceInitiator;
+
+        /* SensorUnitConnector, makernotes 0x0015 tag:
+         - in .3FR - SU side
+         - in .FFF - HB side
+        */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] char[] SensorUnitConnector;
+
+        int format; // 3FR, FFF, Imacon (H3D-39 and maybe others), Hasselblad/Phocus DNG, Adobe DNG
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] int[] nIFD_CM; // number of IFD containing CM
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] int[] RecommendedCrop;
+
+        /* mnColorMatrix is in makernotes tag 0x002a;
+          not present in .3FR files and Imacon/H3D-39 .FFF files;
+          when present in .FFF and Phocus .DNG files, it is a copy of CM1 from .3FR;
+          available samples contain all '1's in the first 3 elements
+        */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4 * 3)] double[] mnColorMatrix;
+    };
+
+[StructLayout(LayoutKind.Sequential)]
     public struct libraw_fuji_info_t
     {
-        float FujiExpoMidPointShift;
-        ushort FujiDynamicRange;
-        ushort FujiFilmMode;
-        ushort FujiDynamicRangeSetting;
-        ushort FujiDevelopmentDynamicRange;
-        ushort FujiAutoDynamicRange;
+        float ExpoMidPointShift;
+        ushort DynamicRange;
+        ushort FilmMode;
+        ushort DynamicRangeSetting;
+        ushort DevelopmentDynamicRange;
+        ushort AutoDynamicRange;
+        ushort DRangePriority;
+        ushort DrangePriorityAuto;
+        ushort DRangePriorityFixed;
+        float BrightnessCompensation;
         ushort FocusMode;
         ushort AFMode;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] ushort[] FocusPixel;
@@ -339,9 +569,23 @@ namespace ASCOM.DSLR.Native
         ushort ExrMode;
         ushort Macro;
         uint Rating;
+        ushort CropMode;
         ushort FrameRate;
         ushort FrameWidth;
         ushort FrameHeight;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x0c + 1)] char[] SerialSignature;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4 +1 )] char[] RAFVersion;
+        ushort RAFDataVersion;
+        int isTSNERDTS;
+        short DriveMode;
+    }
+
+    public struct libraw_sensor_highspeed_crop_t
+    {
+        ushort cleft;
+        ushort ctop;
+        ushort cwidth;
+        ushort cheight;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -393,19 +637,29 @@ namespace ASCOM.DSLR.Native
         byte FlashColorFilter;
         ushort NEFCompression;
         int ExposureMode;
+        int ExposureProgram;
         int nMEshots;
         int MEgainOn;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] double[] ME_WB;
         byte AFFineTune;
         byte AFFineTuneIndex;
         byte AFFineTuneAdj;
+        uint LensDataVersion;
+        uint FlashInfoVersion;
+        uint ColorBalanceVersion;
+        byte key;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] ushort[] NEFBitDepth;
+        ushort HighSpeedCropFormat; /* 1 -> 1.3x; 2 -> DX; 3 -> 5:4; 4 -> 3:2; 6 ->
+                                   16:9; 11 -> FX uncropped; 12 -> DX uncropped;
+                                   17 -> 1:1 */
+        libraw_sensor_highspeed_crop_t SensorHighSpeedCrop;
+        ushort SensorWidth;
+        ushort SensorHeight;
     };
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_olympus_makernotes_t
     {
-        int OlympusCropID;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] ushort[] OlympusFrame; /* upper left XY, lower right XY */
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] int[] OlympusSensorCalibration;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] ushort[] FocusMode;
         ushort AutoFocus;
@@ -413,10 +667,11 @@ namespace ASCOM.DSLR.Native
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] uint[] AFAreas;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] double[] AFPointSelected;
         ushort AFResult;
-        uint ImageStabilization;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)] ushort[] DriveMode;
         ushort ColorSpace;
         byte AFFineTune;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] short[] AFFineTuneAdj;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] char[] CameraType2;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -431,6 +686,9 @@ namespace ASCOM.DSLR.Native
         ushort Compression;
         ushort BlackLevelDim;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)] float[] BlackLevel;
+        uint Multishot;
+        float gamma;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] int[] HighISOMultiplier;
     };
 
     [StructLayout(LayoutKind.Sequential)]
@@ -442,10 +700,25 @@ namespace ASCOM.DSLR.Native
         ushort FocusPosition;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] byte[] DriveMode;
         short AFAdjustment;
+        byte MultiExposure;
+        ushort Quality;
         /*    byte AFPointMode;     */
         /*    byte SRResult;        */
         /*    byte ShakeReduction;  */
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct libraw_samsung_makernotes_t
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] uint[] ImageSizeFull;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] uint[] ImageSizeCrop;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] int[] ColorSpace;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)] uint[] key;
+        double DigitalGain; /* PostAEGain, digital stretch */
+        int DeviceType;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] char[] LensFirmware;
+    }
+
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_kodak_makernotes_t
@@ -460,19 +733,40 @@ namespace ASCOM.DSLR.Native
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3 * 3)] float[] romm_camFlash;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3 * 3)] float[] romm_camCustom;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3 * 3)] float[] romm_camAuto;
+        ushort val018percent, val100percent, val170percent;
+        short MakerNoteKodak8a;
+        float ISOCalibrationGain;
+        float AnalogISO;
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    public struct libraw_p1_makernotes_t
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] char[] Software;        // tag 0x0203
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] char[] SystemType;      // tag 0x0204
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)] char[] FirmwareString; // tag 0x0301
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)] char[] SystemModel;
+    }
+
+
+    [StructLayout(LayoutKind.Sequential)]
+
     public struct libraw_sony_info_t
     {
-        ushort SonyCameraType;
+        ushort CameraType;
         byte Sony0x9400_version; /* 0 if not found/deciphered, 0xa, 0xb, 0xc following exiftool convention */
         byte Sony0x9400_ReleaseMode2;
         uint Sony0x9400_SequenceImageNumber;
         byte Sony0x9400_SequenceLength1;
         uint Sony0x9400_SequenceFileNumber;
         byte Sony0x9400_SequenceLength2;
-        libraw_raw_crop_t raw_crop;
+        byte AFAreaModeSetting;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)] ushort[] FlexibleSpotPosition;
+        byte AFPointSelected;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)] byte[] AFPointsUsed;
+        byte AFTracking;
+        byte AFType;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] ushort[] FocusLocation;
         byte AFMicroAdjValue;
         byte AFMicroAdjOn;
         byte AFMicroAdjRegisteredLenses;
@@ -486,17 +780,46 @@ namespace ASCOM.DSLR.Native
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 20)] string SonyDateTime;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] byte[] TimeStamp;
         uint ShotNumberSincePowerUp;
+        ushort PixelShiftGroupPrefix;
+        uint PixelShiftGroupID;
+        char nShotsInPixelShiftGroup;
+        char numInPixelShiftGroup; /* '0' if ARQ, first shot in the group has '1'
+                                  here */
+        ushort prd_ImageHeight, prd_ImageWidth;
+        ushort prd_RawBitDepth;
+        ushort prd_StorageMethod; /* 82 -> Padded; 89 -> Linear */
+        ushort prd_BayerPattern;  /* 0 -> not valid; 1 -> RGGB; 4 -> GBRG */
+
+        ushort SonyRawFileType; /* takes precedence over RAWFileType and Quality:
+                               0  for uncompressed 14-bit raw
+                               1  for uncompressed 12-bit raw
+                               2  for compressed raw
+                               3  for lossless compressed raw
+                            */
+        ushort RAWFileType;     /* takes precedence over Quality
+                               0 for compressed raw, 1 for uncompressed;
+                            */
+        uint Quality;       /* 0 or 6 for raw, 7 or 8 for compressed raw */
+        ushort FileFormat;      /*  1000 SR2
+                                2000 ARW 1.0
+                                3000 ARW 2.0
+                                3100 ARW 2.1
+                                3200 ARW 2.2
+                                3300 ARW 2.3
+                                3310 ARW 2.3.1
+                                3320 ARW 2.3.2
+                                3330 ARW 2.3.3
+                                3350 ARW 2.3.5
+                             */
     };
 
+    // got to here
+
     [StructLayout(LayoutKind.Sequential)]
-    public struct libraw_raw_crop_t
+    public struct libraw_raw_inset_crop_t
     {
-        ushort cleft, ctop, cwidth, cheight;
+        ushort cleft, ctop, cwidth, cheight, aspect;
     }
-
-
-
-
 
     [StructLayout(LayoutKind.Sequential)]
     public struct libraw_thumbnail_t
@@ -602,6 +925,14 @@ namespace ASCOM.DSLR.Native
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string software;
 
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string normalized_make;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string normalized_model;
+
+        public uint maker_index;
+
         public uint raw_count;
 
         public uint dng_version;
@@ -654,6 +985,6 @@ namespace ASCOM.DSLR.Native
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8 * 4)]
         public int[] mask;
-        libraw_raw_crop_t raw_crop;
+        libraw_raw_inset_crop_t raw_inset_crop;
     }
 }

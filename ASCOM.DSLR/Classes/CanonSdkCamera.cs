@@ -3,6 +3,7 @@ using ASCOM.DSLR.Interfaces;
 using EDSDKLib.API.Base;
 using EOSDigital.API;
 using EOSDigital.SDK;
+using Logging;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -55,6 +56,9 @@ namespace ASCOM.DSLR.Classes
         {
             ScanForCameras();
             _mainCamera = CamList.First();
+
+            // TODO: handle exceptions here, this can fail!
+
             var cameraModel = GetCameraModel(_mainCamera.DeviceName);
             return cameraModel;
         }
@@ -81,7 +85,6 @@ namespace ASCOM.DSLR.Classes
 
         public bool SupportsViewView { get { return true; } }
         
-
         private DateTime _startTime;
 
         private void MainCamera_DownloadReady(EOSDigital.API.Camera sender, DownloadInfo Info)
@@ -97,6 +100,11 @@ namespace ASCOM.DSLR.Classes
 
             string newFilePath = RenameFile(downloadedFilePath, _duration, _startTime);
             ImageReady?.Invoke(this, new ImageReadyEventArgs(newFilePath));
+
+            if ((File.Exists(newFilePath)) && (SaveFile==false ))
+            {
+                File.Delete(newFilePath);
+            }
         }
 
         private void ErrorHandler_NonSevereErrorHappened(object sender, ErrorCode ex)
@@ -116,7 +124,8 @@ namespace ASCOM.DSLR.Classes
                 _mainCamera.ProgressChanged -= MainCamera_ProgressChanged;
                 _mainCamera.StateChanged -= MainCamera_StateChanged;
                 _mainCamera.DownloadReady -= MainCamera_DownloadReady;
-                MainCamera.LiveViewUpdated -= MainCamera_LiveViewUpdated;
+                //MainCamera.LiveViewUpdated -= MainCamera_LiveViewUpdated;
+                _mainCamera.LiveViewUpdated -= MainCamera_LiveViewUpdated;
                 _mainCamera.CloseSession();
             }
         }
@@ -126,6 +135,7 @@ namespace ASCOM.DSLR.Classes
             ScanForCameras();
             if (!MainCamera.SessionOpen)
             {
+                
                 MainCamera.OpenSession();
                 MainCamera.ProgressChanged += MainCamera_ProgressChanged;
                 MainCamera.StateChanged += MainCamera_StateChanged;
@@ -134,6 +144,7 @@ namespace ASCOM.DSLR.Classes
 
                 TvList = MainCamera.GetSettingsList(PropertyID.Tv);
                 ISOList = MainCamera.GetSettingsList(PropertyID.ISO);
+                
             }
         }
 
@@ -162,7 +173,8 @@ namespace ASCOM.DSLR.Classes
                 short iso = 0;
                 if (IsLiveViewMode)
                 {
-                    iso = (short)(ExpCompValues.Values.Count() - 1);
+                    //iso = (short)(ExpCompValues.Values.Count() - 1);
+                    iso = base.MaxIso;
                 }
                 else
                 {
@@ -173,12 +185,20 @@ namespace ASCOM.DSLR.Classes
             }
         }
 
+        double lvexposure = 1;
         private void MainCamera_LiveViewUpdated(EOSDigital.API.Camera sender, Stream img)
         {
             var Evf_Bmp = new Bitmap(img);
 
             if (_lvInitialized)
             {
+                if (MainCamera.IsManualMode())
+                    if (lvexposure > 0 && lvexposure <= 30) { 
+                    CameraValue tvCameraValue = GetSelectedTv(lvexposure);
+                    MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
+                }
+
+
                 var expComp = MainCamera.GetUInt32Setting(PropertyID.ExposureCompensation);
                 if (Iso > 0 && Iso <= MaxIso)
                 {
@@ -187,6 +207,7 @@ namespace ASCOM.DSLR.Classes
 
                 if (LiveViewImageReady != null && _lvCapture)
                 {
+                    //LiveViewImageReady?.Invoke(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
                     LiveViewImageReady(this, new LiveViewImageReadyEventArgs(Evf_Bmp));
                     _lvCapture = false;
                 }
@@ -194,7 +215,6 @@ namespace ASCOM.DSLR.Classes
             else
             {
              
-
                 MainCamera.SetSetting(PropertyID.Evf_Zoom, (UInt32)LiveViewZoom);
                 var currentZoom = MainCamera.GetUInt32Setting(PropertyID.Evf_Zoom);
                 if (currentZoom == (int)LiveViewZoom)
@@ -218,8 +238,6 @@ namespace ASCOM.DSLR.Classes
         }        
 
         public ConnectionMethod IntegrationApi => ConnectionMethod.CanonSdk;
-
-      
 
         public event EventHandler<ImageReadyEventArgs> ImageReady;
         public event EventHandler<ExposureFailedEventArgs> ExposureFailed;
@@ -287,21 +305,87 @@ namespace ASCOM.DSLR.Classes
                 _startTime = DateTime.Now;
                 _canceledFlag.IsCanceled = false;
 
-                if (Duration >= 1)
+                MainCamera.IsOldCanon();
+
+                if (MainCamera.IsManualMode())
                 {
-                    MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
-                    MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+
+                    if (Duration > 30)
+                    {
+                        Logger.WriteTraceMessage("ManualMode and > 30.0");
+                        MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
+                        MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                    }
+                    else
+                    {
+                        Logger.WriteTraceMessage("ManualMode and < 30.0");
+                        CameraValue tvCameraValue = GetSelectedTv(Duration);
+                        MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
+                        MainCamera.TakePhoto();
+                    }
+
+                }
+                else {
+
+                    if (MainCamera.IsBulbMode())
+                    {
+
+                        if (Duration >= 1)
+                        {
+                            Logger.WriteTraceMessage("BulbMode and > 1.0");
+                            MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                        }
+                        else
+                        {
+                            Logger.WriteTraceMessage("BulbMode and < 1.0");
+                            MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                        }
+
+                    }
+                    else {
+                        Logger.WriteTraceMessage("For old cameras the wheel needs to be (M) position and for newer cameras the wheel needs to be (B) position");
+                        throw new InvalidOperationException("For old cameras the wheel needs to be (M) position and for newer cameras the wheel needs to be (B) position");
+                    }
+                }
+
+                /* Old Code when I was trobleshooting 
+                if (Duration >= 1 )
+                {
+                        if (MainCamera.IsManualMode() || MainCamera.IsOldCanon()) {
+                        Logger.WriteTraceMessage(">= 1 ManualMode or Oldcanon");
+                        MainCamera.SetSetting(PropertyID.Tv, TvValues.GetValue("Bulb").IntValue);
+                        }
+                        MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                    
                 }
                 else
                 {
-                    CameraValue tvCameraValue = GetSelectedTv(Duration);
-                    MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
-                    MainCamera.TakePhoto();
-                }
+                    Logger.WriteTraceMessage("< 1");
+                    
+                    if (MainCamera.IsOldCanon() || MainCamera.IsManualMode())
+                    {
+                        CameraValue tvCameraValue = GetSelectedTv(Duration);
+                        Logger.WriteTraceMessage("< 1 ManualMode or Oldcanon");
+                        MainCamera.SetSetting(PropertyID.Tv, tvCameraValue.IntValue);
+                        MainCamera.TakePhoto();
+                    }
+                    else
+                    {
+                        Logger.WriteTraceMessage("Not Old or Manual");
+                        if (MainCamera.IsBulbMode())
+                        {
+                            Logger.WriteTraceMessage("New Canon BulbMode");
+                            MainCamera.TakePhotoBulbAsync((int)(Duration * 1000), _canceledFlag);
+                        }
+
+                    }
+
+                }*/
             }
             else
             {
                 Thread.Sleep(100);
+                lvexposure = Duration;
                 _lvCapture = true;
             }
         }
@@ -319,18 +403,21 @@ namespace ASCOM.DSLR.Classes
         private bool _lvInitialized;
         public void ConnectCamera()
         {
+
             OpenSession();
+
+
+            Thread.Sleep(1000);
             if (IsLiveViewMode)
             {
                 LvFrameHeight = 0;
                 LvFrameWidth = 0;
 
                 MainCamera.StartLiveView();
-
                 Thread.Sleep(1000);
 
                 int retryCount = 0;
-                while ((LvFrameHeight == 0 || LvFrameWidth == 0) && retryCount < 5)
+                while ((LvFrameHeight == 0 || LvFrameWidth == 0) && retryCount < 15)
                 {
                     Thread.Sleep(500);
                     retryCount++;

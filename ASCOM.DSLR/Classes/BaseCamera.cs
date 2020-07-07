@@ -10,6 +10,13 @@ using System.Text.RegularExpressions;
 
 namespace ASCOM.DSLR.Classes
 {
+
+    public class ISOValue 
+    {
+        public string ISOName { get; set; }
+
+        public int ISOId { get; set; }
+    }
     public abstract class BaseCamera
     {
         public BaseCamera(List<CameraModel> cameraModelsHistory)
@@ -32,9 +39,11 @@ namespace ASCOM.DSLR.Classes
                 return _cameraModel;
             }
         }
-        
+
         public CameraValue[] TvList;
         public CameraValue[] ISOList;
+        public List<short> SimpleISOList;
+
 
         public bool IsLiveViewMode { get; set; }
 
@@ -45,6 +54,8 @@ namespace ASCOM.DSLR.Classes
             string newFilePath = Path.ChangeExtension(Path.Combine(StorePath, newFileName), fileInfo.Extension);
             File.Move(downloadedFilePath, newFilePath);
             return newFilePath;
+
+            
         }
         public LiveViewZoom LiveViewZoom { get; set; }
 
@@ -78,6 +89,10 @@ namespace ASCOM.DSLR.Classes
         }
 
         public string StorePath { get; set; }
+        public bool SaveFile { get; set; }
+
+        public bool maxADUOverride { get; set; }
+        public int maxADU { get; set; }
         public double SensorTemperature { get; protected set; }
 
         public abstract CameraModel ScanCameras();
@@ -87,8 +102,13 @@ namespace ASCOM.DSLR.Classes
             var cameraModel = _cameraModelsHistory.FirstOrDefault(c => c?.Name == cameraDescription); //try get sensor params from history
             if (cameraModel == null)
             {
+                // TODO: handle an exception here!
+
                 var cameraModelDetector = new CameraModelDetector(new ImageDataProcessor());
                 cameraModel = cameraModelDetector.GetCameraModel((IDslrCamera)this, StorePath ?? Path.GetTempPath());//make test shot to determine height/width
+
+                // TODO: handle an exception here!
+
                 if (cameraModel != null)
                     _cameraModelsHistory.Add(cameraModel);
             }
@@ -98,7 +118,7 @@ namespace ASCOM.DSLR.Classes
 
         public short Iso
         {
-            get; set;
+            get;set;
         }
 
         public virtual short MinIso
@@ -131,7 +151,14 @@ namespace ASCOM.DSLR.Classes
                 }
                 else
                 {
-                    result = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0).Select(v => (short)v.DoubleValue).ToList();
+                    if (SimpleISOList != null)
+                    {
+                        result = SimpleISOList;
+                    }
+                    else
+                    {
+                        result = ISOValues.Values.Where(v => v.DoubleValue < short.MaxValue && v.DoubleValue > 0).Select(v => (short)v.DoubleValue).ToList();
+                    }
                 }
 
                 return result;

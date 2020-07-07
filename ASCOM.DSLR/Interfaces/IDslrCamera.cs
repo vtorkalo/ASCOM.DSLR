@@ -36,6 +36,11 @@ namespace ASCOM.DSLR.Interfaces
         ImageFormat ImageFormat {get;set;}
 
         string StorePath { get; set; }
+
+        int maxADU { get; set; }
+
+        bool maxADUOverride { get; set; }
+
         CameraModel ScanCameras();
 
         bool UseExternalShutter { get; set; }
@@ -53,6 +58,8 @@ namespace ASCOM.DSLR.Interfaces
         ConnectionMethod IntegrationApi { get; }
 
         CameraModel CameraModel { get; }      
+
+        bool SaveFile { get; set; }
     }
 
     public class LiveViewImageReadyEventArgs : EventArgs

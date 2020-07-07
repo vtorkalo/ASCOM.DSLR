@@ -6,6 +6,7 @@ using FileAccess = EOSDigital.SDK.FileAccess;
 using System.Collections.Generic;
 using System.Linq;
 using EDSDKLib.API.Base;
+using Logging;
 
 namespace EOSDigital.API
 {
@@ -205,6 +206,36 @@ namespace EOSDigital.API
         ~Camera()
         {
             Dispose(false);
+        }
+
+        public bool IsOldCanon()
+        {
+            string[] models =
+            {
+                " 1000D", " 40D", " 450D", " 50D", " 400D", " 500D", " 550D", "Rebel XSi", "Rebel XTi",
+                "Rebel XS", "Rebel T1i", "1Ds Mark III"
+            };
+
+            Logger.WriteTraceMessage(Info.DeviceDescription.ToLower());
+            return models.Any(model => Info.DeviceDescription.ToLower().Contains(model.ToLower()));
+        }
+
+
+
+        public bool IsManualMode()
+        {
+            UInt32 mode;
+            CanonSDK.EdsGetPropertyData(CamRef, PropertyID.AEModeSelect, 0, out mode);
+            bool isManual = (mode == 3);
+            return isManual;
+        }
+
+        public bool IsBulbMode()
+        {
+            UInt32 mode;
+            CanonSDK.EdsGetPropertyData(CamRef, PropertyID.AEModeSelect, 0, out mode);
+            bool isBulb = (mode == 4);
+            return isBulb;
         }
 
         /// <summary>
@@ -445,7 +476,19 @@ namespace EOSDigital.API
         public void TakePhoto()
         {
             CheckState();
-            SendCommand(CameraCommand.TakePicture);
+            //SendCommand(CameraCommand.TakePicture);
+
+                if (IsOldCanon())
+                {
+                    SendCommand(CameraCommand.TakePicture);
+                    return;
+                }
+            Logger.WriteTraceMessage("TakePhoto Completely");
+            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+            Logger.WriteTraceMessage("Sending OFF");
+            SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+           
+
         }
 
         /// <summary>
@@ -473,11 +516,15 @@ namespace EOSDigital.API
         public void TakePhotoShutter()
         {
             CheckState();
-            MainThread.Invoke(() =>
-            {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
-            });
+            try
+                {
+                    MainThread.Invoke(() =>
+                {
+                    SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                    //SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                });
+            }
+            catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
         }
 
         /// <summary>
@@ -496,7 +543,7 @@ namespace EOSDigital.API
                     MainThread.Invoke(() =>
                     {
                         SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
-                        SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+                        //SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
                     });
                 }
                 catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
@@ -538,15 +585,18 @@ namespace EOSDigital.API
                 catch (Exception ex) { if (!ErrorHandler.ReportError(this, ex)) throw; }
             });
         }
-
+       
         private void BulbExposure(int bulbTime, CanceledFlag canceledFlag)
         {
             try
             {
+                Logger.WriteTraceMessage("Try Press");
+                //SendCommand(CameraCommand.PressShutterButton, (int)65539);
                 SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
             }
             catch (ExecutionException)
             {
+                Logger.WriteTraceMessage("Try BulbStart");
                 SendCommand(CameraCommand.BulbStart);
             }
 
@@ -566,10 +616,13 @@ namespace EOSDigital.API
 
             try
             {
-                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF);
+                Logger.WriteTraceMessage("Try Press");
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.Completely);
+                SendCommand(CameraCommand.PressShutterButton, (int)ShutterButton.OFF); // Test for new cameras
             }
             catch (ExecutionException)
             {
+                Logger.WriteTraceMessage("Try BulbEnd");
                 SendCommand(CameraCommand.BulbEnd);
             }
         }
@@ -817,9 +870,12 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SendCommand(CameraCommand command, int inParam = 0)
         {
+            Logger.WriteTraceMessage("Sending Command = " + command.ToString() + "'");
+
             CheckState();
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendCommand(CamRef, command, inParam)));
         }
+
 
         /// <summary>
         /// Sends a Status Command to the camera
@@ -832,6 +888,8 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SendStatusCommand(CameraStatusCommand command, int inParam = 0)
         {
+            Logger.WriteTraceMessage("SendStatusCommand = " + command.ToString() + "'");
+
             CheckState();
             MainThread.Invoke(() => ErrorHandler.CheckError(this, CanonSDK.EdsSendStatusCommand(CamRef, command, inParam)));
         }
@@ -946,12 +1004,113 @@ namespace EOSDigital.API
         {
             CheckState();
 
+            //Teste BUSY
+            //System.Timers.Timer _timer = new System.Timers.Timer(1000 / 10);
+            ErrorCode _error = 0;
+            int retrynum = 0;
+            bool retry = false;
+            //_timer.Start();
+            //bool timerstate = _timer.Enabled;
+            //_timer.Stop();
+
+
             MainThread.Invoke(() =>
             {
-                int propsize;
+                Logger.WriteTraceMessage("SetSetting Start " + propID + "=" + value);
+                int propsize=0;
                 DataType proptype;
-                ErrorHandler.CheckError(this, CanonSDK.EdsGetPropertySize(CamRef, propID, inParam, out proptype, out propsize));
-                ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value));
+                Logger.WriteTraceMessage("GetPropertySize Start " + propID + "=" + value);
+
+                //ErrorHandler.CheckError(this, CanonSDK.EdsGetPropertySize(CamRef, propID, inParam, out proptype, out propsize));
+
+                do
+                {
+                    if (retrynum > 5)
+                    {
+                        return;
+                    }
+                    try
+                    {
+                        retry = false;
+                        _error = CanonSDK.EdsGetPropertySize(CamRef, propID, inParam, out proptype, out propsize);
+
+                        if (_error != ErrorCode.OK)
+                        {
+                            if (_error == ErrorCode.DEVICE_BUSY)
+                            {
+                                Logger.WriteTraceMessage("GetPropertySize DEVICE BUSY " + _error.ToString());
+                                Thread.Sleep(100);
+                                retry = true;
+                                retrynum++;
+                            }
+                            else
+                            {
+                                ErrorHandler.CheckError(this, _error);
+                            }
+                            Logger.WriteTraceMessage("GetPropertySize NOT OK " + _error.ToString());
+                        }
+                        else
+                        {
+                            Logger.WriteTraceMessage("GetPropertySize OK " + _error.ToString());
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.WriteTraceMessage("Error EOS set property :" + propID.ToString("X") + " | " + exception);
+                    }
+                } while (retry);
+                //if (timerstate)
+                //    _timer.Start();
+                //ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value));
+                _error = 0;
+
+
+                Logger.WriteTraceMessage("GetPropertySize End " + propID + "=" + value);
+                Logger.WriteTraceMessage("SetPropertyData Start " + propID + "=" + value);
+
+
+                do {
+                    if (retrynum > 5)
+                    {
+                        return;
+                    }
+                    try {
+                        retry = false;
+                        _error = CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value);
+
+                        if (_error != ErrorCode.OK)
+                        {
+                            if (_error == ErrorCode.DEVICE_BUSY)
+                            {
+                                Logger.WriteTraceMessage("SetPropertyData DEVICE BUSY " + _error.ToString());
+                                Thread.Sleep(100);
+                                retry = true;
+                                retrynum++;
+                            }
+                            else
+                            {
+                                ErrorHandler.CheckError(this, _error);
+                            }
+                            Logger.WriteTraceMessage("SetPropertyData NOT OK " + _error.ToString());
+
+                        }
+                        else
+                        {
+                            Logger.WriteTraceMessage("SetPropertyData OK " + _error.ToString());
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.WriteTraceMessage("Error EOS set property :" + propID.ToString("X") + " | " + exception);
+                    }
+                } while (retry);
+                //if (timerstate)
+                //    _timer.Start();
+                //ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef, propID, inParam, propsize, value));
+                _error = 0;
+
+                Logger.WriteTraceMessage("SetPropertyData Start " + propID + "=" + value);
+                Logger.WriteTraceMessage("SetSetting End " + propID + "=" + value);
             });
         }
 
@@ -968,7 +1127,9 @@ namespace EOSDigital.API
         /// <exception cref="SDKException">An SDK call failed</exception>
         public void SetSetting(PropertyID propID, string value, int inParam = 0, int MAX = 32)
         {
+            Logger.WriteTraceMessage("SetSetting Start2 " + propID + "=" + value);
             CheckState();
+
 
             if (value == null) value = string.Empty;
             if (value.Length > MAX - 1) value = value.Substring(0, MAX - 1);
@@ -979,6 +1140,7 @@ namespace EOSDigital.API
                 ErrorHandler.CheckError(this, CanonSDK.EdsSetPropertyData(CamRef,
                 propID, inParam, propBytes.Length, propBytes));
             });
+            Logger.WriteTraceMessage("SetSetting End2 " + propID + "=" + value);
         }
 
         /// <summary>

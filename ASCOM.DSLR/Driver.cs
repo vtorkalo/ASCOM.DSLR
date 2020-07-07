@@ -91,6 +91,9 @@ namespace ASCOM.DSLR
         /// the new settings are saved, otherwise the old values are reloaded.
         /// THIS IS THE ONLY PLACE WHERE SHOWING USER INTERFACE IS ALLOWED!
         /// </summary>
+        /// 
+
+
         public void SetupDialog()
         {
             Connected = false;
@@ -171,6 +174,9 @@ namespace ASCOM.DSLR
                 {
                     connectedState = true;
                     var previousModelHistory = CameraSettings.CameraModelsHistory.ToList();
+
+                    // TODO: add exception handling here, the camera may not connect!
+
                     ApiContainer.DslrCamera.ConnectCamera();
                     var model = ApiContainer.DslrCamera.CameraModel;
                     if (model != null && previousModelHistory.All(c => c.Name != model.Name))

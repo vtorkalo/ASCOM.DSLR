@@ -806,10 +806,10 @@ namespace EOSDigital.SDK
     }
 
     /// <summary>
-    /// DirectoryItemInfo struct for SDK versions &lt;3.4
+    /// DirectoryItemInfo struct for SDK versions &lt;3.4 cesar
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    internal struct DirectoryItemInfo_3_4
+    public struct DirectoryItemInfo_3_4
     {
         public int Size;
         public bool IsFolder;

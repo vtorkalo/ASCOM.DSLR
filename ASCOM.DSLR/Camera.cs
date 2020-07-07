@@ -5,6 +5,9 @@ using ASCOM.DSLR.Interfaces;
 using ASCOM.Utilities;
 using System;
 using System.Collections;
+using Logging;
+using System.Threading;
+using ASCOM.DSLR.Properties;
 
 namespace ASCOM.DSLR
 {
@@ -37,6 +40,8 @@ namespace ASCOM.DSLR
 
         private static void CreateCamera()
         {
+            Logger.WriteTraceMessage("CreateCamera(), _cameraSettings.IntegrationAPI = '" + _cameraSettings.IntegrationApi.ToString() + "'");
+
             if (_cameraSettings.IntegrationApi == ConnectionMethod.CanonSdk)
             {
                 _dslrCamera = new CanonSdkCamera(_cameraSettings.CameraModelsHistory);
@@ -46,6 +51,20 @@ namespace ASCOM.DSLR
             else if (_cameraSettings.IntegrationApi == ConnectionMethod.BackyardEOS)
             {
                 _dslrCamera = new BackyardEosCamera(_cameraSettings.BackyardEosPort, _cameraSettings.CameraModelsHistory);
+            }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.NikonLegacy)
+            {
+                _dslrCamera = new DigiCamControlCamera(TraceLogger, _cameraSettings.CameraModelsHistory);
+            }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Pentax)
+            {
+                _dslrCamera = new PentaxCamera(_cameraSettings.CameraModelsHistory);
+            }
+            else if (_cameraSettings.IntegrationApi == ConnectionMethod.Nikon)
+            {
+                _dslrCamera = new NikonSDKCamera(_cameraSettings.CameraModelsHistory);
+                _dslrCamera.IsLiveViewMode = _cameraSettings.LiveViewCaptureMode;
+                _dslrCamera.LiveViewZoom = _cameraSettings.LiveViewZoom;
             }
         }
 
@@ -80,6 +99,8 @@ namespace ASCOM.DSLR
 
             BinX = 1;
             BinY = 1;
+
+
         }
 
         private void _dslrCamera_ImageReady(object sender, ImageReadyEventArgs args)
@@ -122,22 +143,78 @@ namespace ASCOM.DSLR
 
         public void StartExposure(double Duration, bool Light)
         {
-            if (_cameraState != CameraStates.cameraIdle) throw new InvalidOperationException("Cannot start exposure - camera is not idle");
 
-            cameraImageReady = false;
-            if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
-            cameraLastExposureDuration = Duration;
-            exposureStart = DateTime.Now;
-            _cameraState = CameraStates.cameraExposing;
+            int retrynum = 0;
+            bool retry = false;
+            
+            do
+            {
+                if (retrynum > 5)
+                {
+                    return;
+                }
+                try
+                {
+                    retry = false;
 
-            if (ApiContainer.DslrCamera.IsLiveViewMode)
-            {
-                LvExposure(Duration);
-            }
-            else
-            {
-                ShutterExposure(Duration, Light);
-            }
+                    if (_cameraState != CameraStates.cameraIdle)
+                    {
+
+                        Thread.Sleep(100);
+                        retry = true;
+                        retrynum++;
+
+                     }
+                    else
+                    {
+                        cameraImageReady = false;
+                        if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
+                        cameraLastExposureDuration = Duration;
+                        exposureStart = DateTime.Now;
+                        _cameraState = CameraStates.cameraExposing;
+
+                        if (ApiContainer.DslrCamera.IsLiveViewMode)
+                        {
+                            LvExposure(Duration);
+                            //LvExposure(0.5);
+                        }
+                        else
+                        {
+                            ShutterExposure(Duration, Light);
+                        }
+
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.WriteTraceMessage("Cannot start exposure - camera is not idle: " + exception);
+                    throw new InvalidOperationException("Cannot start exposure - camera is not idle");
+                }
+            } while (retry);
+
+
+
+
+           /* if (_cameraState != CameraStates.cameraIdle) throw new InvalidOperationException("Cannot start exposure - camera is not idle");
+
+            //throw new InvalidOperationException("Cannot start exposure - camera is not idle");
+
+                cameraImageReady = false;
+                if (Duration < 0.0) throw new InvalidValueException("StartExposure", Duration.ToString(), "0.0 upwards");
+                cameraLastExposureDuration = Duration;
+                exposureStart = DateTime.Now;
+                _cameraState = CameraStates.cameraExposing;
+
+                if (ApiContainer.DslrCamera.IsLiveViewMode)
+                {
+                    LvExposure(Duration);
+                }
+                else
+                {
+                    ShutterExposure(Duration, Light);
+                }
+                */
+            
         }
 
         private void ShutterExposure(double Duration, bool Light)
@@ -166,7 +243,11 @@ namespace ASCOM.DSLR
         private void DslrCamera_LiveViewImageReady(object sender, LiveViewImageReadyEventArgs e)
         {
             cameraImageArray = _imageDataProcessor.ReadBitmap(e.Data);
-            cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
+            //cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
+            //ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
+
+            //cameraImageArray = _imageDataProcessor.ToMonochrome(cameraImageArray, _imageDataProcessor.From8To16Bit);
+            //cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
             ApiContainer.DslrCamera.LiveViewImageReady -= DslrCamera_LiveViewImageReady;
 
             _cameraState = CameraStates.cameraIdle;
@@ -205,11 +286,19 @@ namespace ASCOM.DSLR
 
         private void SetCameraSettings(IDslrCamera camera, CameraSettings settings)
         {
-            camera.Iso = Gain > 0 ? Gain : settings.Iso;
+            //camera.Iso = Gain > 0 ? Gain : settings.Iso;
+            camera.Iso = Gain > 50 ? Gain : settings.Iso;
             camera.StorePath = settings.StorePath;
+            camera.SaveFile = settings.SaveFile;
+            camera.IsLiveViewMode = settings.LiveViewCaptureMode;
+            camera.LiveViewZoom = settings.LiveViewZoom;
+            camera.maxADU = settings.maxADU;
+
+            camera.maxADUOverride = settings.maxADUOverride;
 
             switch (CameraSettings.CameraMode)
             {
+
                 case CameraMode.RGGB:
                 case CameraMode.Color16:
                     camera.ImageFormat = ImageFormat.RAW;
@@ -218,6 +307,10 @@ namespace ASCOM.DSLR
                     camera.ImageFormat = ImageFormat.JPEG;
                     break;
             }
+
+            camera.UseExternalShutter = settings.UseExternalShutter;
+            camera.ExternalShutterPort = settings.ExternalShutterPortName;
+
         }
 
         private void PrepareCameraImageArray(string rawFileName)
@@ -234,6 +327,10 @@ namespace ASCOM.DSLR
             else if (CameraSettings.CameraMode == Enums.CameraMode.RGGB)
             {
                 cameraImageArray = _imageDataProcessor.ReadRaw(rawFileName);
+            }
+            if (BinX > 1 || BinY > 1)
+            {
+                cameraImageArray = _imageDataProcessor.Binning(cameraImageArray, BinX, BinY, CameraSettings.BinningMode);
             }
 
             cameraImageArray = _imageDataProcessor.CutArray(cameraImageArray, StartX, StartY, NumX, NumY, CameraXSize, CameraYSize);
@@ -307,7 +404,7 @@ namespace ASCOM.DSLR
 
         public bool CanSetCCDTemperature { get { return false; } }
 
-        public bool CanStopExposure { get { return false; } }
+        public bool CanStopExposure { get { return true; } }
 
         public bool CoolerOn { get { return false; } set { } }
 
@@ -315,31 +412,80 @@ namespace ASCOM.DSLR
 
         public double ElectronsPerADU { get { return 1; } }
 
-        public double ExposureMax { get { return double.MaxValue; } }
+        public double ExposureMax { get { return 600; } }
 
-        public double ExposureMin { get { return 0; } }
+        public double ExposureMin { get { return 0.00025; } }
 
         public double ExposureResolution { get { return 0.01; } }
 
-        public bool FastReadout { get { return false; } set { } }
+        public bool FastReadout { get { throw new PropertyNotImplementedException("The FastReadout property is not implemented"); } set { throw new PropertyNotImplementedException("The Gains property is not implemented"); } }
 
         public double FullWellCapacity { get { return short.MaxValue; } }
+
+        /*public short Gain
+        {
+            get
+            {
+                if (ApiContainer.DslrCamera.Iso == 0)
+                { return CameraSettings.Iso; }
+                else
+                { return ApiContainer.DslrCamera.Iso; }
+
+            }
+            set
+            {
+                ApiContainer.DslrCamera.Iso = value;
+                CameraSettings.Iso = value;
+            }
+        }*/
 
         public short Gain
         {
             get
             {
-                return ApiContainer.DslrCamera.Iso;
+                return Convert.ToInt16(Gains.IndexOf(CameraSettings.Iso));
+
             }
             set
             {
-                ApiContainer.DslrCamera.Iso = value;
+                ApiContainer.DslrCamera.Iso = value < 50 ? value : Convert.ToInt16(Gains.IndexOf(value));
+                CameraSettings.Iso = value > 50 ? value : Convert.ToInt16(Gains[value]);
             }
         }
 
-        public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
+        //public short GainMax { get { return ApiContainer.DslrCamera.MaxIso; } }
+        public short GainMax
+        {
+            get
+            {
 
-        public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
+                if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
+                {
+                    return ApiContainer.DslrCamera.MaxIso;
+                }
+                else
+                {
+                    throw new PropertyNotImplementedException("The Gains property is not implemented");
+                }
+            }
+        }
+
+        //public short GainMin { get { return ApiContainer.DslrCamera.MinIso; } }
+        public short GainMin
+        {
+            get
+            {
+
+                if (cameraSettingsProfileName.ToUpper().Contains("NINA"))
+                {
+                    return ApiContainer.DslrCamera.MinIso;
+                }
+                else
+                {
+                    throw new PropertyNotImplementedException("The Gains property is not implemented");
+                }
+            }
+        }
 
         public ArrayList Gains
         {
@@ -348,8 +494,10 @@ namespace ASCOM.DSLR
                 // ASCOM Camera drivers should implement either Gains or GainMin/GainMax, not both
                 // If Gains is implemented then the 'Gain' value is an index into the array returned by this property
                 // If GainMin/GainMax is implemented then the 'Gain' value is the numerical value of the gain. 
-                throw new PropertyNotImplementedException("The Gains property is not implemented");
+                //throw new PropertyNotImplementedException("The Gains property is not implemented");
+                return new ArrayList(ApiContainer.DslrCamera.IsoValues);
             }
+ 
         }
 
         public bool HasShutter { get { return true; } }
@@ -368,6 +516,10 @@ namespace ASCOM.DSLR
         {
             get
             {
+                if (!cameraImageReady)
+                {
+                    throw new InvalidOperationException("Call to ImageArrayVariant before the first image has been taken!");
+                }
                 return cameraImageArray;
             }
         }
@@ -398,7 +550,7 @@ namespace ASCOM.DSLR
             {
                 if (!cameraImageReady)
                 {
-                    throw new ASCOM.InvalidOperationException("Call to LastExposureDuration before the first image has been taken!");
+                    throw new InvalidOperationException("Call to LastExposureDuration before the first image has been taken!");
                 }
                 return cameraLastExposureDuration;
             }
@@ -410,7 +562,7 @@ namespace ASCOM.DSLR
             {
                 if (!cameraImageReady)
                 {
-                    throw new ASCOM.InvalidOperationException("Call to LastExposureStartTime before the first image has been taken!");
+                    throw new InvalidOperationException("Call to LastExposureStartTime before the first image has been taken!");
                 }
 
                 string exposureStartString = exposureStart.ToString("yyyy-MM-ddTHH:mm:ss");
@@ -432,12 +584,35 @@ namespace ASCOM.DSLR
                     switch (CameraSettings.CameraMode)
                     {
                         case Enums.CameraMode.RGGB:
+                            if (CameraSettings.maxADUOverride)
+                            {
+                                maxValue = CameraSettings.maxADU;
+                            }
+                            else 
+                            {
+                                maxValue = 16384;
+                            }
+                            break;
                         case Enums.CameraMode.Color16:
-                            maxValue = short.MaxValue;
+                            if (CameraSettings.maxADUOverride)
+                            {
+                                maxValue = CameraSettings.maxADU;
+                            }
+                            else
+                            {
+                                maxValue = 16384;
+                            }
                             break;
 
                         case Enums.CameraMode.ColorJpg:
-                            maxValue = byte.MaxValue;
+                            if (CameraSettings.maxADUOverride)
+                            {
+                                maxValue = CameraSettings.maxADU;
+                            }
+                            else
+                            {
+                                maxValue = 16384;
+                            }
                             break;
                     }
                 }
@@ -450,7 +625,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return 1;
+                return (short)(CameraSettings.EnableBinning ? 4 : 1);
             }
         }
 
@@ -482,7 +657,9 @@ namespace ASCOM.DSLR
             }
         }
 
-        public void PulseGuide(GuideDirections Direction, int Duration) { }
+        public void PulseGuide(GuideDirections Direction, int Duration) {
+            throw new ASCOM.MethodNotImplementedException("The PulseGuide property is not implemented");
+        }
 
         public short ReadoutMode { get; set; }
 
@@ -490,7 +667,7 @@ namespace ASCOM.DSLR
         {
             get
             {
-                return new ArrayList();
+                return new ArrayList(new[] {ImageFormat.RAW.ToString(), ImageFormat.JPEG.ToString() });
             }
         }
 
@@ -508,15 +685,26 @@ namespace ASCOM.DSLR
             {
                 SensorType sensorType;
 
-                switch (CameraSettings.CameraMode)
+                if (CameraSettings.LiveViewCaptureMode)
                 {
-                    case CameraMode.Color16:
-                    case CameraMode.ColorJpg:
-                        sensorType = SensorType.Color;
-                        break;
-                    default:
-                        sensorType = SensorType.RGGB;
-                        break;
+                    sensorType = SensorType.Color;
+                }
+                else
+                {
+                    switch (CameraSettings.CameraMode)
+                    {
+                        case CameraMode.RGGB:
+                            sensorType = CameraSettings.EnableBinning ? SensorType.Monochrome : SensorType.RGGB;
+                            //sensorType = SensorType.RGGB;
+                            break;
+                        case CameraMode.Color16:
+                        case CameraMode.ColorJpg:
+                            sensorType = SensorType.Color;
+                            break;
+                        default:
+                            sensorType = SensorType.RGGB;
+                            break;
+                    }
                 }
 
                 return sensorType;
@@ -531,6 +719,7 @@ namespace ASCOM.DSLR
             }
             set
             {
+                throw new PropertyNotImplementedException("The FastReadout property is not implemented");
             }
         }
 
