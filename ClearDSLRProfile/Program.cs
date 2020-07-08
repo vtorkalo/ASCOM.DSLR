@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +42,11 @@ namespace ClearDSLRSCProfile
                     key.Close();
                 }
             }
+
+            Process[] ps = Process.GetProcessesByName("WmiPrvSE");
+            foreach (Process p in ps)
+                p.Kill();
+
 
         }
     }

@@ -639,6 +639,7 @@ namespace ASCOM.DSLR
 
         public int NumY { get; set; }
 
+
         public short PercentCompleted { get { return 100; } }
 
         public double PixelSizeX
