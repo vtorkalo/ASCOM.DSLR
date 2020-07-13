@@ -11,7 +11,7 @@ The code is being released under GPL v3 and GPL v3 compatible licenses. Means if
 Technologies:
 The project uses C#, DigicamControl for Old Nikon Cameras, Nikoncswrapper for newer nikon cameras, CanonSDK, pktriggercord, Libraw and Innosetup
 
-The Drivers is supported ASIS we not responsible for damages in your camera.
+The Drivers is supported As-Is we not responsible for damages in your camera.
 
 If you would like to contribute documenting ASCOM.DSLR, let me know to get you started.
 
