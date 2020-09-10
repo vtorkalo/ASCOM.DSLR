@@ -13,15 +13,13 @@ The project uses C#, DigicamControl for Old Nikon Cameras, Nikoncswrapper for ne
 
 The Drivers is supported As-Is we not responsible for damages in your camera.
 
-Download and installation instructions are here: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
+Installation Guide (including where to download!): https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
 
 If you would like to contribute documenting ASCOM.DSLR, let me know to get you started.
 
 Discord Channel: https://discord.gg/Q8GtTKW
 
 Wiki: https://github.com/FearL0rd/ASCOM.DSLR/wiki
-
-Installation Guide: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
 
 Notes about using Sharpcap: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Notes-about-Sharpcap
 
