@@ -590,7 +590,7 @@ namespace ASCOM.DSLR
                             }
                             else 
                             {
-                                maxValue = 16384;
+                                maxValue = 14605;
                             }
                             break;
                         case Enums.CameraMode.Color16:
@@ -600,7 +600,7 @@ namespace ASCOM.DSLR
                             }
                             else
                             {
-                                maxValue = 16384;
+                                maxValue = 14605;
                             }
                             break;
 
@@ -611,7 +611,7 @@ namespace ASCOM.DSLR
                             }
                             else
                             {
-                                maxValue = 16384;
+                                maxValue = 14605;
                             }
                             break;
                     }
