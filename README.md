@@ -13,6 +13,8 @@ The project uses C#, DigicamControl for Old Nikon Cameras, Nikoncswrapper for ne
 
 The Drivers is supported As-Is we not responsible for damages in your camera.
 
+Note that focusing camera lenses is not possible with this driver.  ASCOM focuser drivers are distinct from camera drivers, so it isn't something that is even been considered.
+
 Installation Guide (including where to download!): https://github.com/FearL0rd/ASCOM.DSLR/wiki/Installation
 
 If you would like to contribute documenting ASCOM.DSLR, let me know to get you started.
