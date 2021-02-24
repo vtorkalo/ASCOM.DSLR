@@ -19,7 +19,7 @@ Installation Guide (including where to download!): https://github.com/FearL0rd/A
 
 If you would like to contribute documenting ASCOM.DSLR, let me know to get you started.
 
-Discord Channel: https://discord.gg/Q8GtTKW
+Discord Channel: https://discord.gg/SanCmjQN99
 
 Wiki: https://github.com/FearL0rd/ASCOM.DSLR/wiki
 
