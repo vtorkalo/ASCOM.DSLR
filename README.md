@@ -23,6 +23,8 @@ Discord Channel: https://discord.gg/SanCmjQN99
 
 Wiki: https://github.com/FearL0rd/ASCOM.DSLR/wiki
 
+List of cameras know to work: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Camera-Compatibility
+
 Notes about using Sharpcap: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Notes-about-Sharpcap
 
 Release Notes
