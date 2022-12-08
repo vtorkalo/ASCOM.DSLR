@@ -23,13 +23,15 @@ Discord Channel: https://discord.gg/SanCmjQN99
 
 Wiki: https://github.com/FearL0rd/ASCOM.DSLR/wiki
 
-List of cameras know to work: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Camera-Compatibility
+List of cameras know to work: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Camera-Compatibility 
 
 Notes about using Sharpcap: https://github.com/FearL0rd/ASCOM.DSLR/wiki/Notes-about-Sharpcap
 
 Release Notes
 
-5/15/2020 - Added more log fo troubleshooting
+11/25/2022 - Upgraded to latest Canon SDK, should support more Canon R series Cameras now.
+
+5/15/2020 - Added more log for troubleshooting
 
 5/29/2020 - Fixed Camera detection to work wil multiple cameras
 
