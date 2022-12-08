@@ -298,10 +298,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Accord.3.8.2-alpha\build\Accord.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Accord.3.8.2-alpha\build\Accord.targets'))" />
     <Error Condition="!Exists('..\..\packages\Accord.3.8.2-alpha\build\Accord.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Accord.3.8.2-alpha\build\Accord.targets'))" />
-    <Error Condition="!Exists('..\..\packages\GitInfo.2.0.26\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitInfo.2.0.26\build\GitInfo.targets'))" />
+    <Error Condition="!Exists('..\..\packages\GitInfo.2.3.0\build\GitInfo.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitInfo.2.3.0\build\GitInfo.targets'))" />
   </Target>
   <Import Project="..\..\packages\Accord.3.8.2-alpha\build\Accord.targets" Condition="Exists('..\..\packages\Accord.3.8.2-alpha\build\Accord.targets')" />
-  <Import Project="..\..\packages\GitInfo.2.0.26\build\GitInfo.targets" Condition="Exists('..\..\packages\GitInfo.2.0.26\build\GitInfo.targets')" />
+  <Import Project="..\..\packages\GitInfo.2.3.0\build\GitInfo.targets" Condition="Exists('..\..\packages\GitInfo.2.3.0\build\GitInfo.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
